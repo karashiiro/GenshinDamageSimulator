@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "GenshinDamageSimulator", "GenshinDamageSimulator\GenshinDamageSimulator.fsproj", "{64A4D989-3477-4E34-BE98-53458CDC1D73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenshinDamageSimulator.Tests", "GenshinDamageSimulator.Tests\GenshinDamageSimulator.Tests.csproj", "{FC735CE9-B601-492A-B2DF-6CE7FA8B35C6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64A4D989-3477-4E34-BE98-53458CDC1D73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64A4D989-3477-4E34-BE98-53458CDC1D73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64A4D989-3477-4E34-BE98-53458CDC1D73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64A4D989-3477-4E34-BE98-53458CDC1D73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC735CE9-B601-492A-B2DF-6CE7FA8B35C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC735CE9-B601-492A-B2DF-6CE7FA8B35C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC735CE9-B601-492A-B2DF-6CE7FA8B35C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC735CE9-B601-492A-B2DF-6CE7FA8B35C6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7CDF4545-CECC-4FE7-AACA-97BC45CD0667}
+	EndGlobalSection
+EndGlobal
