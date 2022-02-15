@@ -1,9 +1,6 @@
 ﻿namespace GenshinDamageSimulator
 
-open EntityTypes
-open PartyTypes
-
-module Party =
+module Resonance =
     let hasProtectiveCanopy (map: Map<Element, int>) =
         map.Count >= 4
 
@@ -39,7 +36,7 @@ module Party =
         |> hasTwo Element.Geo
 
     let getResonances party =
-        party.Members
+        party
         |> Seq.countBy (fun x -> x.Element)
         |> Map.ofSeq
         |> fun map -> ([], map)

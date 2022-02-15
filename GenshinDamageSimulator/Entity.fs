@@ -1,8 +1,5 @@
 ﻿namespace GenshinDamageSimulator
 
-open StatTypes
-open EntityTypes
-
 module Entity =
     let getTotalFlat stat statLines =
         statLines

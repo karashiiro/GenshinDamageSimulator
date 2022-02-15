@@ -12,7 +12,7 @@
     <Compile Include="EntityTypes.fs" />
     <Compile Include="PartyTypes.fs" />
     <Compile Include="Entity.fs" />
-    <Compile Include="Party.fs" />
+    <Compile Include="Resonance.fs" />
     <Compile Include="Reactions.fs" />
     <Compile Include="ElementalCoefficients.fs" />
     <Compile Include="Formulas.fs" />

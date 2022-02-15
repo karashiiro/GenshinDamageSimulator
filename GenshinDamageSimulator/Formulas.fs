@@ -1,9 +1,7 @@
 ﻿namespace GenshinDamageSimulator
 
-open StatTypes
-open EntityTypes
 open Entity
-open Party
+open Resonance
 open Reactions
 open ElementalCoefficients
 

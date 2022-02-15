@@ -1,7 +1,5 @@
 using System;
 using Xunit;
-using static GenshinDamageSimulator.EntityTypes;
-using static GenshinDamageSimulator.StatTypes;
 
 namespace GenshinDamageSimulator.Tests
 {
@@ -15,12 +13,10 @@ namespace GenshinDamageSimulator.Tests
                 Element.Electro,
                 new Weapon(120, StatModifier.NewPercStatModifier(new PercStatModifier(PercStatType.Physical, 0.5f))),
                 Array.Empty<Artifact>());
-
             var testNpcState = new BattleNpcState();
 
-            var sim = Simulator.CreateSimulation();
-
-            Simulator.AddCombatant(sim, testNpc, testNpcState);
+            var sim = SimulationState.Create();
+            _ = sim.AddCombatant(testNpc, testNpcState);
         }
     }
 }

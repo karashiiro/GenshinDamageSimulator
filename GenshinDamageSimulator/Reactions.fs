@@ -1,7 +1,5 @@
 ﻿namespace GenshinDamageSimulator
 
-open DamageTypes
-
 module Reactions =
     let getReaction firstElement secondElement =
         match firstElement with

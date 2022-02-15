@@ -1,18 +1,13 @@
 ﻿namespace GenshinDamageSimulator
 
-open EntityTypes
+[<Struct>]
+type ElementalResonance =
+    | FerventFlames
+    | SoothingWater
+    | HighVoltage
+    | ShatteringIce
+    | ImpetuousWinds
+    | EnduringRock
+    | ProtectiveCanopy
 
-module PartyTypes =
-    [<Struct>]
-    type ElementalResonance =
-        | FerventFlames
-        | SoothingWater
-        | HighVoltage
-        | ShatteringIce
-        | ImpetuousWinds
-        | EnduringRock
-        | ProtectiveCanopy
-
-    [<Struct>]
-    type Party =
-        { Members: BattleNpc list }
+type Party = BattleNpc list
