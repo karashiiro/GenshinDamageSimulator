@@ -10,95 +10,95 @@ open ElementalCoefficients
 module Formulas =
     // HP formulas
     let calcTotalHp bNpc =
-        uint32 (float32 (bNpc.BaseHp) * (1f + getBNpcStatPercent bNpc PercStatType.Hp)) + getBNpcStatFlat bNpc FlatStatType.Hp
+        uint32 (float32 (bNpc.BaseHp) * (1f + getBNpcStatPercent bNpc PercStat.Hp)) + getBNpcStatFlat bNpc FlatStat.Hp
 
     // Attack formulas
     let calcTotalAttack bNpc party =
-        uint32 (float32 (bNpc.BaseAttack) * (1f + calcResonanceAttackPercent party * getBNpcStatPercent bNpc PercStatType.Attack)) + getBNpcStatFlat bNpc FlatStatType.Attack
+        uint32 (float32 (bNpc.BaseAttack) * (1f + calcResonanceAttackPercent party * getBNpcStatPercent bNpc PercStat.Attack)) + getBNpcStatFlat bNpc FlatStat.Attack
         
     // Defense formulas
     let calcTotalDefense bNpc =
-        uint32 (float32 (bNpc.BaseDefense) * (1f + getBNpcStatPercent bNpc PercStatType.Defense)) + getBNpcStatFlat bNpc FlatStatType.Defense
+        uint32 (float32 (bNpc.BaseDefense) * (1f + getBNpcStatPercent bNpc PercStat.Defense)) + getBNpcStatFlat bNpc FlatStat.Defense
 
     // Elemental mastery formulas
     let calcTotalElementalMastery bNpc =
-        getBNpcStatFlat bNpc FlatStatType.ElementalMastery
+        getBNpcStatFlat bNpc FlatStat.ElementalMastery
 
     // Energy recharge formulas
     let calcTotalEnergyRecharge bNpc =
-        1f + getBNpcStatPercent bNpc PercStatType.EnergyRecharge
+        1f + getBNpcStatPercent bNpc PercStat.EnergyRecharge
 
     // Crit rate formulas
     let calcTotalCriticalHit bNpc =
-        getBNpcStatPercent bNpc PercStatType.CriticalHit
+        getBNpcStatPercent bNpc PercStat.CriticalHit
 
     // Crit damage formulas
     let calcTotalCriticalDamage bNpc =
-        getBNpcStatPercent bNpc PercStatType.CriticalDamage
+        getBNpcStatPercent bNpc PercStat.CriticalDamage
 
     // Physical damage bonus formulas
     let calcTotalPhysical bNpc =
-        getBNpcStatPercent bNpc PercStatType.Physical
+        getBNpcStatPercent bNpc PercStat.Physical
 
     // Pyro damage bonus formulas
     let calcTotalPyro bNpc =
-        getBNpcStatPercent bNpc PercStatType.Pyro
+        getBNpcStatPercent bNpc PercStat.Pyro
 
     // Hydro damage bonus formulas
     let calcTotalHydro bNpc =
-        getBNpcStatPercent bNpc PercStatType.Hydro
+        getBNpcStatPercent bNpc PercStat.Hydro
 
     // Electro damage bonus formulas
     let calcTotalElectro bNpc =
-        getBNpcStatPercent bNpc PercStatType.Electro
+        getBNpcStatPercent bNpc PercStat.Electro
 
     // Cryo damage bonus formulas
     let calcTotalCryo bNpc =
-        getBNpcStatPercent bNpc PercStatType.Cryo
+        getBNpcStatPercent bNpc PercStat.Cryo
 
     // Anemo damage bonus formulas
     let calcTotalAnemo bNpc =
-        getBNpcStatPercent bNpc PercStatType.Anemo
+        getBNpcStatPercent bNpc PercStat.Anemo
 
     // Geo damage bonus formulas
     let calcTotalGeo bNpc =
-        getBNpcStatPercent bNpc PercStatType.Geo
+        getBNpcStatPercent bNpc PercStat.Geo
 
     // Dendro damage bonus formulas
     let calcTotalDendro bNpc =
-        getBNpcStatPercent bNpc PercStatType.Dendro
+        getBNpcStatPercent bNpc PercStat.Dendro
 
     // Physical resistance formulas
     let calcTotalPhysicalRes bNpc =
-        getBNpcStatPercent bNpc PercStatType.PhysicalRes
+        getBNpcStatPercent bNpc PercStat.PhysicalRes
 
     // Pyro resistance formulas
     let calcTotalPyroRes bNpc =
-        getBNpcStatPercent bNpc PercStatType.PyroRes
+        getBNpcStatPercent bNpc PercStat.PyroRes
 
     // Hydro resistance formulas
     let calcTotalHydroRes bNpc =
-        getBNpcStatPercent bNpc PercStatType.HydroRes
+        getBNpcStatPercent bNpc PercStat.HydroRes
 
     // Electro resistance formulas
     let calcTotalElectroRes bNpc =
-        getBNpcStatPercent bNpc PercStatType.ElectroRes
+        getBNpcStatPercent bNpc PercStat.ElectroRes
 
     // Cryo resistance formulas
     let calcTotalCryoRes bNpc =
-        getBNpcStatPercent bNpc PercStatType.CryoRes
+        getBNpcStatPercent bNpc PercStat.CryoRes
 
     // Anemo resistance formulas
     let calcTotalAnemoRes bNpc =
-        getBNpcStatPercent bNpc PercStatType.AnemoRes
+        getBNpcStatPercent bNpc PercStat.AnemoRes
 
     // Geo resistance formulas
     let calcTotalGeoRes bNpc =
-        getBNpcStatPercent bNpc PercStatType.GeoRes
+        getBNpcStatPercent bNpc PercStat.GeoRes
 
     // Dendro resistance formulas
     let calcTotalDendroRes bNpc =
-        getBNpcStatPercent bNpc PercStatType.DendroRes
+        getBNpcStatPercent bNpc PercStat.DendroRes
 
     // Outgoing damage formulas
     let calcAmplifyingBonus em =
@@ -127,6 +127,9 @@ module Formulas =
     let calcAverageCritMultiplier critRate critDamage =
         1f + critRate * critDamage
 
+    let calcCritMultiplier critDamage =
+        1f + critDamage
+
     let calcOutgoingDamage (abilityStat: uint32) abilityMult bonusFlat bonusMult =
         uint32 (float32 (uint32 (float32 (abilityStat) * abilityMult) + bonusFlat) * bonusMult)
 
@@ -137,11 +140,11 @@ module Formulas =
     let calcBaseDefenseMultiplier defense attackerLevel =
         1f - (float32 defense / float32 (defense + 5u * attackerLevel + 500u))
 
-    let calcLevelDiffDefenseMultiplier attackerLevel enemyLevel defReductionPerc defIgnoredPerc =
-        float32 (attackerLevel + 100u) / (float32 (attackerLevel + 100u) + float32 (enemyLevel + 100u) * (1f - defReductionPerc) * (1f - defIgnoredPerc))
+    let calcLevelDiffDefenseMultiplier attackerLevel defenderLevel defReductionPerc defIgnoredPerc =
+        float32 (attackerLevel + 100u) / (float32 (attackerLevel + 100u) + float32 (defenderLevel + 100u) * (1f - defReductionPerc) * (1f - defIgnoredPerc))
 
-    let calcDefenseMultiplier defense attackerLevel enemyLevel defReductionPerc defIgnoredPerc =
-        (calcBaseDefenseMultiplier defense attackerLevel) * (calcLevelDiffDefenseMultiplier attackerLevel enemyLevel defReductionPerc defIgnoredPerc)
+    let calcDefenseMultiplier defense attackerLevel defenderLevel defReductionPerc defIgnoredPerc =
+        (calcBaseDefenseMultiplier defense attackerLevel) * (calcLevelDiffDefenseMultiplier attackerLevel defenderLevel defReductionPerc defIgnoredPerc)
 
     let calcResMultiplier baseResPerc resBonusPerc resReductionPerc =
         let resPerc = baseResPerc + resBonusPerc - resReductionPerc

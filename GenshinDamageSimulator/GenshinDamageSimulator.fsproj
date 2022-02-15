@@ -10,12 +10,14 @@
     <Compile Include="StatTypes.fs" />
     <Compile Include="DamageTypes.fs" />
     <Compile Include="EntityTypes.fs" />
+    <Compile Include="EventTypes.fs" />
     <Compile Include="PartyTypes.fs" />
     <Compile Include="Entity.fs" />
     <Compile Include="Resonance.fs" />
     <Compile Include="Reactions.fs" />
     <Compile Include="ElementalCoefficients.fs" />
     <Compile Include="Formulas.fs" />
+    <Compile Include="EventHandling.fs" />
     <Compile Include="Simulator.fs" />
   </ItemGroup>
 

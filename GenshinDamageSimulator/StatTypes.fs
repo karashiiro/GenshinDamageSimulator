@@ -1,10 +1,13 @@
 ﻿namespace GenshinDamageSimulator
 
 [<Struct>]
-type FlatStatType = Hp | Attack | Defense | ElementalMastery
+type BaseStat = Hp | Attack | Defense
 
 [<Struct>]
-type PercStatType =
+type FlatStat = Hp | Attack | Defense | ElementalMastery
+
+[<Struct>]
+type PercStat =
     | Hp | Attack | Defense
     | EnergyRecharge
     | CriticalHit | CriticalDamage
@@ -13,12 +16,12 @@ type PercStatType =
 
 [<Struct>]
 type FlatStatModifier =
-    { Type: FlatStatType
+    { Type: FlatStat
       Value: uint32 }
 
 [<Struct>]
 type PercStatModifier =
-    { Type: PercStatType
+    { Type: PercStat
       Value: float32 }
 
 type StatModifier =

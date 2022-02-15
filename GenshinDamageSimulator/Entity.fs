@@ -31,3 +31,42 @@ module Entity =
         bNpc
         |> getBNpcStatLines
         |> getTotalPercent stat
+
+    let getBNpcBaseStat bNpc stat =
+        match stat with
+        | BaseStat.Hp -> bNpc.BaseHp
+        | BaseStat.Attack -> bNpc.BaseAttack
+        | BaseStat.Defense -> bNpc.BaseDefense
+
+    let getBNpcBaseResStat bNpc resStat = 
+        match resStat with
+        | DamageType.Physical -> bNpc.BasePhysicalRes
+        | DamageType.Pyro -> bNpc.BasePyroRes
+        | DamageType.Hydro -> bNpc.BaseHydroRes
+        | DamageType.Electro -> bNpc.BaseElectroRes
+        | DamageType.Cryo -> bNpc.BaseCryoRes
+        | DamageType.Anemo -> bNpc.BaseAnemoRes
+        | DamageType.Geo -> bNpc.BaseGeoRes
+        | DamageType.Dendro -> bNpc.BaseDendroRes
+
+    let getBNpcDamageBonusPercent bNpc damageType =
+        match damageType with
+        | DamageType.Physical -> getBNpcStatPercent bNpc PercStat.Physical
+        | DamageType.Pyro -> getBNpcStatPercent bNpc PercStat.Pyro
+        | DamageType.Hydro -> getBNpcStatPercent bNpc PercStat.Hydro
+        | DamageType.Electro -> getBNpcStatPercent bNpc PercStat.Electro
+        | DamageType.Cryo -> getBNpcStatPercent bNpc PercStat.Cryo
+        | DamageType.Anemo -> getBNpcStatPercent bNpc PercStat.Anemo
+        | DamageType.Geo -> getBNpcStatPercent bNpc PercStat.Geo
+        | DamageType.Dendro -> getBNpcStatPercent bNpc PercStat.Dendro
+
+    let getBNpcDamageResPercent bNpc damageType =
+        match damageType with
+        | DamageType.Physical -> getBNpcStatPercent bNpc PercStat.PhysicalRes
+        | DamageType.Pyro -> getBNpcStatPercent bNpc PercStat.PyroRes
+        | DamageType.Hydro -> getBNpcStatPercent bNpc PercStat.HydroRes
+        | DamageType.Electro -> getBNpcStatPercent bNpc PercStat.ElectroRes
+        | DamageType.Cryo -> getBNpcStatPercent bNpc PercStat.CryoRes
+        | DamageType.Anemo -> getBNpcStatPercent bNpc PercStat.AnemoRes
+        | DamageType.Geo -> getBNpcStatPercent bNpc PercStat.GeoRes
+        | DamageType.Dendro -> getBNpcStatPercent bNpc PercStat.DendroRes
