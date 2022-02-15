@@ -3,6 +3,8 @@
 open EntityTypes
 open Entity
 open Party
+open Reactions
+open ElementalCoefficients
 
 // From https://genshin-impact.fandom.com/wiki/Damage
 
@@ -121,13 +123,27 @@ module Formulas =
         calcBnpcDendroResPercent bNpc + calcWeaponDendroResPercent bNpc.Weapon + calcArtifactsDendroResPercent bNpc.Artifacts
 
     // Outgoing damage formulas
-    let calcAmplifyingBonus (em: uint32) =
+    let calcAmplifyingBonus em =
         2.78f * (float32 em / float32 (em + 1400u))
 
-    let calcAmplifyingMultiplier reactionMult amplifyingBonus reactionBonus =
-        reactionMult * (1f + amplifyingBonus + reactionBonus)
+    let calcAmplifyingMultiplier reaction amplifyingBonus reactionBonus =
+        getAmpifyingReactionMultiplier reaction * (1f + amplifyingBonus + reactionBonus)
 
-    // TODO: Transformative reactions
+    let calcTransformativeBonus em =
+        16f * (float32 em / float32 (em + 2000u))
+
+    let calcTransformativeDamageCharacter reaction characterLevel transformativeBonus reactionBonus =
+        let levelMult = Map.tryFind characterLevel characterLevelMultipliers
+        match levelMult with
+            | Some x -> uint32 (x * getTransformativeReactionMultiplier reaction * (1f + transformativeBonus + reactionBonus))
+            | None -> 0u
+
+    let calcTransformativeDamageEnemy reaction enemyLevel transformativeBonus reactionBonus =
+        let levelMult = Map.tryFind enemyLevel enemyLevelMultipliers
+        match levelMult with
+            | Some x -> uint32 (x * getTransformativeReactionMultiplier reaction * (1f + transformativeBonus + reactionBonus))
+            | None -> 0u
+
     // TODO: Swirl reactions
 
     let calcAverageCritMultiplier critRate critDamage =
@@ -160,6 +176,9 @@ module Formulas =
 
     let calcDamageReductionMultiplier dmgReductionPerc =
         1f - dmgReductionPerc
+
+    let calcIncomingTransformativeDamage (baseDamage: uint32) resMult =
+        uint32 (float32 (baseDamage) * resMult)
 
     let calcIncomingDamage amplifyingMult (baseDamage: uint32) defMult resMult dmgReductionMult =
         uint32 (amplifyingMult * float32 (uint32 (float32 (baseDamage) * defMult * resMult * dmgReductionMult)))

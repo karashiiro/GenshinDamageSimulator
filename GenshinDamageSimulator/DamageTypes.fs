@@ -17,3 +17,4 @@ module DamageTypes =
         | Swirl
         | Crystallize
         | Burning
+        | Shattered // Frozen -> Physical

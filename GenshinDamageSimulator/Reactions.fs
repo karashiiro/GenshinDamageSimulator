@@ -49,10 +49,19 @@ module Reactions =
                             | _ -> None
             | _ -> None
 
-    let getReactionMultiplier reaction =
+    let getAmpifyingReactionMultiplier reaction =
         match reaction with
             | Vaporize -> 2f
             | ReverseVaporize -> 1.5f
             | Melt -> 2f
             | ReverseMelt -> 1.5f
             | _ -> 1f
+
+    let getTransformativeReactionMultiplier reaction =
+        match reaction with
+            | Superconduct -> 1f
+            | Swirl -> 1.2f
+            | ElectroCharged -> 2.4f
+            | Shattered -> 3f
+            | Overloaded -> 4f
+            | _ -> 0f

@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="ElementCoeffExcelConfigData.json" />
     <Compile Include="StatTypes.fs" />
     <Compile Include="DamageTypes.fs" />
     <Compile Include="EntityTypes.fs" />
@@ -14,9 +15,18 @@
     <Compile Include="Entity.fs" />
     <Compile Include="Party.fs" />
     <Compile Include="Reactions.fs" />
+    <Compile Include="ElementalCoefficients.fs" />
     <Compile Include="Formulas.fs" />
     <Compile Include="SimulationState.fs" />
     <Compile Include="Simulator.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="6.0.3" />
   </ItemGroup>
 
 </Project>
