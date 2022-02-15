@@ -122,8 +122,6 @@ module Formulas =
             | Some x -> uint32 (x * getTransformativeReactionMultiplier reaction * (1f + transformativeBonus + reactionBonus))
             | None -> 0u
 
-    // TODO: Swirl reactions
-
     let calcAverageCritMultiplier critRate critDamage =
         1f + critRate * critDamage
 
