@@ -11,7 +11,6 @@
     <Compile Include="DamageTypes.fs" />
     <Compile Include="EntityTypes.fs" />
     <Compile Include="PartyTypes.fs" />
-    <Compile Include="Stat.fs" />
     <Compile Include="Entity.fs" />
     <Compile Include="Party.fs" />
     <Compile Include="Reactions.fs" />

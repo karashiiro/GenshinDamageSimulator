@@ -1,5 +1,6 @@
 ﻿namespace GenshinDamageSimulator
 
+open StatTypes
 open EntityTypes
 open Entity
 open Party
@@ -10,117 +11,96 @@ open ElementalCoefficients
 
 module Formulas =
     // HP formulas
-    let calcTotalHpMultiplier bNpc =
-        1f + calcBnpcHpPercent bNpc + calcWeaponHpPercent bNpc.Weapon + calcArtifactsHpPercent bNpc.Artifacts
-
-    let calcTotalHpFlat bNpc =
-        calcBnpcHpFlat bNpc + calcWeaponHpFlat bNpc.Weapon + calcArtifactsHpFlat bNpc.Artifacts
-
     let calcTotalHp bNpc =
-        uint32 (float32 bNpc.BaseHp * calcTotalHpMultiplier bNpc) + calcTotalHpFlat bNpc
+        uint32 (float32 (bNpc.BaseHp) * (1f + getBNpcStatPercent bNpc PercStatType.Hp)) + getBNpcStatFlat bNpc FlatStatType.Hp
 
     // Attack formulas
-    let calcTotalAttackMultiplier bNpc party =
-        1f + calcWeaponAttackPercent bNpc.Weapon + calcArtifactsAttackPercent bNpc.Artifacts + calcResonanceAttackPercent party
-
-    let calcTotalAttackFlat bNpc =
-        calcBnpcAttackFlat bNpc + calcWeaponAttackFlat bNpc.Weapon + calcArtifactsAttackFlat bNpc.Artifacts
-
-    let calcBaseAttack bNpc =
-        bNpc.Weapon.Attack + bNpc.BaseAttack
-
     let calcTotalAttack bNpc party =
-        uint32 (float32 (calcBaseAttack bNpc) * calcTotalAttackMultiplier bNpc party) + calcTotalAttackFlat bNpc
+        uint32 (float32 (bNpc.BaseAttack) * (1f + calcResonanceAttackPercent party * getBNpcStatPercent bNpc PercStatType.Attack)) + getBNpcStatFlat bNpc FlatStatType.Attack
         
     // Defense formulas
-    let calcTotalDefenseMultiplier bNpc =
-        1f + calcWeaponDefensePercent bNpc.Weapon + calcArtifactsDefensePercent bNpc.Artifacts
-
-    let calcTotalDefenseFlat bNpc =
-        calcBnpcDefenseFlat bNpc + calcWeaponDefenseFlat bNpc.Weapon + calcArtifactsDefenseFlat bNpc.Artifacts
-
     let calcTotalDefense bNpc =
-        uint32 (float32 bNpc.BaseDefense * calcTotalDefenseMultiplier bNpc) + calcTotalDefenseFlat bNpc
+        uint32 (float32 (bNpc.BaseDefense) * (1f + getBNpcStatPercent bNpc PercStatType.Defense)) + getBNpcStatFlat bNpc FlatStatType.Defense
 
     // Elemental mastery formulas
     let calcTotalElementalMastery bNpc =
-        calcBnpcElementalMasteryFlat bNpc + calcWeaponElementalMasteryFlat bNpc.Weapon + calcArtifactsElementalMasteryFlat bNpc.Artifacts
+        getBNpcStatFlat bNpc FlatStatType.ElementalMastery
 
     // Energy recharge formulas
     let calcTotalEnergyRecharge bNpc =
-        1f + calcBnpcEnergyRechargePercent bNpc + calcWeaponEnergyRechargePercent bNpc.Weapon + calcArtifactsEnergyRechargePercent bNpc.Artifacts
+        1f + getBNpcStatPercent bNpc PercStatType.EnergyRecharge
 
     // Crit rate formulas
     let calcTotalCriticalHit bNpc =
-        calcBnpcCriticalHitPercent bNpc + calcWeaponCriticalHitPercent bNpc.Weapon + calcArtifactsCriticalHitPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.CriticalHit
 
     // Crit damage formulas
     let calcTotalCriticalDamage bNpc =
-        calcBnpcCriticalDamagePercent bNpc + calcWeaponCriticalDamagePercent bNpc.Weapon + calcArtifactsCriticalDamagePercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.CriticalDamage
 
     // Physical damage bonus formulas
     let calcTotalPhysical bNpc =
-        calcBnpcPhysicalPercent bNpc + calcWeaponPhysicalPercent bNpc.Weapon + calcArtifactsPhysicalPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.Physical
 
     // Pyro damage bonus formulas
     let calcTotalPyro bNpc =
-        calcBnpcPyroPercent bNpc + calcWeaponPyroPercent bNpc.Weapon + calcArtifactsPyroPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.Pyro
 
     // Hydro damage bonus formulas
     let calcTotalHydro bNpc =
-        calcBnpcHydroPercent bNpc + calcWeaponHydroPercent bNpc.Weapon + calcArtifactsHydroPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.Hydro
 
     // Electro damage bonus formulas
     let calcTotalElectro bNpc =
-        calcBnpcElectroPercent bNpc + calcWeaponElectroPercent bNpc.Weapon + calcArtifactsElectroPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.Electro
 
     // Cryo damage bonus formulas
     let calcTotalCryo bNpc =
-        calcBnpcCryoPercent bNpc + calcWeaponCryoPercent bNpc.Weapon + calcArtifactsCryoPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.Cryo
 
     // Anemo damage bonus formulas
     let calcTotalAnemo bNpc =
-        calcBnpcAnemoPercent bNpc + calcWeaponAnemoPercent bNpc.Weapon + calcArtifactsAnemoPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.Anemo
 
     // Geo damage bonus formulas
     let calcTotalGeo bNpc =
-        calcBnpcGeoPercent bNpc + calcWeaponGeoPercent bNpc.Weapon + calcArtifactsGeoPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.Geo
 
     // Dendro damage bonus formulas
     let calcTotalDendro bNpc =
-        calcBnpcDendroPercent bNpc + calcWeaponDendroPercent bNpc.Weapon + calcArtifactsDendroPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.Dendro
 
     // Physical resistance formulas
     let calcTotalPhysicalRes bNpc =
-        calcBnpcPhysicalResPercent bNpc + calcWeaponPhysicalResPercent bNpc.Weapon + calcArtifactsPhysicalResPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.PhysicalRes
 
     // Pyro resistance formulas
     let calcTotalPyroRes bNpc =
-        calcBnpcPyroResPercent bNpc + calcWeaponPyroResPercent bNpc.Weapon + calcArtifactsPyroResPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.PyroRes
 
     // Hydro resistance formulas
     let calcTotalHydroRes bNpc =
-        calcBnpcHydroResPercent bNpc + calcWeaponHydroResPercent bNpc.Weapon + calcArtifactsHydroResPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.HydroRes
 
     // Electro resistance formulas
     let calcTotalElectroRes bNpc =
-        calcBnpcElectroResPercent bNpc + calcWeaponElectroResPercent bNpc.Weapon + calcArtifactsElectroResPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.ElectroRes
 
     // Cryo resistance formulas
     let calcTotalCryoRes bNpc =
-        calcBnpcCryoResPercent bNpc + calcWeaponCryoResPercent bNpc.Weapon + calcArtifactsCryoResPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.CryoRes
 
     // Anemo resistance formulas
     let calcTotalAnemoRes bNpc =
-        calcBnpcAnemoResPercent bNpc + calcWeaponAnemoResPercent bNpc.Weapon + calcArtifactsAnemoResPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.AnemoRes
 
     // Geo resistance formulas
     let calcTotalGeoRes bNpc =
-        calcBnpcGeoResPercent bNpc + calcWeaponGeoResPercent bNpc.Weapon + calcArtifactsGeoResPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.GeoRes
 
     // Dendro resistance formulas
     let calcTotalDendroRes bNpc =
-        calcBnpcDendroResPercent bNpc + calcWeaponDendroResPercent bNpc.Weapon + calcArtifactsDendroResPercent bNpc.Artifacts
+        getBNpcStatPercent bNpc PercStatType.DendroRes
 
     // Outgoing damage formulas
     let calcAmplifyingBonus em =
