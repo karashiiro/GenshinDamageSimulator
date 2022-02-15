@@ -2,17 +2,20 @@
 
 open EventHandling
 
+exception NoHistoryException of string
+
 [<Struct>]
 type SimulationState =
     { Combatants: Map<uint32, (BattleNpc * BattleNpcState)>
-      Party: Party }
+      Party: Party
+      History: SimulationState list }
 
 module Simulator =
     let AddCombatant state combatantId bNpc =
-        { state with Combatants = state.Combatants.Add (combatantId, bNpc) }
+        { state with Combatants = state.Combatants.Add (combatantId, bNpc); History = state :: state.History }
 
     let AddPartyMember state bNpc =
-        { state with Party = bNpc :: state.Party }
+        { state with Party = bNpc :: state.Party; History = state :: state.History }
 
     let DoEvent state event attackerId defenderId =
         let defenderDamage = match state.Combatants.TryFind attackerId with
@@ -24,11 +27,17 @@ module Simulator =
             match v with
             | Some (defender, defenderState) -> Some(defender, { defenderState with Hp = defenderState.Hp - defenderDamage })
             | None -> None
-        { state with Combatants = state.Combatants.Change (defenderId, updateFn) }
+        { state with Combatants = state.Combatants.Change (defenderId, updateFn); History = state :: state.History }
+
+    let StepBack state =
+        match state.History with
+        | head :: tail -> { Combatants = head.Combatants; Party = head.Party; History = tail }
+        | _ -> raise (NoHistoryException("Simulation history is empty."))
 
     let Create =
         { Combatants = Map.empty
-          Party = [] }
+          Party = []
+          History = [] }
 
 // This is the C# interface for the simulator.
 type SimulationState with
@@ -39,3 +48,5 @@ type SimulationState with
     member this.AddPartyMember bNpc = Simulator.AddPartyMember this bNpc
 
     member this.DoEvent event attackerId defenderId = Simulator.DoEvent this event attackerId defenderId
+
+    member this.StepBack() = Simulator.StepBack this

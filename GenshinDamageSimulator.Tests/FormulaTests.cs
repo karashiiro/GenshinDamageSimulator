@@ -29,9 +29,10 @@ namespace GenshinDamageSimulator.Tests
             var sim = SimulationState.Create();
             sim = sim.AddCombatant(0, testNpc0, testNpcState0);
             sim = sim.AddCombatant(1, testNpc1, testNpcState1);
-            _ = sim.DoEvent(
+            sim = sim.DoEvent(
                 GameEvent.NewTalentDamage(new TalentDamageEvent(DamageType.Physical, BaseStat.Attack, 1f,
                     Critical.NoCritical)), 0, 1);
+            _ = sim.StepBack();
         }
     }
 }
