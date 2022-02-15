@@ -25,3 +25,7 @@ module EntityTypes =
           Element: Element
           Weapon: Weapon
           Artifacts: Artifact array }
+
+    [<Struct>]
+    type BattleNpcState =
+        { ShieldHp: uint32 }

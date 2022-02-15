@@ -16,7 +16,6 @@
     <Compile Include="Reactions.fs" />
     <Compile Include="ElementalCoefficients.fs" />
     <Compile Include="Formulas.fs" />
-    <Compile Include="SimulationState.fs" />
     <Compile Include="Simulator.fs" />
   </ItemGroup>
 

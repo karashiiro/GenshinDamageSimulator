@@ -15,6 +15,12 @@ namespace GenshinDamageSimulator.Tests
                 Element.Electro,
                 new Weapon(120, StatModifier.NewPercStatModifier(new PercStatModifier(PercStatType.Physical, 0.5f))),
                 Array.Empty<Artifact>());
+
+            var testNpcState = new BattleNpcState();
+
+            var sim = Simulator.CreateSimulation();
+
+            Simulator.AddCombatant(sim, testNpc, testNpcState);
         }
     }
 }

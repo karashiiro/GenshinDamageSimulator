@@ -15,4 +15,4 @@ module PartyTypes =
 
     [<Struct>]
     type Party =
-        { Members: BattleNpc array }
+        { Members: BattleNpc list }
