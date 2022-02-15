@@ -111,16 +111,12 @@ module Formulas =
         16f * (float32 em / float32 (em + 2000u))
 
     let calcTransformativeDamageCharacter reaction characterLevel transformativeBonus reactionBonus =
-        let levelMult = Map.tryFind characterLevel characterLevelMultipliers
-        match levelMult with
-            | Some x -> uint32 (x * getTransformativeReactionMultiplier reaction * (1f + transformativeBonus + reactionBonus))
-            | None -> 0u
+        let levelMult = getCharacterLevelMultiplier characterLevel
+        uint32 (levelMult * getTransformativeReactionMultiplier reaction * (1f + transformativeBonus + reactionBonus))
 
     let calcTransformativeDamageEnemy reaction enemyLevel transformativeBonus reactionBonus =
-        let levelMult = Map.tryFind enemyLevel enemyLevelMultipliers
-        match levelMult with
-            | Some x -> uint32 (x * getTransformativeReactionMultiplier reaction * (1f + transformativeBonus + reactionBonus))
-            | None -> 0u
+        let levelMult = getEnemyLevelMultiplier enemyLevel
+        uint32 (levelMult * getTransformativeReactionMultiplier reaction * (1f + transformativeBonus + reactionBonus))
 
     let calcAverageCritMultiplier critRate critDamage =
         1f + critRate * critDamage

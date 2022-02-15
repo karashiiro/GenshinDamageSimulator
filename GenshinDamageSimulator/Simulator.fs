@@ -32,7 +32,7 @@ module Simulator =
     let StepBack state =
         match state.History with
         | head :: tail -> { Combatants = head.Combatants; Party = head.Party; History = tail }
-        | _ -> raise (NoHistoryException("Simulation history is empty."))
+        | _ -> state
 
     let Create =
         { Combatants = Map.empty
