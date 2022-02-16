@@ -48,9 +48,11 @@ type ElementalAura =
       ApplicationTimeMs: int64<ms> // Nanosecond-precision is also an option, but that doesn't seem meaningful
       Gauge: AbilityGaugeValue }
 
+type CombatantId = uint32
+
 [<Struct>]
 type BattleNpcState =
-    { Id: uint32
+    { Id: CombatantId
       Hp: uint32
       ShieldHp: uint32
       ElementalAuras: ElementalAura array }

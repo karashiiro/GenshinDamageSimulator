@@ -5,8 +5,16 @@ type ElapseEvent =
     { TimeElapsed: int64<ms> }
 
 [<Struct>]
-type CombatantAddEvent =
-    { TargetId: uint32 }
+type CombatantAddEvent = struct end
+
+[<Struct>]
+type CombatantRemoveEvent = struct end
+
+[<Struct>]
+type PartyAddEvent = struct end
+
+[<Struct>]
+type PartyRemoveEvent = struct end
 
 [<Struct>]
 type Critical = AverageCritical | FullCritical | NoCritical
@@ -26,8 +34,14 @@ type TalentHealEvent =
 type GameEvent =
     | Elapse of ElapseEvent
     | CombatantAdd of CombatantAddEvent
+    | CombatantRemove of CombatantRemoveEvent
+    | PartyAdd of PartyAddEvent
+    | PartyRemove of PartyRemoveEvent
     | TalentDamage of TalentDamageEvent
     | TalentHeal of TalentHealEvent
+
+[<Struct>]
+type GenesisEventResult = struct end
 
 [<Struct>]
 type ElapseEventResult =
@@ -35,26 +49,42 @@ type ElapseEventResult =
 
 [<Struct>]
 type CombatantAddEventResult =
-    { TargetId: uint32 }
+    { TargetId: CombatantId }
+
+[<Struct>]
+type CombatantRemoveEventResult =
+    { TargetId: CombatantId }
+
+[<Struct>]
+type PartyAddEventResult =
+    { TargetId: CombatantId }
+
+[<Struct>]
+type PartyRemoveEventResult =
+    { TargetId: CombatantId }
 
 [<Struct>]
 type DamageEventResult =
-    { TargetId: uint32
+    { TargetId: CombatantId
       DamageAmount: uint32 }
 
 [<Struct>]
 type ElementalAuraEventResult =
-    { TargetId: uint32
+    { TargetId: CombatantId
       AppliedAura: ElementalAura }
 
 [<Struct>]
 type HealEventResult =
-    { TargetId: uint32
+    { TargetId: CombatantId
       HealAmount: uint32 }
 
 type GameEventResult =
+    | GenesisResult of GenesisEventResult
     | ElapseResult of ElapseEventResult
     | CombatantAddResult of CombatantAddEventResult
+    | CombatantRemoveResult of CombatantRemoveEventResult
+    | PartyAddResult of PartyAddEventResult
+    | PartyRemoveResult of PartyRemoveEventResult
     | DamageResult of DamageEventResult
     | ElementalAuraResult of ElementalAuraEventResult
     | HealResult of HealEventResult

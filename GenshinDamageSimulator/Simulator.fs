@@ -6,7 +6,7 @@ open EventHandling
 type SimulationState =
     { Combatants: Map<uint32, (BattleNpc * BattleNpcState)>
       Party: Party
-      LastEventResult: GameEventResult option
+      LastEventResult: GameEventResult
       Timestamp: int64<ms>
       History: SimulationState list }
 
@@ -23,7 +23,7 @@ module Simulator =
         let eventResult = handleEvent event sourceOption targetOption
         let updateFn v =
             match (v, eventResult) with
-            | (Some (defender, defenderState), Some (GameEventResult.DamageResult r))
+            | (Some (defender, defenderState), DamageResult r)
                 -> Some(defender, { defenderState with Hp = defenderState.Hp - r.DamageAmount })
             | _ -> None
         { state with Combatants = state.Combatants.Change (targetId, updateFn); LastEventResult = eventResult; History = state :: state.History }
@@ -36,7 +36,7 @@ module Simulator =
     let Create =
         { Combatants = Map.empty
           Party = []
-          LastEventResult = None
+          LastEventResult = GenesisResult (GenesisEventResult ())
           Timestamp = 0
           History = [] }
 

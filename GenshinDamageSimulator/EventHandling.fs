@@ -3,6 +3,8 @@
 open Entity
 open Formulas
 
+exception InvalidEventException of string
+
 module EventHandling =
     let handleDamageEventOutgoing attacker event =
         let attackerBaseStat = getBNpcBaseStat event.DamageStat attacker
@@ -34,11 +36,17 @@ module EventHandling =
     let handleEvent event sourceOption targetOption =
         match event, sourceOption, targetOption with
         | (Elapse e, _, _)
-            -> Some (ElapseResult ({ TimeElapsed = e.TimeElapsed }))
-        | (CombatantAdd e, _, Some (_, targetState))
-            -> Some (CombatantAddResult ({ TargetId = targetState.Id }))
+            -> ElapseResult ({ TimeElapsed = e.TimeElapsed })
+        | (CombatantAdd _, _, Some (_, targetState))
+            -> CombatantAddResult ({ TargetId = targetState.Id })
+        | (CombatantRemove _, _, Some (_, targetState))
+            -> CombatantRemoveResult ({ TargetId = targetState.Id })
+        | (PartyAdd _, _, Some (_, targetState))
+            -> PartyAddResult ({ TargetId = targetState.Id })
+        | (PartyRemove _, _, Some (_, targetState))
+            -> PartyRemoveResult ({ TargetId = targetState.Id })
         | (TalentDamage e, Some (source, sourceState), Some (target, targetState))
-            -> Some (DamageResult (handleDamageEvent e (source, sourceState) (target, targetState)))
-        | (TalentHeal _, _, Some (target, targetState))
-            -> Some (HealResult ({ TargetId = targetState.Id; HealAmount = 0u }))
-        | _ -> None
+            -> DamageResult (handleDamageEvent e (source, sourceState) (target, targetState))
+        | (TalentHeal _, _, Some (_, targetState))
+            -> HealResult ({ TargetId = targetState.Id; HealAmount = 0u })
+        | _ -> raise (InvalidEventException("Invalid event"))
