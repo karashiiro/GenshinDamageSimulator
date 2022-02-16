@@ -2,8 +2,6 @@
 
 open EventHandling
 
-exception NoHistoryException of string
-
 [<Struct>]
 type SimulationState =
     { Combatants: Map<uint32, (BattleNpc * BattleNpcState)>
