@@ -6,35 +6,29 @@ module Resonance =
 
     let hasTwo element map =
         map
-        |> Map.tryFind (element)
+        |> Map.tryFind element
         |> fun res
             -> match res with
                | Some x -> x >= 2
                | None -> false
 
-    let hasFerventFlames map =
-        map
-        |> hasTwo Element.Pyro
+    let hasFerventFlames =
+        hasTwo Element.Pyro
 
-    let hasSoothingWater map =
-        map
-        |> hasTwo Element.Hydro
+    let hasSoothingWater =
+        hasTwo Element.Hydro
 
-    let hasHighVoltage map =
-        map
-        |> hasTwo Element.Electro
+    let hasHighVoltage =
+        hasTwo Element.Electro
 
-    let hasShatteringIce map =
-        map
-        |> hasTwo Element.Cryo
+    let hasShatteringIce =
+        hasTwo Element.Cryo
 
-    let hasImpetuousWinds map =
-        map
-        |> hasTwo Element.Anemo
+    let hasImpetuousWinds =
+        hasTwo Element.Anemo
 
-    let hasEnduringRock map =
-        map
-        |> hasTwo Element.Geo
+    let hasEnduringRock =
+        hasTwo Element.Geo
 
     let getResonances party =
         party
