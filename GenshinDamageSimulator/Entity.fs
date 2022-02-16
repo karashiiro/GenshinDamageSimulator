@@ -24,23 +24,23 @@ module Entity =
     let getBNpcStatLines bNpc =
         bNpc.MainStat :: bNpc.Weapon.MainStat :: (bNpc.Artifacts |> Seq.map (fun x -> x.MainStat :: List.ofArray x.StatLines) |> Seq.concat |> List.ofSeq)
 
-    let getBNpcStatFlat bNpc stat =
+    let getBNpcStatFlat stat bNpc =
         bNpc
         |> getBNpcStatLines
         |> getTotalFlat stat
 
-    let getBNpcStatPercent bNpc stat =
+    let getBNpcStatPercent stat bNpc =
         bNpc
         |> getBNpcStatLines
         |> getTotalPercent stat
 
-    let getBNpcBaseStat bNpc stat =
+    let getBNpcBaseStat stat bNpc =
         match stat with
         | BaseStat.Hp -> bNpc.BaseHp
         | BaseStat.Attack -> bNpc.BaseAttack
         | BaseStat.Defense -> bNpc.BaseDefense
 
-    let getBNpcBaseResStat bNpc resStat = 
+    let getBNpcBaseResStat resStat bNpc = 
         match resStat with
         | DamageType.Physical -> bNpc.BasePhysicalRes
         | DamageType.Pyro -> bNpc.BasePyroRes
@@ -51,24 +51,24 @@ module Entity =
         | DamageType.Geo -> bNpc.BaseGeoRes
         | DamageType.Dendro -> bNpc.BaseDendroRes
 
-    let getBNpcDamageBonusPercent bNpc damageType =
+    let getBNpcDamageBonusPercent damageType =
         match damageType with
-        | DamageType.Physical -> getBNpcStatPercent bNpc PercStat.Physical
-        | DamageType.Pyro -> getBNpcStatPercent bNpc PercStat.Pyro
-        | DamageType.Hydro -> getBNpcStatPercent bNpc PercStat.Hydro
-        | DamageType.Electro -> getBNpcStatPercent bNpc PercStat.Electro
-        | DamageType.Cryo -> getBNpcStatPercent bNpc PercStat.Cryo
-        | DamageType.Anemo -> getBNpcStatPercent bNpc PercStat.Anemo
-        | DamageType.Geo -> getBNpcStatPercent bNpc PercStat.Geo
-        | DamageType.Dendro -> getBNpcStatPercent bNpc PercStat.Dendro
+        | DamageType.Physical -> getBNpcStatPercent PercStat.Physical
+        | DamageType.Pyro -> getBNpcStatPercent PercStat.Pyro
+        | DamageType.Hydro -> getBNpcStatPercent PercStat.Hydro
+        | DamageType.Electro -> getBNpcStatPercent PercStat.Electro
+        | DamageType.Cryo -> getBNpcStatPercent PercStat.Cryo
+        | DamageType.Anemo -> getBNpcStatPercent PercStat.Anemo
+        | DamageType.Geo -> getBNpcStatPercent PercStat.Geo
+        | DamageType.Dendro -> getBNpcStatPercent PercStat.Dendro
 
-    let getBNpcDamageResPercent bNpc damageType =
+    let getBNpcDamageResPercent damageType =
         match damageType with
-        | DamageType.Physical -> getBNpcStatPercent bNpc PercStat.PhysicalRes
-        | DamageType.Pyro -> getBNpcStatPercent bNpc PercStat.PyroRes
-        | DamageType.Hydro -> getBNpcStatPercent bNpc PercStat.HydroRes
-        | DamageType.Electro -> getBNpcStatPercent bNpc PercStat.ElectroRes
-        | DamageType.Cryo -> getBNpcStatPercent bNpc PercStat.CryoRes
-        | DamageType.Anemo -> getBNpcStatPercent bNpc PercStat.AnemoRes
-        | DamageType.Geo -> getBNpcStatPercent bNpc PercStat.GeoRes
-        | DamageType.Dendro -> getBNpcStatPercent bNpc PercStat.DendroRes
+        | DamageType.Physical -> getBNpcStatPercent PercStat.PhysicalRes
+        | DamageType.Pyro -> getBNpcStatPercent PercStat.PyroRes
+        | DamageType.Hydro -> getBNpcStatPercent PercStat.HydroRes
+        | DamageType.Electro -> getBNpcStatPercent PercStat.ElectroRes
+        | DamageType.Cryo -> getBNpcStatPercent PercStat.CryoRes
+        | DamageType.Anemo -> getBNpcStatPercent PercStat.AnemoRes
+        | DamageType.Geo -> getBNpcStatPercent PercStat.GeoRes
+        | DamageType.Dendro -> getBNpcStatPercent PercStat.DendroRes

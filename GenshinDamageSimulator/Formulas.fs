@@ -10,95 +10,95 @@ open ElementalCoefficients
 module Formulas =
     // HP formulas
     let calcTotalHp bNpc =
-        uint32 (float32 (bNpc.BaseHp) * (1f + getBNpcStatPercent bNpc PercStat.Hp)) + getBNpcStatFlat bNpc FlatStat.Hp
+        uint32 (float32 (bNpc.BaseHp) * (1f + getBNpcStatPercent PercStat.Hp bNpc)) + getBNpcStatFlat FlatStat.Hp bNpc
 
     // Attack formulas
     let calcTotalAttack bNpc party =
-        uint32 (float32 (bNpc.BaseAttack) * (1f + calcResonanceAttackPercent party * getBNpcStatPercent bNpc PercStat.Attack)) + getBNpcStatFlat bNpc FlatStat.Attack
+        uint32 (float32 (bNpc.BaseAttack) * (1f + calcResonanceAttackPercent party * getBNpcStatPercent PercStat.Attack bNpc)) + getBNpcStatFlat FlatStat.Attack bNpc
         
     // Defense formulas
     let calcTotalDefense bNpc =
-        uint32 (float32 (bNpc.BaseDefense) * (1f + getBNpcStatPercent bNpc PercStat.Defense)) + getBNpcStatFlat bNpc FlatStat.Defense
+        uint32 (float32 (bNpc.BaseDefense) * (1f + getBNpcStatPercent PercStat.Defense bNpc)) + getBNpcStatFlat FlatStat.Defense bNpc
 
     // Elemental mastery formulas
-    let calcTotalElementalMastery bNpc =
-        getBNpcStatFlat bNpc FlatStat.ElementalMastery
+    let calcTotalElementalMastery =
+        getBNpcStatFlat FlatStat.ElementalMastery
 
     // Energy recharge formulas
     let calcTotalEnergyRecharge bNpc =
-        1f + getBNpcStatPercent bNpc PercStat.EnergyRecharge
+        1f + getBNpcStatPercent PercStat.EnergyRecharge bNpc
 
     // Crit rate formulas
-    let calcTotalCriticalHit bNpc =
-        getBNpcStatPercent bNpc PercStat.CriticalHit
+    let calcTotalCriticalHit =
+        getBNpcStatPercent PercStat.CriticalHit
 
     // Crit damage formulas
-    let calcTotalCriticalDamage bNpc =
-        getBNpcStatPercent bNpc PercStat.CriticalDamage
+    let calcTotalCriticalDamage =
+        getBNpcStatPercent PercStat.CriticalDamage
 
     // Physical damage bonus formulas
-    let calcTotalPhysical bNpc =
-        getBNpcStatPercent bNpc PercStat.Physical
+    let calcTotalPhysical =
+        getBNpcStatPercent PercStat.Physical
 
     // Pyro damage bonus formulas
-    let calcTotalPyro bNpc =
-        getBNpcStatPercent bNpc PercStat.Pyro
+    let calcTotalPyro =
+        getBNpcStatPercent PercStat.Pyro
 
     // Hydro damage bonus formulas
-    let calcTotalHydro bNpc =
-        getBNpcStatPercent bNpc PercStat.Hydro
+    let calcTotalHydro =
+        getBNpcStatPercent PercStat.Hydro
 
     // Electro damage bonus formulas
-    let calcTotalElectro bNpc =
-        getBNpcStatPercent bNpc PercStat.Electro
+    let calcTotalElectro =
+        getBNpcStatPercent PercStat.Electro
 
     // Cryo damage bonus formulas
-    let calcTotalCryo bNpc =
-        getBNpcStatPercent bNpc PercStat.Cryo
+    let calcTotalCryo =
+        getBNpcStatPercent PercStat.Cryo
 
     // Anemo damage bonus formulas
-    let calcTotalAnemo bNpc =
-        getBNpcStatPercent bNpc PercStat.Anemo
+    let calcTotalAnemo =
+        getBNpcStatPercent PercStat.Anemo
 
     // Geo damage bonus formulas
-    let calcTotalGeo bNpc =
-        getBNpcStatPercent bNpc PercStat.Geo
+    let calcTotalGeo =
+        getBNpcStatPercent PercStat.Geo
 
     // Dendro damage bonus formulas
-    let calcTotalDendro bNpc =
-        getBNpcStatPercent bNpc PercStat.Dendro
+    let calcTotalDendro =
+        getBNpcStatPercent PercStat.Dendro
 
     // Physical resistance formulas
-    let calcTotalPhysicalRes bNpc =
-        getBNpcStatPercent bNpc PercStat.PhysicalRes
+    let calcTotalPhysicalRes =
+        getBNpcStatPercent PercStat.PhysicalRes
 
     // Pyro resistance formulas
-    let calcTotalPyroRes bNpc =
-        getBNpcStatPercent bNpc PercStat.PyroRes
+    let calcTotalPyroRes =
+        getBNpcStatPercent PercStat.PyroRes
 
     // Hydro resistance formulas
-    let calcTotalHydroRes bNpc =
-        getBNpcStatPercent bNpc PercStat.HydroRes
+    let calcTotalHydroRes =
+        getBNpcStatPercent PercStat.HydroRes
 
     // Electro resistance formulas
-    let calcTotalElectroRes bNpc =
-        getBNpcStatPercent bNpc PercStat.ElectroRes
+    let calcTotalElectroRes =
+        getBNpcStatPercent PercStat.ElectroRes
 
     // Cryo resistance formulas
-    let calcTotalCryoRes bNpc =
-        getBNpcStatPercent bNpc PercStat.CryoRes
+    let calcTotalCryoRes =
+        getBNpcStatPercent PercStat.CryoRes
 
     // Anemo resistance formulas
-    let calcTotalAnemoRes bNpc =
-        getBNpcStatPercent bNpc PercStat.AnemoRes
+    let calcTotalAnemoRes =
+        getBNpcStatPercent PercStat.AnemoRes
 
     // Geo resistance formulas
-    let calcTotalGeoRes bNpc =
-        getBNpcStatPercent bNpc PercStat.GeoRes
+    let calcTotalGeoRes =
+        getBNpcStatPercent PercStat.GeoRes
 
     // Dendro resistance formulas
-    let calcTotalDendroRes bNpc =
-        getBNpcStatPercent bNpc PercStat.DendroRes
+    let calcTotalDendroRes =
+        getBNpcStatPercent PercStat.DendroRes
 
     // Outgoing damage formulas
     let calcAmplifyingBonus em =
