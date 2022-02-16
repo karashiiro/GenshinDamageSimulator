@@ -7,9 +7,10 @@ module Resonance =
     let hasTwo element map =
         map
         |> Map.tryFind (element)
-        |> fun res -> match res with
-                        | Some x -> x >= 2
-                        | None -> false
+        |> fun res
+            -> match res with
+               | Some x -> x >= 2
+               | None -> false
 
     let hasFerventFlames map =
         map

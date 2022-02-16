@@ -17,8 +17,8 @@ module EventHandling =
 
     let handleDamageEventIncoming attacker defender event outgoingDamage =
         let defenderDefenseBaseStat = match defender.NpcType with
-                                        | BattleNpcType.Character -> getBNpcBaseStat defender BaseStat.Defense
-                                        | BattleNpcType.Enemy -> calcEnemyDefense defender.Level
+                                      | BattleNpcType.Character -> getBNpcBaseStat defender BaseStat.Defense
+                                      | BattleNpcType.Enemy -> calcEnemyDefense defender.Level
         let defenderResistanceBaseStat = getBNpcBaseResStat defender event.DamageType
         let defMult = calcDefenseMultiplier defenderDefenseBaseStat attacker.Level defender.Level 0f 0f
         let resMult = calcResMultiplier defenderResistanceBaseStat (getBNpcDamageResPercent defender event.DamageType) 0f
