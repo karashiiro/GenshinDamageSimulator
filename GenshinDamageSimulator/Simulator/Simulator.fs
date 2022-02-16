@@ -96,6 +96,8 @@ module Simulator =
 type SimulationState with
     static member Create() = Simulator.genesis
 
-    member this.DoEvent event sourceId targetId = Simulator.doEvent this event sourceId targetId
+    member this.DoEvent(event: GameEvent, sourceId: CombatantId, targetId: CombatantId) =
+        if isNull (box event) then nullArg "event"
+        Simulator.doEvent this event sourceId targetId
 
     member this.StepBack() = Simulator.stepBack this
