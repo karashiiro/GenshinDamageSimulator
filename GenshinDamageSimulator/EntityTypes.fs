@@ -1,7 +1,5 @@
 ﻿namespace GenshinDamageSimulator
 
-open System
-
 [<Struct>]
 type Element = Unknown | Pyro | Hydro | Electro | Cryo | Anemo | Geo | Dendro
 
@@ -47,7 +45,7 @@ type AbilityGaugeValue =
 type ElementalAura =
     { Element: Element
       ApplicationSkillId: uint32 // Used for comparing ICDs
-      ApplicationTime: DateTime
+      ApplicationTimeMs: int64<ms> // Nanosecond-precision is also an option, but that doesn't seem meaningful
       Gauge: AbilityGaugeValue }
 
 [<Struct>]

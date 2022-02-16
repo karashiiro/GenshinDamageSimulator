@@ -1,6 +1,14 @@
 ﻿namespace GenshinDamageSimulator
 
 [<Struct>]
+type ElapseEvent =
+    { TimeElapsed: int64<ms> }
+
+[<Struct>]
+type CombatantAddEvent =
+    { TargetId: uint32 }
+
+[<Struct>]
 type Critical = AverageCritical | FullCritical | NoCritical
 
 [<Struct>]
@@ -16,22 +24,37 @@ type TalentHealEvent =
       HealStatMultiplier: float32 }
 
 type GameEvent =
+    | Elapse of ElapseEvent
+    | CombatantAdd of CombatantAddEvent
     | TalentDamage of TalentDamageEvent
     | TalentHeal of TalentHealEvent
 
 [<Struct>]
+type ElapseEventResult =
+    { TimeElapsed: int64<ms> }
+
+[<Struct>]
+type CombatantAddEventResult =
+    { TargetId: uint32 }
+
+[<Struct>]
 type DamageEventResult =
-    { DamageAmount: uint32 }
+    { TargetId: uint32
+      DamageAmount: uint32 }
 
 [<Struct>]
 type ElementalAuraEventResult =
-    { AppliedAura: ElementalAura }
+    { TargetId: uint32
+      AppliedAura: ElementalAura }
 
 [<Struct>]
 type HealEventResult =
-    { HealAmount: uint32 }
+    { TargetId: uint32
+      HealAmount: uint32 }
 
 type GameEventResult =
+    | ElapseResult of ElapseEventResult
+    | CombatantAddResult of CombatantAddEventResult
     | DamageResult of DamageEventResult
     | ElementalAuraResult of ElementalAuraEventResult
     | HealResult of HealEventResult
