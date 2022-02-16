@@ -3,7 +3,7 @@
 open Entity
 open Formulas
 
-exception InvalidEventException of string
+exception InvalidEventException of string * GameEvent
 
 module EventHandling =
     let handleDamageEventOutgoing attacker event =
@@ -34,19 +34,19 @@ module EventHandling =
         |> fun incomingDamage -> { TargetId = defenderState.Id; DamageAmount = incomingDamage }
 
     let handleEvent event sourceOption targetOption =
-        match event, sourceOption, targetOption with
-        | (Elapse e, _, _)
-            -> ElapseResult ({ TimeElapsed = e.TimeElapsed })
-        | (CombatantAdd _, _, Some (_, targetState))
-            -> CombatantAddResult ({ TargetId = targetState.Id })
-        | (CombatantRemove _, _, Some (_, targetState))
-            -> CombatantRemoveResult ({ TargetId = targetState.Id })
-        | (PartyAdd _, _, Some (_, targetState))
-            -> PartyAddResult ({ TargetId = targetState.Id })
-        | (PartyRemove _, _, Some (_, targetState))
-            -> PartyRemoveResult ({ TargetId = targetState.Id })
-        | (TalentDamage e, Some (source, sourceState), Some (target, targetState))
-            -> DamageResult (handleDamageEvent e (source, sourceState) (target, targetState))
-        | (TalentHeal _, _, Some (_, targetState))
-            -> HealResult ({ TargetId = targetState.Id; HealAmount = 0u })
-        | _ -> raise (InvalidEventException("Invalid event"))
+        match sourceOption, targetOption with
+        | Some (source, sourceState), Some (target, targetState)
+            -> match event with
+               | TalentDamage e -> DamageResult (handleDamageEvent e (source, sourceState) (target, targetState))
+               | _ -> raise (InvalidEventException("No such source-target event exists", event))
+        | _, Some (_, targetState)
+            -> match event with
+               | CombatantAdd _ -> CombatantAddResult ({ TargetId = targetState.Id })
+               | CombatantRemove _ -> CombatantRemoveResult ({ TargetId = targetState.Id })
+               | PartyAdd _ -> PartyAddResult ({ TargetId = targetState.Id })
+               | PartyRemove _ -> PartyRemoveResult ({ TargetId = targetState.Id })
+               | TalentHeal _ -> HealResult ({ TargetId = targetState.Id; HealAmount = 0u })
+               | _ -> raise (InvalidEventException("No such target event exists", event))
+        | _ -> match event with
+               | Elapse e -> ElapseResult ({ TimeElapsed = e.TimeElapsed })
+               | _ -> raise (InvalidEventException("No such parameterless event exists", event))
