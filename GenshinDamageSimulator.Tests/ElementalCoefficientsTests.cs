@@ -7,7 +7,7 @@ public class ElementalCoefficientsTests
     [Fact]
     public void DataLoad_Works()
     {
-        var playerData = ElementalCoefficients.characterLevelMultipliers;
-        Assert.Equal(17.165605545043945f, playerData[1]);
+        var value = ElementalCoefficients.getCharacterLevelMultiplier(1);
+        Assert.Equal(17.165605545043945f, value);
     }
 }

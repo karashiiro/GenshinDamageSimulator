@@ -18,3 +18,20 @@ type TalentHealEvent =
 type GameEvent =
     | TalentDamage of TalentDamageEvent
     | TalentHeal of TalentHealEvent
+
+[<Struct>]
+type DamageEventResult =
+    { DamageAmount: uint32 }
+
+[<Struct>]
+type ElementalAuraEventResult =
+    { AppliedAura: ElementalAura }
+
+[<Struct>]
+type HealEventResult =
+    { HealAmount: uint32 }
+
+type GameEventResult =
+    | DamageResult of DamageEventResult
+    | ElementalAuraResult of ElementalAuraEventResult
+    | HealResult of HealEventResult

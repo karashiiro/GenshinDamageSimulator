@@ -52,6 +52,7 @@ type ElementalAura =
 
 [<Struct>]
 type BattleNpcState =
-    { Hp: uint32
+    { Id: uint32
+      Hp: uint32
       ShieldHp: uint32
       ElementalAuras: ElementalAura array }

@@ -24,13 +24,14 @@ module EventHandling =
         let resMult = calcResMultiplier defenderResistanceBaseStat (getBNpcDamageResPercent defender event.DamageType) 0f
         calcIncomingDamage 1f outgoingDamage defMult resMult (calcDamageReductionMultiplier 0f)
 
-    let handleDamageEvent event attacker defender =
+    let handleDamageEvent event (attacker, _) (defender, _) =
         event
         |> handleDamageEventOutgoing attacker
         |> fun outgoingDamage -> event, outgoingDamage
         ||> handleDamageEventIncoming attacker defender
+        |> fun incomingDamage -> { DamageAmount = incomingDamage }
 
     let handleEvent event attacker defender =
         match event with
-        | TalentDamage e -> handleDamageEvent e attacker defender
-        | TalentHeal _ -> 0u
+        | TalentDamage e -> GameEventResult.DamageResult (handleDamageEvent e attacker defender)
+        | TalentHeal _ -> GameEventResult.HealResult ({ HealAmount = 0u })
