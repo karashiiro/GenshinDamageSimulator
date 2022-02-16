@@ -6,20 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="ElementCoeffExcelConfigData.json" />
-    <Compile Include="TimeTypes.fs" />
-    <Compile Include="StatTypes.fs" />
-    <Compile Include="DamageTypes.fs" />
-    <Compile Include="EntityTypes.fs" />
-    <Compile Include="EventTypes.fs" />
-    <Compile Include="PartyTypes.fs" />
-    <Compile Include="Entity.fs" />
-    <Compile Include="Resonance.fs" />
-    <Compile Include="Reactions.fs" />
-    <Compile Include="ElementalCoefficients.fs" />
-    <Compile Include="Formulas.fs" />
-    <Compile Include="EventHandling.fs" />
-    <Compile Include="Simulator.fs" />
+    <Compile Include="Types\TimeTypes.fs" />
+    <Compile Include="Types\StatTypes.fs" />
+    <Compile Include="Types\DamageTypes.fs" />
+    <Compile Include="Types\EntityTypes.fs" />
+    <Compile Include="Types\EventTypes.fs" />
+    <Compile Include="Types\PartyTypes.fs" />
+    <EmbeddedResource Include="Data\ElementCoeffExcelConfigData.json" />
+    <Compile Include="Data\ElementalCoefficients.fs" />
+    <Compile Include="BaseLogic\Entity.fs" />
+    <Compile Include="BaseLogic\Resonance.fs" />
+    <Compile Include="BaseLogic\Reactions.fs" />
+    <Compile Include="Simulator\Formulas.fs" />
+    <Compile Include="Simulator\EventHandling.fs" />
+    <Compile Include="Simulator\Simulator.fs" />
   </ItemGroup>
 
   <ItemGroup>
