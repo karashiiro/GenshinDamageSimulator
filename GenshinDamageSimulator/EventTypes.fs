@@ -5,16 +5,20 @@ type ElapseEvent =
     { TimeElapsed: int64<ms> }
 
 [<Struct>]
-type CombatantAddEvent = struct end
+type CombatantAddEvent =
+    { BNpc: BattleNpc * BattleNpcState }
 
 [<Struct>]
-type CombatantRemoveEvent = struct end
+type CombatantRemoveEvent =
+    { TargetId: CombatantId }
 
 [<Struct>]
-type PartyAddEvent = struct end
+type PartyAddEvent =
+    { TargetId: CombatantId }
 
 [<Struct>]
-type PartyRemoveEvent = struct end
+type PartyRemoveEvent =
+    { TargetId: CombatantId }
 
 [<Struct>]
 type Critical = AverageCritical | FullCritical | NoCritical
@@ -49,7 +53,7 @@ type ElapseEventResult =
 
 [<Struct>]
 type CombatantAddEventResult =
-    { TargetId: CombatantId }
+    { BNpc: BattleNpc * BattleNpcState }
 
 [<Struct>]
 type CombatantRemoveEventResult =

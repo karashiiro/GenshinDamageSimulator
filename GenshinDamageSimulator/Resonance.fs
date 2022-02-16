@@ -30,8 +30,8 @@ module Resonance =
     let hasEnduringRock =
         hasTwo Element.Geo
 
-    let getResonances party =
-        party
+    let getResonances (party: Party) =
+        party.Values
         |> Seq.countBy (fun x -> x.Element)
         |> Map.ofSeq
         |> fun map -> ([], map)

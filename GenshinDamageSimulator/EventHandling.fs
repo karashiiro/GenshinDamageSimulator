@@ -41,7 +41,6 @@ module EventHandling =
                | _ -> raise (InvalidEventException("No such source-target event exists", event))
         | _, Some (_, targetState)
             -> match event with
-               | CombatantAdd _ -> CombatantAddResult ({ TargetId = targetState.Id })
                | CombatantRemove _ -> CombatantRemoveResult ({ TargetId = targetState.Id })
                | PartyAdd _ -> PartyAddResult ({ TargetId = targetState.Id })
                | PartyRemove _ -> PartyRemoveResult ({ TargetId = targetState.Id })
@@ -49,4 +48,5 @@ module EventHandling =
                | _ -> raise (InvalidEventException("No such target event exists", event))
         | _ -> match event with
                | Elapse e -> ElapseResult ({ TimeElapsed = e.TimeElapsed })
+               | CombatantAdd e -> CombatantAddResult ({ BNpc = e.BNpc })
                | _ -> raise (InvalidEventException("No such parameterless event exists", event))
