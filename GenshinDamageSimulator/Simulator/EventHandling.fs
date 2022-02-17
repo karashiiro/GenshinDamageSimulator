@@ -48,5 +48,5 @@ module EventHandling =
                | _ -> raise (InvalidEventException("No such target event exists", event))
         | _ -> match event with
                | Elapse e -> ElapseResult ({ TimeElapsed = e.TimeElapsed })
-               | CombatantAdd e -> CombatantAddResult ({ BNpc = e.BNpc })
+               | CombatantAdd e -> CombatantAddResult ({ BNpc = e.BNpc; BNpcState = e.BNpcState })
                | _ -> raise (InvalidEventException("No such parameterless event exists", event))

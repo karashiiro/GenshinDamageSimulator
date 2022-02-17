@@ -16,10 +16,10 @@ module Simulator =
     let elapse state t =
         { state with Timestamp = state.Timestamp + t }
 
-    let addCombatant state (bNpc, bNpcState) =
+    let addCombatant state bNpc bNpcState =
         { state with
             Combatants = state.Combatants.Add (bNpcState.Id, (bNpc, bNpcState))
-            LastEventResult = CombatantAddResult ({ BNpc = (bNpc, bNpcState) })
+            LastEventResult = CombatantAddResult ({ BNpc = bNpc; BNpcState = bNpcState })
             History = state :: state.History }
 
     let removeCombatant state combatantId =
@@ -72,7 +72,7 @@ module Simulator =
         let eventResult = handleEvent event sourceOption targetOption
         match eventResult with
         | ElapseResult r -> elapse state r.TimeElapsed
-        | CombatantAddResult r -> addCombatant state r.BNpc
+        | CombatantAddResult r -> addCombatant state r.BNpc r.BNpcState
         | CombatantRemoveResult r -> removeCombatant state r.TargetId
         | PartyAddResult r -> addPartyMember state r.TargetId
         | PartyRemoveResult r -> removePartyMember state r.TargetId

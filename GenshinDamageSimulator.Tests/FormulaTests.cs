@@ -28,11 +28,11 @@ namespace GenshinDamageSimulator.Tests
 
             var sim = SimulationState.Create();
             sim = sim.DoEvent(
-                GameEvent.NewCombatantAdd(new CombatantAddEvent(new Tuple<BattleNpc, BattleNpcState>(testNpc0, testNpcState0))), 0, 0);
+                GameEvent.NewCombatantAdd(new CombatantAddEvent(testNpc0, testNpcState0)), 0, 0);
             sim = sim.DoEvent(
                 GameEvent.NewPartyAdd(new PartyAddEvent()), 0, 1);
             sim = sim.DoEvent(
-                GameEvent.NewCombatantAdd(new CombatantAddEvent(new Tuple<BattleNpc, BattleNpcState>(testNpc1, testNpcState1))), 0, 0);
+                GameEvent.NewCombatantAdd(new CombatantAddEvent(testNpc1, testNpcState1)), 0, 0);
             sim = sim.DoEvent(
                 GameEvent.NewTalentDamage(new TalentDamageEvent(DamageType.Physical, BaseStat.Attack, 1f,
                     Critical.NoCritical)), 1, 2);

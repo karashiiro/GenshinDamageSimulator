@@ -4,7 +4,8 @@ type ElapseEvent =
     { TimeElapsed: int64<ms> }
 
 type CombatantAddEvent =
-    { BNpc: BattleNpc * BattleNpcState }
+    { BNpc: BattleNpc
+      BNpcState: BattleNpcState }
 
 type CombatantRemoveEvent() = class end
 
@@ -39,7 +40,8 @@ type ElapseEventResult =
     { TimeElapsed: int64<ms> }
 
 type CombatantAddEventResult =
-    { BNpc: BattleNpc * BattleNpcState }
+    { BNpc: BattleNpc
+      BNpcState: BattleNpcState }
 
 type CombatantRemoveEventResult =
     { TargetId: CombatantId }
