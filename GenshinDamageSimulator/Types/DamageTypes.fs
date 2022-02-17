@@ -1,9 +1,7 @@
 ﻿namespace GenshinDamageSimulator
 
-[<Struct>]
 type DamageType = Physical | Pyro | Hydro | Electro | Cryo | Anemo | Geo | Dendro
 
-[<Struct>]
 type ElementalReaction =
     | Vaporize // Pyro -> Hydro
     | Overloaded

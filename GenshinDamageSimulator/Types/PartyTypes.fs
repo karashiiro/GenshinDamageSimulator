@@ -1,6 +1,5 @@
 ﻿namespace GenshinDamageSimulator
 
-[<Struct>]
 type ElementalResonance =
     | FerventFlames
     | SoothingWater

@@ -1,22 +1,17 @@
 ﻿namespace GenshinDamageSimulator
 
-[<Struct>]
 type Element = Unknown | Pyro | Hydro | Electro | Cryo | Anemo | Geo | Dendro
 
-[<Struct>]
 type Artifact =
     { MainStat: StatModifier
       StatLines: StatModifier array }
 
-[<Struct>]
 type Weapon =
     { Attack: uint32
       MainStat: StatModifier }
 
-[<Struct>]
 type BattleNpcType = Character | Enemy
 
-[<Struct>]
 type BattleNpc =
     { BaseHp: uint32
       BaseAttack: uint32
@@ -36,12 +31,10 @@ type BattleNpc =
       Weapon: Weapon
       Artifacts: Artifact array }
 
-[<Struct>]
 type AbilityGaugeValue =
     { ElementalGaugeValue: uint8
       DurationValue: float32 }
 
-[<Struct>]
 type ElementalAura =
     { Element: Element
       ApplicationSkillId: uint32 // Used for comparing ICDs
@@ -50,7 +43,6 @@ type ElementalAura =
 
 type CombatantId = uint32
 
-[<Struct>]
 type BattleNpcState =
     { Id: CombatantId
       Hp: uint32
