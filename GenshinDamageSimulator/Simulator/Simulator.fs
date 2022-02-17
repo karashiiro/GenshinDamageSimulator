@@ -81,7 +81,7 @@ module Simulator =
 
     let stepBack state =
         match state.History with
-        | _ :: nextHead :: _ -> nextHead
+        | head :: _ -> head
         | _ -> state
 
     let genesis =
