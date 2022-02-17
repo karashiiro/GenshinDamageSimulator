@@ -6,14 +6,11 @@ type ElapseEvent =
 type CombatantAddEvent =
     { BNpc: BattleNpc * BattleNpcState }
 
-type CombatantRemoveEvent =
-    { TargetId: CombatantId }
+type CombatantRemoveEvent() = class end
 
-type PartyAddEvent =
-    { TargetId: CombatantId }
+type PartyAddEvent() = class end
 
-type PartyRemoveEvent =
-    { TargetId: CombatantId }
+type PartyRemoveEvent() = class end
 
 type Critical = AverageCritical | FullCritical | NoCritical
 
@@ -36,7 +33,7 @@ type GameEvent =
     | TalentDamage of TalentDamageEvent
     | TalentHeal of TalentHealEvent
 
-type GenesisEventResult = struct end
+type GenesisEventResult() = class end
 
 type ElapseEventResult =
     { TimeElapsed: int64<ms> }

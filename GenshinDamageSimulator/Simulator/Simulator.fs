@@ -5,7 +5,6 @@ open EventHandling
 exception InvalidEventResultException of string * GameEventResult
 exception CombatantNotFoundException of string * CombatantId
 
-[<Struct>]
 type SimulationState =
     { Combatants: Map<uint32, (BattleNpc * BattleNpcState)>
       Party: Party
