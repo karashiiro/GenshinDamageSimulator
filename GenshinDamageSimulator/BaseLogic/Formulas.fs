@@ -119,7 +119,7 @@ module Formulas =
         uint32 (levelMult * getTransformativeReactionMultiplier reaction * (1f + transformativeBonus + reactionBonus))
 
     let calcAverageCritMultiplier critRate critDamage =
-        1f + critRate * critDamage
+        1f + (min (critRate) 0f) * critDamage
 
     let calcCritMultiplier critDamage =
         1f + critDamage
