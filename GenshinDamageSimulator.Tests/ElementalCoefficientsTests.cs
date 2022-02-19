@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using GenshinDamageSimulator.Data;
+using Xunit;
 
 namespace GenshinDamageSimulator.Tests;
 

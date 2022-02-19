@@ -3,7 +3,7 @@
 open Entity
 open Resonance
 open Reactions
-open ElementalCoefficients
+open Data.ElementalCoefficients
 
 // From https://genshin-impact.fandom.com/wiki/Damage
 

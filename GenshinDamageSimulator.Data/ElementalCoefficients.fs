@@ -1,4 +1,4 @@
-﻿namespace GenshinDamageSimulator
+﻿namespace GenshinDamageSimulator.Data
 
 open System.Reflection
 open System.IO
@@ -16,7 +16,7 @@ module ElementalCoefficients =
           PlayerShieldLevelCo: float32 }
 
     let private levelScalingData =
-        "GenshinDamageSimulator.ElementCoeffExcelConfigData.json"
+        "GenshinDamageSimulator.Data.ElementCoeffExcelConfigData.json"
         |> Assembly.GetExecutingAssembly().GetManifestResourceStream
         |> fun data -> new StreamReader(data)
         |> fun reader -> reader.ReadToEnd()

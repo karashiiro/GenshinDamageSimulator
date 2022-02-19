@@ -12,8 +12,6 @@
     <Compile Include="Types\EntityTypes.fs" />
     <Compile Include="Types\EventTypes.fs" />
     <Compile Include="Types\PartyTypes.fs" />
-    <EmbeddedResource Include="Data\ElementCoeffExcelConfigData.json" />
-    <Compile Include="Data\ElementalCoefficients.fs" />
     <Compile Include="BaseLogic\Entity.fs" />
     <Compile Include="BaseLogic\Resonance.fs" />
     <Compile Include="BaseLogic\Reactions.fs" />
@@ -23,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <ProjectReference Include="..\GenshinDamageSimulator.Data\GenshinDamageSimulator.Data.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
