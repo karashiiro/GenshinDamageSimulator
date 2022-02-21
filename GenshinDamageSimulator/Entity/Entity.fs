@@ -34,8 +34,6 @@ type Entity =
     | EnemyEntity of BasicEntityData
     | CharacterEntity of CharacterEntity
 
-type EntityId = EntityId of uint32
-
 type EntityState = // TODO: Status effects
     { Id: EntityId
       Hp: uint32
@@ -137,9 +135,12 @@ type Entity with
     /// Creates a new character entity from the provided data. This method should be preferred
     /// over NewCharacterEntity.
     static member CreateCharacter (basicData: BasicEntityData) (characterData: CharacterEntityData) =
+        if isNull (box basicData) then nullArg "basicData"
+        if isNull (box characterData) then nullArg "characterData"
         (basicData, characterData) |> CharacterEntity
 
     /// Creates a new enemy entity from the provided data. This method should be preferred
     /// over NewEnemyEntity.
     static member CreateEnemy (basicData: BasicEntityData) =
+        if isNull (box basicData) then nullArg "basicData"
         basicData |> EnemyEntity

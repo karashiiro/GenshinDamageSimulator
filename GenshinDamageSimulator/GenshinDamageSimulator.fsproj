@@ -6,13 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Types\ElementTypes.fs" />
-    <Compile Include="Types\StatTypes.fs" />
-    <Compile Include="Types\DamageTypes.fs" />
+    <Compile Include="Common\Element.fs" />
+    <Compile Include="Common\Stat.fs" />
+    <Compile Include="Common\DamageType.fs" />
     <Compile Include="ElementalAura\GaugeUnits.fs" />
     <Compile Include="ElementalAura\Reaction.fs" />
     <Compile Include="ElementalAura\ElementalAura.fs" />
     <Compile Include="ElementalAura\ElementalAuraState.fs" />
+    <Compile Include="Entity\EntityId.fs" />
     <Compile Include="Entity\Entity.fs" />
     <Compile Include="Party\PartyTypes.fs" />
     <Compile Include="Party\Resonance.fs" />

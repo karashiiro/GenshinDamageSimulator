@@ -29,6 +29,7 @@ type ElementalAuraState with
 
     /// Creates a new elemental aura state object from the provided dictionary.
     static member FromDictionary (dict: IDictionary<Element, ElementalAura>) =
+        if isNull (box dict) then nullArg "dict"
         dict.AsEnumerable().Select(fun kvp -> kvp.Key, kvp.Value)
         |> Map.ofSeq
         |> ElementalAuraState
