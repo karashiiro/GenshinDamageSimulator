@@ -13,7 +13,7 @@ module ElementalAuraState =
     let interact state trigger =
         state
         |> Map.values
-        |> Seq.map (fun aura -> ElementalAura.interact1 aura trigger)
+        |> Seq.map (fun aura -> ElementalAura.interact aura trigger)
         |> Seq.map (fun (auras, reaction) -> auras, reaction |> Option.toArray |> Seq.ofArray)
         |> (Seq.fold (fun (x, y) (auras, reactions) ->
             let allAuras = Seq.append x auras

@@ -82,7 +82,7 @@ module ElementalAura =
             let newGaugeUnits = calcUpdatedGaugeRaw aura trigger reaction
             if newGaugeUnits <= 0f then Seq.empty else Seq.singleton (wrapAuraData { aura with GaugeUnits = newGaugeUnits |> GaugeUnits })
 
-    let interact1 aura trigger = // TODO aura tax
+    let interact aura trigger = // TODO aura tax
         match (aura, trigger) with
         // Same-element triggers
         | (PyroAura pOld, PyroAura pNew) -> oldIfPermanent pOld pNew, None

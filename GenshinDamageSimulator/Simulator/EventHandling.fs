@@ -55,15 +55,15 @@ module EventHandling =
         | Some (source, sourceState), Some (target, targetState)
             -> match event with
                | TalentDamage e -> DamageResult (handleDamageEvent e (source, sourceState) (target, targetState))
+               | TalentHeal _ -> HealResult ({ TargetId = targetState.Id; HealAmount = 0u })
                | _ -> raise (InvalidEventException("No such source-target event exists", event))
         | _, Some (_, targetState)
             -> match event with
                | CombatantRemove _ -> CombatantRemoveResult ({ TargetId = targetState.Id })
                | PartyAdd _ -> PartyAddResult ({ TargetId = targetState.Id })
                | PartyRemove _ -> PartyRemoveResult ({ TargetId = targetState.Id })
-               | TalentHeal _ -> HealResult ({ TargetId = targetState.Id; HealAmount = 0u })
                | _ -> raise (InvalidEventException("No such target event exists", event))
         | _ -> match event with
                | Elapse e -> ElapseResult ({ TimeElapsedMs = e.TimeElapsedMs })
-               | CombatantAdd e -> CombatantAddResult ({ BNpc = e.BNpc; BNpcState = e.BNpcState })
+               | CombatantAdd e -> CombatantAddResult ({ Entity = e.Entity; EntityState = e.EntityState })
                | _ -> raise (InvalidEventException("No such parameterless event exists", event))

@@ -18,7 +18,8 @@
     <Compile Include="Party\PartyTypes.fs" />
     <Compile Include="Party\Resonance.fs" />
     <Compile Include="Simulator\Formulas.fs" />
-    <Compile Include="Simulator\EventTypes.fs" />
+    <Compile Include="Simulator\GameEvent.fs" />
+    <Compile Include="Simulator\GameEventResult.fs" />
     <Compile Include="Simulator\EventHandling.fs" />
     <Compile Include="Simulator\Simulator.fs" />
   </ItemGroup>

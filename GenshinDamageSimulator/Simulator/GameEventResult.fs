@@ -1,47 +1,13 @@
 ﻿namespace GenshinDamageSimulator
 
-type ElapseEvent =
-    { TimeElapsedMs: int64 }
-
-type CombatantAddEvent =
-    { BNpc: Entity
-      BNpcState: EntityState }
-
-type CombatantRemoveEvent() = class end
-
-type PartyAddEvent() = class end
-
-type PartyRemoveEvent() = class end
-
-type Critical = AverageCritical | FullCritical | NoCritical
-
-type TalentDamageEvent =
-    { DamageType: DamageType
-      DamageStat: BaseStat
-      DamageStatMultiplier: float32
-      Critical: Critical }
-
-type TalentHealEvent =
-    { HealStat: BaseStat
-      HealStatMultiplier: float32 }
-
-type GameEvent =
-    | Elapse of ElapseEvent
-    | CombatantAdd of CombatantAddEvent
-    | CombatantRemove of CombatantRemoveEvent
-    | PartyAdd of PartyAddEvent
-    | PartyRemove of PartyRemoveEvent
-    | TalentDamage of TalentDamageEvent
-    | TalentHeal of TalentHealEvent
-
 type OriginEventResult() = class end
 
 type ElapseEventResult =
     { TimeElapsedMs: int64 }
 
 type CombatantAddEventResult =
-    { BNpc: Entity
-      BNpcState: EntityState }
+    { Entity: Entity
+      EntityState: EntityState }
 
 type CombatantRemoveEventResult =
     { TargetId: EntityId }
