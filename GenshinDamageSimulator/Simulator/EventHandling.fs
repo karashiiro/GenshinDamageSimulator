@@ -1,12 +1,16 @@
 ﻿namespace GenshinDamageSimulator
 
-open Entity
+open EntityLogic
+open ElementalAura
 open Formulas
 
 exception InvalidEventException of string * GameEvent
 
 module EventHandling =
-    let handleDamageEventOutgoing attacker event =
+    let handleDamageEventOutgoing (attacker: Entity) event =
+        let attackerBasicData = match attacker with
+                                | CharacterEntity (cd, _) -> cd
+                                | EnemyEntity ed -> ed
         let attackerBaseStat = getBNpcBaseStat event.DamageStat attacker
         let attackerDamageBonus = getBNpcDamageBonusPercent event.DamageType attacker
         let attackerCriticalHit = getBNpcStatPercent PercStat.CriticalHit attacker
@@ -17,21 +21,38 @@ module EventHandling =
         | AverageCritical -> uint32 (float32 (outgoingDamage) * calcAverageCritMultiplier attackerCriticalHit attackerCriticalDamage)
         | NoCritical -> outgoingDamage
 
-    let handleDamageEventIncoming attacker defender event outgoingDamage =
-        let defenderDefenseBaseStat = match defender.NpcType with
-                                      | Character -> getBNpcBaseStat BaseStat.Defense defender
-                                      | Enemy -> calcEnemyDefense defender.Level
+    let handleDamageEventIncoming (attacker: Entity) defender outgoingDamage event =
+        let attackerBasicData = match attacker with
+                                | CharacterEntity (cd, _) -> cd
+                                | EnemyEntity ed -> ed
+        let defenderBasicData = match defender with
+                                | CharacterEntity (cd, _) -> cd
+                                | EnemyEntity ed -> ed
+        let defenderDefenseBaseStat = match defender with
+                                      | CharacterEntity (_, _) -> getBNpcBaseStat BaseStat.Defense defender
+                                      | EnemyEntity ed -> calcEnemyDefense ed.Level
         let defenderResistanceBaseStat = getBNpcBaseResStat event.DamageType defender
-        let defMult = calcDefenseMultiplier defenderDefenseBaseStat attacker.Level defender.Level 0f 0f
+        let defMult = calcDefenseMultiplier defenderDefenseBaseStat attackerBasicData.Level defenderBasicData.Level 0f 0f
         let resMult = calcResMultiplier defenderResistanceBaseStat (getBNpcDamageResPercent event.DamageType defender) 0f
         calcIncomingDamage 1f outgoingDamage defMult resMult (calcDamageReductionMultiplier 0f)
 
-    let handleDamageEvent event (attacker, _) (defender, defenderState) =
+    let handleDamageEvent event (attacker: Entity, _: EntityState) (defender, defenderState) =
+        let eo = getElementForDamageType event.DamageType
         event
         |> handleDamageEventOutgoing attacker
-        |> fun outgoingDamage -> event, outgoingDamage
-        ||> handleDamageEventIncoming attacker defender
-        |> fun incomingDamage -> { TargetId = defenderState.Id; DamageAmount = incomingDamage }
+        |> handleDamageEventIncoming attacker defender <| event
+        |> fun incomingDamage
+            -> { TargetId = defenderState.Id
+                 DamageAmount = incomingDamage
+                 DamageAura =
+                    match eo with
+                    | Some element
+                        -> Some(wrapAuraData { Element = element
+                                               ApplicationSkillId = 0u
+                                               ApplicationSkillIcdMs = 0f
+                                               GaugeUnits = 0f |> GaugeUnits
+                                               Permanent = false })
+                    | None -> None }
 
     let handleEvent event sourceOption targetOption =
         match sourceOption, targetOption with
@@ -47,6 +68,6 @@ module EventHandling =
                | TalentHeal _ -> HealResult ({ TargetId = targetState.Id; HealAmount = 0u })
                | _ -> raise (InvalidEventException("No such target event exists", event))
         | _ -> match event with
-               | Elapse e -> ElapseResult ({ TimeElapsed = e.TimeElapsed })
+               | Elapse e -> ElapseResult ({ TimeElapsedMs = e.TimeElapsedMs })
                | CombatantAdd e -> CombatantAddResult ({ BNpc = e.BNpc; BNpcState = e.BNpcState })
                | _ -> raise (InvalidEventException("No such parameterless event exists", event))

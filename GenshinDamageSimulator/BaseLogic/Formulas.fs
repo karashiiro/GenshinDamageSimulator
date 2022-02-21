@@ -1,24 +1,38 @@
 ﻿namespace GenshinDamageSimulator
 
-open Entity
+open EntityLogic
 open Resonance
-open Reactions
 open Data.ElementalCoefficients
 
 // From https://genshin-impact.fandom.com/wiki/Damage
 
 module Formulas =
+    let getAmpifyingReactionMultiplier reaction =
+        match reaction with
+            | StrongVaporize | StrongMelt -> 2f
+            | WeakVaporize | WeakMelt -> 1.5f
+            | _ -> 1f
+
+    let getTransformativeReactionMultiplier reaction =
+        match reaction with
+            | Superconduct -> 1f
+            | Swirl -> 1.2f
+            | ElectroCharged -> 2.4f
+            | Shattered -> 3f
+            | Overload -> 4f
+            | _ -> 0f
+
     // HP formulas
-    let calcTotalHp bNpc =
-        uint32 (float32 (bNpc.BaseHp) * (1f + getBNpcStatPercent PercStat.Hp bNpc)) + getBNpcStatFlat FlatStat.Hp bNpc
+    let calcTotalHp (b, c) =
+        uint32 (float32 (b.BaseHp) * (1f + getBNpcStatPercent PercStat.Hp c)) + getBNpcStatFlat FlatStat.Hp c
 
     // Attack formulas
-    let calcTotalAttack bNpc party =
-        uint32 (float32 (bNpc.BaseAttack) * (1f + calcResonanceAttackPercent party * getBNpcStatPercent PercStat.Attack bNpc)) + getBNpcStatFlat FlatStat.Attack bNpc
+    let calcTotalAttack (b, c) party =
+        uint32 (float32 (b.BaseAttack) * (1f + calcResonanceAttackPercent party * getBNpcStatPercent PercStat.Attack c)) + getBNpcStatFlat FlatStat.Attack c
         
     // Defense formulas
-    let calcTotalDefense bNpc =
-        uint32 (float32 (bNpc.BaseDefense) * (1f + getBNpcStatPercent PercStat.Defense bNpc)) + getBNpcStatFlat FlatStat.Defense bNpc
+    let calcTotalDefense (b, c) =
+        uint32 (float32 (b.BaseDefense) * (1f + getBNpcStatPercent PercStat.Defense c)) + getBNpcStatFlat FlatStat.Defense c
 
     // Elemental mastery formulas
     let calcTotalElementalMastery =

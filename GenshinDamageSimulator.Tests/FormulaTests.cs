@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using Microsoft.FSharp.Collections;
 using Xunit;
 
 namespace GenshinDamageSimulator.Tests
@@ -8,23 +10,22 @@ namespace GenshinDamageSimulator.Tests
         [Fact]
         public void SingleAbility_Works()
         {
-            var testNpc0 = new BattleNpc(2000, 500, 200,
+            var testNpc0 = new Entity.CharacterEntity(new Tuple<BasicEntityData, CharacterEntityData>(new BasicEntityData(2000, 500, 200,
                 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
-                90, BattleNpcType.Character,
-                StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.CriticalDamage, 0.2f)),
+                90), new CharacterEntityData(StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.CriticalDamage, 0.2f)),
                 Element.Electro,
-                new Weapon(120, StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.Physical, 0.5f))),
-                Array.Empty<Artifact>());
-            var testNpcState0 = new BattleNpcState(1, 20000, 0, Array.Empty<ElementalAura>());
+                new Weapon(120, StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.PhysicalBonus, 0.5f))),
+                Array.Empty<Artifact>())));
+            var testNpcState0 = new EntityState(1, 20000, 0, new FSharpMap<Element, Aura>(Enumerable.Empty<Tuple<Element, Aura>>()));
 
-            var testNpc1 = new BattleNpc(2000, 500, 200,
+            var testNpc1 = new BasicEntityData(2000, 500, 200,
                 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
-                100, BattleNpcType.Enemy,
+                100,
                 StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.CriticalDamage, 0.2f)),
                 Element.Electro,
-                new Weapon(120, StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.Physical, 0.5f))),
+                new Weapon(120, StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.PhysicalBonus, 0.5f))),
                 Array.Empty<Artifact>());
-            var testNpcState1 = new BattleNpcState(2, 20000, 0, Array.Empty<ElementalAura>());
+            var testNpcState1 = new EntityState(2, 20000, 0, new FSharpMap<Element, Aura>(Enumerable.Empty<Tuple<Element, Aura>>()));
 
             var sim = SimulationState.Create();
             sim = sim.DoEvent(

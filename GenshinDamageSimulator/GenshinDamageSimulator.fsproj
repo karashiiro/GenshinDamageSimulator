@@ -6,16 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Types\TimeTypes.fs" />
+    <Compile Include="Types\ElementTypes.fs" />
     <Compile Include="Types\StatTypes.fs" />
     <Compile Include="Types\DamageTypes.fs" />
-    <Compile Include="Types\EntityTypes.fs" />
-    <Compile Include="Types\EventTypes.fs" />
-    <Compile Include="Types\PartyTypes.fs" />
-    <Compile Include="BaseLogic\Entity.fs" />
-    <Compile Include="BaseLogic\Resonance.fs" />
-    <Compile Include="BaseLogic\Reactions.fs" />
+    <Compile Include="Aura\AuraTypes.fs" />
+    <Compile Include="Aura\Gauge.fs" />
+    <Compile Include="Aura\ReactionTypes.fs" />
+    <Compile Include="Aura\ElementalAura.fs" />
+    <Compile Include="Entity\EntityTypes.fs" />
+    <Compile Include="Party\PartyTypes.fs" />
+    <Compile Include="Party\Resonance.fs" />
+    <Compile Include="Entity\EntityLogic.fs" />
     <Compile Include="BaseLogic\Formulas.fs" />
+    <Compile Include="Simulator\EventTypes.fs" />
     <Compile Include="Simulator\EventHandling.fs" />
     <Compile Include="Simulator\Simulator.fs" />
   </ItemGroup>

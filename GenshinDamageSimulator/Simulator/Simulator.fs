@@ -1,20 +1,21 @@
 ﻿namespace GenshinDamageSimulator
 
+open ElementalAura
 open EventHandling
 
 exception InvalidEventResultException of string * GameEventResult
-exception CombatantNotFoundException of string * CombatantId
+exception EntityNotFoundException of string * EntityId
 
 type SimulationState =
-    { Combatants: Map<uint32, (BattleNpc * BattleNpcState)>
+    { Combatants: Map<EntityId, (Entity * EntityState)>
       Party: Party
       LastEventResult: GameEventResult
-      Timestamp: int64<ms>
+      TimestampMs: int64
       History: SimulationState list }
 
 module Simulator =
     let elapse state t =
-        { state with Timestamp = state.Timestamp + t }
+        { state with TimestampMs = state.TimestampMs + t }
 
     let addCombatant state bNpc bNpcState =
         { state with
@@ -30,17 +31,20 @@ module Simulator =
                     Combatants = state.Combatants.Remove combatantId
                     LastEventResult = CombatantRemoveResult ({ TargetId = combatantId })
                     History = state :: state.History }
-        | None -> raise (CombatantNotFoundException("Combatant not found", combatantId))
+        | None -> raise (EntityNotFoundException("Combatant not found", combatantId))
 
     let addPartyMember state combatantId =
         let cOpt = state.Combatants.TryFind combatantId
         match cOpt with
         | Some (combatant, combatantState)
-            -> { state with
-                    Party = state.Party.Add (combatantState.Id, combatant)
-                    LastEventResult = PartyAddResult ({ TargetId = combatantState.Id })
-                    History = state :: state.History }
-        | None -> raise (CombatantNotFoundException("Combatant not found", combatantId))
+            -> match combatant with
+               | CharacterEntity c ->
+                    { state with
+                        Party = state.Party.Add (combatantState.Id, c)
+                        LastEventResult = PartyAddResult ({ TargetId = combatantState.Id })
+                        History = state :: state.History }
+               | _ -> raise (EntityNotFoundException("Character not found", combatantId))
+        | None -> raise (EntityNotFoundException("Character not found", combatantId))
 
     let removePartyMember state combatantId =
         let cOpt = state.Combatants.TryFind combatantId
@@ -50,7 +54,7 @@ module Simulator =
                     Party = state.Party.Remove combatantId
                     LastEventResult = PartyRemoveResult ({ TargetId = combatantId })
                     History = state :: state.History }
-        | None -> raise (CombatantNotFoundException("Combatant not found", combatantId))
+        | None -> raise (EntityNotFoundException("Character not found", combatantId))
 
     let combatantantUpdateFn f value =
         match value with
@@ -58,9 +62,17 @@ module Simulator =
             -> Some(f matchedValue)
         | _ -> None
 
+    let damageResultFn damageResult (target, targetState) =
+        match damageResult.DamageAura with
+        | Some aura
+            -> (target, { targetState with
+                            Hp = targetState.Hp - damageResult.DamageAmount
+                            ElementalAuras = targetState.ElementalAuras.Change((unwrapAuraData aura).Element, fun _ -> Some(aura)) })
+        | None -> (target, { targetState with Hp = targetState.Hp - damageResult.DamageAmount })
+
     let applyDamageResult state damageResult targetId =
         let updateFnTarget =
-            combatantantUpdateFn (fun (target, targetState) -> (target, { targetState with Hp = targetState.Hp - damageResult.DamageAmount }))
+            combatantantUpdateFn (damageResultFn damageResult)
         { state with
             Combatants = state.Combatants.Change (targetId, updateFnTarget)
             LastEventResult = DamageResult (damageResult)
@@ -71,7 +83,7 @@ module Simulator =
         let targetOption = state.Combatants.TryFind targetId
         let eventResult = handleEvent event sourceOption targetOption
         match eventResult with
-        | ElapseResult r -> elapse state r.TimeElapsed
+        | ElapseResult r -> elapse state r.TimeElapsedMs
         | CombatantAddResult r -> addCombatant state r.BNpc r.BNpcState
         | CombatantRemoveResult r -> removeCombatant state r.TargetId
         | PartyAddResult r -> addPartyMember state r.TargetId
@@ -88,14 +100,14 @@ module Simulator =
         { Combatants = Map.empty
           Party = Map.empty
           LastEventResult = GenesisResult (GenesisEventResult ())
-          Timestamp = 0
+          TimestampMs = 0
           History = [] }
 
 // This is the C# interface for the simulator.
 type SimulationState with
     static member Create() = Simulator.genesis
 
-    member this.DoEvent(event: GameEvent, sourceId: CombatantId, targetId: CombatantId) =
+    member this.DoEvent(event: GameEvent, sourceId: EntityId, targetId: EntityId) =
         if isNull (box event) then nullArg "event"
         Simulator.doEvent this event sourceId targetId
 

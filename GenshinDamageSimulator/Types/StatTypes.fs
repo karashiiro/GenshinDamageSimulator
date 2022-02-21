@@ -8,7 +8,7 @@ type PercStat =
     | Hp | Attack | Defense
     | EnergyRecharge
     | CriticalHit | CriticalDamage
-    | Physical | Pyro | Hydro | Electro | Cryo | Anemo | Geo | Dendro
+    | PhysicalBonus | PyroBonus | HydroBonus | ElectroBonus | CryoBonus | AnemoBonus | GeoBonus | DendroBonus
     | PhysicalRes | PyroRes | HydroRes | ElectroRes | CryoRes | AnemoRes | GeoRes | DendroRes
 
 type FlatStatModifier =

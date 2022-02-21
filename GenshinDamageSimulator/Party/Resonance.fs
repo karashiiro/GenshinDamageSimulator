@@ -32,7 +32,7 @@ module Resonance =
 
     let getResonances (party: Party) =
         party.Values
-        |> Seq.countBy (fun x -> x.Element)
+        |> Seq.countBy (fun (_, c) -> c.Element)
         |> Map.ofSeq
         |> fun map -> ([], map)
         ||> fun resonances map -> if hasProtectiveCanopy map then (ProtectiveCanopy :: resonances, map) else (resonances, map)

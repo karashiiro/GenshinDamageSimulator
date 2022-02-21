@@ -9,4 +9,4 @@ type ElementalResonance =
     | EnduringRock
     | ProtectiveCanopy
 
-type Party = Map<CombatantId, BattleNpc>
+type Party = Map<EntityId, CharacterEntity>

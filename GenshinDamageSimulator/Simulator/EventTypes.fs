@@ -1,11 +1,11 @@
 ﻿namespace GenshinDamageSimulator
 
 type ElapseEvent =
-    { TimeElapsed: int64<ms> }
+    { TimeElapsedMs: int64 }
 
 type CombatantAddEvent =
-    { BNpc: BattleNpc
-      BNpcState: BattleNpcState }
+    { BNpc: Entity
+      BNpcState: EntityState }
 
 type CombatantRemoveEvent() = class end
 
@@ -37,31 +37,32 @@ type GameEvent =
 type GenesisEventResult() = class end
 
 type ElapseEventResult =
-    { TimeElapsed: int64<ms> }
+    { TimeElapsedMs: int64 }
 
 type CombatantAddEventResult =
-    { BNpc: BattleNpc
-      BNpcState: BattleNpcState }
+    { BNpc: Entity
+      BNpcState: EntityState }
 
 type CombatantRemoveEventResult =
-    { TargetId: CombatantId }
+    { TargetId: EntityId }
 
 type PartyAddEventResult =
-    { TargetId: CombatantId }
+    { TargetId: EntityId }
 
 type PartyRemoveEventResult =
-    { TargetId: CombatantId }
+    { TargetId: EntityId }
 
 type DamageEventResult =
-    { TargetId: CombatantId
-      DamageAmount: uint32 }
+    { TargetId: EntityId
+      DamageAmount: uint32
+      DamageAura: Aura option }
 
 type ElementalAuraEventResult =
-    { TargetId: CombatantId
-      AppliedAura: ElementalAura }
+    { TargetId: EntityId
+      AppliedAura: Aura }
 
 type HealEventResult =
-    { TargetId: CombatantId
+    { TargetId: EntityId
       HealAmount: uint32 }
 
 type GameEventResult =
