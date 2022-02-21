@@ -16,7 +16,7 @@
     <Compile Include="Entity\Entity.fs" />
     <Compile Include="Party\PartyTypes.fs" />
     <Compile Include="Party\Resonance.fs" />
-    <Compile Include="BaseLogic\Formulas.fs" />
+    <Compile Include="Simulator\Formulas.fs" />
     <Compile Include="Simulator\EventTypes.fs" />
     <Compile Include="Simulator\EventHandling.fs" />
     <Compile Include="Simulator\Simulator.fs" />
