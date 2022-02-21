@@ -1,8 +1,5 @@
 ﻿namespace GenshinDamageSimulator
 
-open ElementalAura
-open EventHandling
-
 exception InvalidEventResultException of string * GameEventResult
 exception EntityNotFoundException of string * EntityId
 
@@ -67,7 +64,7 @@ module Simulator =
         | Some aura
             -> (target, { targetState with
                             Hp = targetState.Hp - damageResult.DamageAmount
-                            ElementalAuras = targetState.ElementalAuras.Change((unwrapAuraData aura).Element, fun _ -> Some(aura)) })
+                            ElementalAuras = targetState.ElementalAuras.Change((ElementalAura.unwrapAuraData aura).Element, fun _ -> Some(aura)) })
         | None -> (target, { targetState with Hp = targetState.Hp - damageResult.DamageAmount })
 
     let applyDamageResult state damageResult targetId =
@@ -81,7 +78,7 @@ module Simulator =
     let doEvent state event sourceId targetId =
         let sourceOption = state.Combatants.TryFind sourceId
         let targetOption = state.Combatants.TryFind targetId
-        let eventResult = handleEvent event sourceOption targetOption
+        let eventResult = EventHandling.handleEvent event sourceOption targetOption
         match eventResult with
         | ElapseResult r -> elapse state r.TimeElapsedMs
         | CombatantAddResult r -> addCombatant state r.BNpc r.BNpcState
@@ -105,10 +102,14 @@ module Simulator =
 
 // This is the C# interface for the simulator.
 type SimulationState with
+    /// Creates a new simulator with the genesis state.
     static member Create() = Simulator.genesis
 
+    /// Executes an event on the current simulation state, returning a new simulation state
+    /// with the current state in the history stack.
     member this.DoEvent(event: GameEvent, sourceId: EntityId, targetId: EntityId) =
         if isNull (box event) then nullArg "event"
         Simulator.doEvent this event sourceId targetId
 
+    /// Returns the top state from the history stack, or the genesis state if the history stack is empty.
     member this.StepBack() = Simulator.stepBack this

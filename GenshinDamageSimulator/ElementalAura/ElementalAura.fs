@@ -1,5 +1,23 @@
 ﻿namespace GenshinDamageSimulator
 
+// https://docs.google.com/document/d/e/2PACX-1vSEovpheHaeum4Ba0MlNdfyOTsJ-wZzDmBof13bVztYtKDi6OQhLqNdwEkEApo6vvtAV0L_tMal2ZTN/pub#h.6crtulvx1dlt
+
+type ElementalAuraData =
+    { Element: Element
+      ApplicationSkillId: uint32 // Used for comparing ICDs
+      ApplicationSkillIcdMs: float32
+      GaugeUnits: GaugeUnits
+      Permanent: bool }
+
+type ElementalAura =
+    | PyroAura of ElementalAuraData
+    | HydroAura of ElementalAuraData
+    | ElectroAura of ElementalAuraData
+    | CryoAura of ElementalAuraData
+    | AnemoAura of ElementalAuraData
+    | GeoAura of ElementalAuraData
+    | DendroAura of ElementalAuraData
+
 module ElementalAura =
     let getAuraElement aura =
         match aura with
@@ -46,7 +64,7 @@ module ElementalAura =
         | _ -> 0f
 
     let calcUpdatedGaugeRaw aura trigger reaction =
-        (Gauge.raw aura.GaugeUnits) - reactionModifier reaction * (Gauge.raw trigger.GaugeUnits)
+        (GaugeUnits.raw aura.GaugeUnits) - reactionModifier reaction * (GaugeUnits.raw trigger.GaugeUnits)
 
     let resolveGaugeElectroCharged aura trigger = // TODO aura tax
         let newGaugeUnitsAura = calcUpdatedGaugeRaw aura trigger ElectroCharged
@@ -124,15 +142,3 @@ module ElementalAura =
         | (HydroAura h, DendroAura d) -> oldIfPermanent h d, None
         | (ElectroAura e, DendroAura d) -> oldIfPermanent e d, None
         | (CryoAura c, DendroAura d) -> oldIfPermanent c d, None
-
-    let interactState state trigger =
-        state
-        |> Map.values
-        |> Seq.map (fun aura -> interact1 aura trigger)
-        |> Seq.map (fun (auras, reaction) -> auras, reaction |> Option.toArray |> Seq.ofArray)
-        |> (Seq.fold (fun (x, y) (auras, reactions) ->
-            let allAuras = Seq.append x auras
-            let allReactions = Seq.append y reactions
-            allAuras, allReactions) (Seq.empty, Seq.empty))
-        ||> fun auras reactions -> Seq.map (fun aura -> getAuraElement aura, aura) auras, reactions
-        ||> fun auras reactions -> Map.ofSeq auras, reactions

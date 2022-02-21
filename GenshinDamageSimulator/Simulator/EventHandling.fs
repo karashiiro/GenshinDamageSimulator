@@ -1,9 +1,5 @@
 ﻿namespace GenshinDamageSimulator
 
-open EntityLogic
-open ElementalAura
-open Formulas
-
 exception InvalidEventException of string * GameEvent
 
 module EventHandling =
@@ -11,14 +7,14 @@ module EventHandling =
         let attackerBasicData = match attacker with
                                 | CharacterEntity (cd, _) -> cd
                                 | EnemyEntity ed -> ed
-        let attackerBaseStat = getBNpcBaseStat event.DamageStat attacker
-        let attackerDamageBonus = getBNpcDamageBonusPercent event.DamageType attacker
-        let attackerCriticalHit = getBNpcStatPercent PercStat.CriticalHit attacker
-        let attackerCriticalDamage = getBNpcStatPercent PercStat.CriticalDamage attacker
-        let outgoingDamage = calcOutgoingDamage attackerBaseStat event.DamageStatMultiplier 0u attackerDamageBonus
+        let attackerBaseStat = Entity.getBaseStat event.DamageStat attacker
+        let attackerDamageBonus = Entity.getDamageBonusPercent event.DamageType attacker
+        let attackerCriticalHit = Entity.getStatPercent PercStat.CriticalHit attacker
+        let attackerCriticalDamage = Entity.getStatPercent PercStat.CriticalDamage attacker
+        let outgoingDamage = Formulas.calcOutgoingDamage attackerBaseStat event.DamageStatMultiplier 0u attackerDamageBonus
         match event.Critical with
-        | FullCritical -> uint32 (float32 (outgoingDamage) * calcCritMultiplier attackerCriticalDamage)
-        | AverageCritical -> uint32 (float32 (outgoingDamage) * calcAverageCritMultiplier attackerCriticalHit attackerCriticalDamage)
+        | FullCritical -> uint32 (float32 (outgoingDamage) * Formulas.calcCritMultiplier attackerCriticalDamage)
+        | AverageCritical -> uint32 (float32 (outgoingDamage) * Formulas.calcAverageCritMultiplier attackerCriticalHit attackerCriticalDamage)
         | NoCritical -> outgoingDamage
 
     let handleDamageEventIncoming (attacker: Entity) defender outgoingDamage event =
@@ -29,15 +25,15 @@ module EventHandling =
                                 | CharacterEntity (cd, _) -> cd
                                 | EnemyEntity ed -> ed
         let defenderDefenseBaseStat = match defender with
-                                      | CharacterEntity (_, _) -> getBNpcBaseStat BaseStat.Defense defender
-                                      | EnemyEntity ed -> calcEnemyDefense ed.Level
-        let defenderResistanceBaseStat = getBNpcBaseResStat event.DamageType defender
-        let defMult = calcDefenseMultiplier defenderDefenseBaseStat attackerBasicData.Level defenderBasicData.Level 0f 0f
-        let resMult = calcResMultiplier defenderResistanceBaseStat (getBNpcDamageResPercent event.DamageType defender) 0f
-        calcIncomingDamage 1f outgoingDamage defMult resMult (calcDamageReductionMultiplier 0f)
+                                      | CharacterEntity (_, _) -> Entity.getBaseStat BaseStat.Defense defender
+                                      | EnemyEntity ed -> Formulas.calcEnemyDefense ed.Level
+        let defenderResistanceBaseStat = Entity.getBaseResStat event.DamageType defender
+        let defMult = Formulas.calcDefenseMultiplier defenderDefenseBaseStat attackerBasicData.Level defenderBasicData.Level 0f 0f
+        let resMult = Formulas.calcResMultiplier defenderResistanceBaseStat (Entity.getDamageResPercent event.DamageType defender) 0f
+        Formulas.calcIncomingDamage 1f outgoingDamage defMult resMult (Formulas.calcDamageReductionMultiplier 0f)
 
     let handleDamageEvent event (attacker: Entity, _: EntityState) (defender, defenderState) =
-        let eo = getElementForDamageType event.DamageType
+        let eo = Entity.getElementForDamageType event.DamageType
         event
         |> handleDamageEventOutgoing attacker
         |> handleDamageEventIncoming attacker defender <| event
@@ -47,11 +43,11 @@ module EventHandling =
                  DamageAura =
                     match eo with
                     | Some element
-                        -> Some(wrapAuraData { Element = element
-                                               ApplicationSkillId = 0u
-                                               ApplicationSkillIcdMs = 0f
-                                               GaugeUnits = 0f |> GaugeUnits
-                                               Permanent = false })
+                        -> Some(ElementalAura.wrapAuraData { Element = element
+                                                             ApplicationSkillId = 0u
+                                                             ApplicationSkillIcdMs = 0f
+                                                             GaugeUnits = 0f |> GaugeUnits
+                                                             Permanent = false })
                     | None -> None }
 
     let handleEvent event sourceOption targetOption =

@@ -10,33 +10,32 @@ namespace GenshinDamageSimulator.Tests
         [Fact]
         public void SingleAbility_Works()
         {
-            var testNpc0 = new Entity.CharacterEntity(new Tuple<BasicEntityData, CharacterEntityData>(new BasicEntityData(2000, 500, 200,
+            var testNpc0 = Entity.NewCharacterEntity(new Tuple<BasicEntityData, CharacterEntityData>(new BasicEntityData(2000, 500, 200,
                 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
                 90), new CharacterEntityData(StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.CriticalDamage, 0.2f)),
                 Element.Electro,
                 new Weapon(120, StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.PhysicalBonus, 0.5f))),
                 Array.Empty<Artifact>())));
-            var testNpcState0 = new EntityState(1, 20000, 0, new FSharpMap<Element, Aura>(Enumerable.Empty<Tuple<Element, Aura>>()));
+            var testNpcState0 = new EntityState(EntityId.NewEntityId(1), 20000, 0, new FSharpMap<Element, ElementalAura>(Enumerable.Empty<Tuple<Element, ElementalAura>>()));
 
-            var testNpc1 = new BasicEntityData(2000, 500, 200,
+            var testNpc1 = Entity.NewCharacterEntity(new Tuple<BasicEntityData, CharacterEntityData>(new BasicEntityData(2000, 500, 200,
                 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
-                100,
-                StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.CriticalDamage, 0.2f)),
+                100), new CharacterEntityData(StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.CriticalDamage, 0.2f)),
                 Element.Electro,
                 new Weapon(120, StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.PhysicalBonus, 0.5f))),
-                Array.Empty<Artifact>());
-            var testNpcState1 = new EntityState(2, 20000, 0, new FSharpMap<Element, Aura>(Enumerable.Empty<Tuple<Element, Aura>>()));
+                Array.Empty<Artifact>())));
+            var testNpcState1 = new EntityState(EntityId.NewEntityId(2), 20000, 0, new FSharpMap<Element, ElementalAura>(Enumerable.Empty<Tuple<Element, ElementalAura>>()));
 
             var sim = SimulationState.Create();
             sim = sim.DoEvent(
-                GameEvent.NewCombatantAdd(new CombatantAddEvent(testNpc0, testNpcState0)), 0, 0);
+                GameEvent.NewCombatantAdd(new CombatantAddEvent(testNpc0, testNpcState0)), EntityId.NewEntityId(0), EntityId.NewEntityId(0));
             sim = sim.DoEvent(
-                GameEvent.NewPartyAdd(new PartyAddEvent()), 0, 1);
+                GameEvent.NewPartyAdd(new PartyAddEvent()), EntityId.NewEntityId(0), EntityId.NewEntityId(1));
             sim = sim.DoEvent(
-                GameEvent.NewCombatantAdd(new CombatantAddEvent(testNpc1, testNpcState1)), 0, 0);
+                GameEvent.NewCombatantAdd(new CombatantAddEvent(testNpc1, testNpcState1)), EntityId.NewEntityId(0), EntityId.NewEntityId(0));
             sim = sim.DoEvent(
                 GameEvent.NewTalentDamage(new TalentDamageEvent(DamageType.Physical, BaseStat.Attack, 1f,
-                    Critical.NoCritical)), 1, 2);
+                    Critical.NoCritical)), EntityId.NewEntityId(1), EntityId.NewEntityId(2));
             _ = sim.StepBack();
         }
     }

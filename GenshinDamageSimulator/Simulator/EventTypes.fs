@@ -55,11 +55,11 @@ type PartyRemoveEventResult =
 type DamageEventResult =
     { TargetId: EntityId
       DamageAmount: uint32
-      DamageAura: Aura option }
+      DamageAura: ElementalAura option }
 
 type ElementalAuraEventResult =
     { TargetId: EntityId
-      AppliedAura: Aura }
+      AppliedAura: ElementalAura }
 
 type HealEventResult =
     { TargetId: EntityId

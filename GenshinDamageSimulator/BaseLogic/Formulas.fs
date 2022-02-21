@@ -1,8 +1,6 @@
 ﻿namespace GenshinDamageSimulator
 
-open EntityLogic
-open Resonance
-open Data.ElementalCoefficients
+open GenshinDamageSimulator.Data
 
 // From https://genshin-impact.fandom.com/wiki/Damage
 
@@ -24,31 +22,31 @@ module Formulas =
 
     // HP formulas
     let calcTotalHp (b, c) =
-        uint32 (float32 (b.BaseHp) * (1f + getBNpcStatPercent PercStat.Hp c)) + getBNpcStatFlat FlatStat.Hp c
+        uint32 (float32 (b.BaseHp) * (1f + Entity.getStatPercent PercStat.Hp c)) + Entity.getStatFlat FlatStat.Hp c
 
     // Attack formulas
     let calcTotalAttack (b, c) party =
-        uint32 (float32 (b.BaseAttack) * (1f + calcResonanceAttackPercent party * getBNpcStatPercent PercStat.Attack c)) + getBNpcStatFlat FlatStat.Attack c
+        uint32 (float32 (b.BaseAttack) * (1f + Resonance.calcResonanceAttackPercent party * Entity.getStatPercent PercStat.Attack c)) + Entity.getStatFlat FlatStat.Attack c
         
     // Defense formulas
     let calcTotalDefense (b, c) =
-        uint32 (float32 (b.BaseDefense) * (1f + getBNpcStatPercent PercStat.Defense c)) + getBNpcStatFlat FlatStat.Defense c
+        uint32 (float32 (b.BaseDefense) * (1f + Entity.getStatPercent PercStat.Defense c)) + Entity.getStatFlat FlatStat.Defense c
 
     // Elemental mastery formulas
     let calcTotalElementalMastery =
-        getBNpcStatFlat FlatStat.ElementalMastery
+        Entity.getStatFlat FlatStat.ElementalMastery
 
     // Energy recharge formulas
-    let calcTotalEnergyRecharge bNpc =
-        1f + getBNpcStatPercent PercStat.EnergyRecharge bNpc
+    let calcTotalEnergyRecharge entity =
+        1f + Entity.getStatPercent PercStat.EnergyRecharge entity
 
     // Crit rate formulas
     let calcTotalCriticalHit =
-        getBNpcStatPercent PercStat.CriticalHit
+        Entity.getStatPercent PercStat.CriticalHit
 
     // Crit damage formulas
     let calcTotalCriticalDamage =
-        getBNpcStatPercent PercStat.CriticalDamage
+        Entity.getStatPercent PercStat.CriticalDamage
 
     // Outgoing damage formulas
     let calcAmplifyingBonus em =
@@ -61,11 +59,11 @@ module Formulas =
         16f * (float32 em / float32 (em + 2000u))
 
     let calcTransformativeDamageCharacter reaction characterLevel transformativeBonus reactionBonus =
-        let levelMult = getCharacterLevelMultiplier characterLevel
+        let levelMult = ElementalCoefficients.getCharacterLevelMultiplier characterLevel
         uint32 (levelMult * getTransformativeReactionMultiplier reaction * (1f + transformativeBonus + reactionBonus))
 
     let calcTransformativeDamageEnemy reaction enemyLevel transformativeBonus reactionBonus =
-        let levelMult = getEnemyLevelMultiplier enemyLevel
+        let levelMult = ElementalCoefficients.getEnemyLevelMultiplier enemyLevel
         uint32 (levelMult * getTransformativeReactionMultiplier reaction * (1f + transformativeBonus + reactionBonus))
 
     let calcAverageCritMultiplier critRate critDamage =

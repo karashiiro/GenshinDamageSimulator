@@ -1,6 +1,8 @@
 ﻿namespace GenshinDamageSimulator
 
-module Gauge =
+type GaugeUnits = GaugeUnits of float32
+
+module GaugeUnits =
     let durationSeconds (gu: GaugeUnits) =
         let (GaugeUnits gu') = gu
         2.5f * gu' + 7f
