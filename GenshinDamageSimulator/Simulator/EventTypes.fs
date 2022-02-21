@@ -34,7 +34,7 @@ type GameEvent =
     | TalentDamage of TalentDamageEvent
     | TalentHeal of TalentHealEvent
 
-type GenesisEventResult() = class end
+type OriginEventResult() = class end
 
 type ElapseEventResult =
     { TimeElapsedMs: int64 }
@@ -66,7 +66,7 @@ type HealEventResult =
       HealAmount: uint32 }
 
 type GameEventResult =
-    | GenesisResult of GenesisEventResult
+    | OriginResult of OriginEventResult
     | ElapseResult of ElapseEventResult
     | CombatantAddResult of CombatantAddEventResult
     | CombatantRemoveResult of CombatantRemoveEventResult

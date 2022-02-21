@@ -93,17 +93,17 @@ module Simulator =
         | head :: _ -> head
         | _ -> state
 
-    let genesis =
+    let origin =
         { Combatants = Map.empty
           Party = Map.empty
-          LastEventResult = GenesisResult (GenesisEventResult ())
+          LastEventResult = OriginResult (OriginEventResult ())
           TimestampMs = 0
           History = [] }
 
 // This is the C# interface for the simulator.
 type SimulationState with
-    /// Creates a new simulator with the genesis state.
-    static member Create() = Simulator.genesis
+    /// Creates a new simulator with the origin state.
+    static member Create() = Simulator.origin
 
     /// Executes an event on the current simulation state, returning a new simulation state
     /// with the current state in the history stack.
@@ -111,5 +111,5 @@ type SimulationState with
         if isNull (box event) then nullArg "event"
         Simulator.doEvent this event sourceId targetId
 
-    /// Returns the top state from the history stack, or the genesis state if the history stack is empty.
+    /// Returns the top state from the history stack, or the origin state if the history stack is empty.
     member this.StepBack() = Simulator.stepBack this
