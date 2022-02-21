@@ -64,7 +64,7 @@ module Simulator =
         | Some aura
             -> (target, { targetState with
                             Hp = targetState.Hp - damageResult.DamageAmount
-                            ElementalAuras = targetState.ElementalAuras.Change((ElementalAura.unwrapAuraData aura).Element, fun _ -> Some(aura)) })
+                            ElementalAuras = (ElementalAuraState.unwrap targetState.ElementalAuras).Change((ElementalAura.unwrapAuraData aura).Element, fun _ -> Some(aura)) |> ElementalAuraState })
         | None -> (target, { targetState with Hp = targetState.Hp - damageResult.DamageAmount })
 
     let applyDamageResult state damageResult targetId =

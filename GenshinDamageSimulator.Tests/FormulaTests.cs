@@ -1,6 +1,5 @@
 using System;
-using System.Linq;
-using Microsoft.FSharp.Collections;
+using System.Collections.Generic;
 using Xunit;
 
 namespace GenshinDamageSimulator.Tests
@@ -10,13 +9,13 @@ namespace GenshinDamageSimulator.Tests
         [Fact]
         public void SingleAbility_Works()
         {
-            var testNpc0 = Entity.NewCharacterEntity(new Tuple<BasicEntityData, CharacterEntityData>(new BasicEntityData(2000, 500, 200,
+            var testNpc0 = Entity.CreateCharacter(new BasicEntityData(2000, 500, 200,
                 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
                 90), new CharacterEntityData(StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.CriticalDamage, 0.2f)),
                 Element.Electro,
                 new Weapon(120, StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.PhysicalBonus, 0.5f))),
-                Array.Empty<Artifact>())));
-            var testNpcState0 = new EntityState(EntityId.NewEntityId(1), 20000, 0, new FSharpMap<Element, ElementalAura>(Enumerable.Empty<Tuple<Element, ElementalAura>>()));
+                Array.Empty<Artifact>()));
+            var testNpcState0 = new EntityState(EntityId.NewEntityId(1), 20000, 0, ElementalAuraState.Create());
 
             var testNpc1 = Entity.NewCharacterEntity(new Tuple<BasicEntityData, CharacterEntityData>(new BasicEntityData(2000, 500, 200,
                 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
@@ -24,7 +23,7 @@ namespace GenshinDamageSimulator.Tests
                 Element.Electro,
                 new Weapon(120, StatModifier.NewPercStatModifier(new PercStatModifier(PercStat.PhysicalBonus, 0.5f))),
                 Array.Empty<Artifact>())));
-            var testNpcState1 = new EntityState(EntityId.NewEntityId(2), 20000, 0, new FSharpMap<Element, ElementalAura>(Enumerable.Empty<Tuple<Element, ElementalAura>>()));
+            var testNpcState1 = new EntityState(EntityId.NewEntityId(2), 20000, 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAura>()));
 
             var sim = SimulationState.Create();
             sim = sim.DoEvent(

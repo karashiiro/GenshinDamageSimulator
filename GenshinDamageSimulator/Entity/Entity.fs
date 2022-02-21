@@ -131,3 +131,15 @@ module Entity =
         | DamageType.Geo -> Some(Element.Geo)
         | DamageType.Dendro -> Some(Element.Dendro)
         | _ -> None
+
+// This is the C# interface for entities.
+type Entity with
+    /// Creates a new character entity from the provided data. This method should be preferred
+    /// over NewCharacterEntity.
+    static member CreateCharacter (basicData: BasicEntityData) (characterData: CharacterEntityData) =
+        (basicData, characterData) |> CharacterEntity
+
+    /// Creates a new enemy entity from the provided data. This method should be preferred
+    /// over NewEnemyEntity.
+    static member CreateEnemy (basicData: BasicEntityData) =
+        basicData |> EnemyEntity

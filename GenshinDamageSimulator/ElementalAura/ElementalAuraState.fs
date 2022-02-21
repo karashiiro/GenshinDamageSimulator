@@ -1,8 +1,15 @@
 ﻿namespace GenshinDamageSimulator
 
-type ElementalAuraState = Map<Element, ElementalAura>
+open System.Collections.Generic
+open System.Linq
+
+type ElementalAuraState = ElementalAuraState of Map<Element, ElementalAura>
 
 module ElementalAuraState =
+    let unwrap state =
+        let (ElementalAuraState state') = state
+        state'
+
     let interact state trigger =
         state
         |> Map.values
@@ -14,3 +21,14 @@ module ElementalAuraState =
             allAuras, allReactions) (Seq.empty, Seq.empty))
         ||> fun auras reactions -> Seq.map (fun aura -> ElementalAura.getAuraElement aura, aura) auras, reactions
         ||> fun auras reactions -> Map.ofSeq auras, reactions
+
+// This is the C# interface for the aura state.
+type ElementalAuraState with
+    /// Creates a new elemental aura state object.
+    static member Create() = Map.empty |> ElementalAuraState
+
+    /// Creates a new elemental aura state object from the provided dictionary.
+    static member FromDictionary (dict: IDictionary<Element, ElementalAura>) =
+        dict.AsEnumerable().Select(fun kvp -> kvp.Key, kvp.Value)
+        |> Map.ofSeq
+        |> ElementalAuraState
