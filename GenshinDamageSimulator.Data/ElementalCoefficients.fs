@@ -8,12 +8,12 @@ exception MappingNotFoundException of string * uint32
 
 // https://github.com/Dimbreath/GenshinData/blob/master/ExcelBinOutput/ElementCoeffExcelConfigData.json
 module ElementalCoefficients =
-    type private CoeffDataRow =
-        { [<JsonProperty("Level", NullValueHandling = NullValueHandling.Ignore)>]
-          Level: uint32
-          ElementLevelCo: float32
-          PlayerElementLevelCo: float32
-          PlayerShieldLevelCo: float32 }
+    type private CoeffDataRow () =
+        [<JsonProperty("Level", NullValueHandling = NullValueHandling.Ignore)>]
+        member val Level = 0u with get, set
+        member val ElementLevelCo = 0f with get, set
+        member val PlayerElementLevelCo = 0f with get, set
+        member val PlayerShieldLevelCo = 0f with get, set
 
     let private levelScalingData =
         lazy (
