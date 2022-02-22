@@ -43,11 +43,11 @@ module EventHandling =
                  DamageAura =
                     match eo with
                     | Some element
-                        -> Some(ElementalAura.wrapAuraData { Element = element
-                                                             ApplicationSkillId = 0u
-                                                             ApplicationSkillIcdMs = 0f
-                                                             GaugeUnits = 0f |> GaugeUnits
-                                                             Permanent = false })
+                        -> Some({ Element = element
+                                  ApplicationSkillId = 0u
+                                  ApplicationSkillIcdMs = 0f
+                                  GaugeUnits = 0f |> GaugeUnits
+                                  Permanent = false } |> ElementalAura.wrap)
                     | None -> None }
 
     let handleEvent event sourceOption targetOption =
@@ -56,14 +56,14 @@ module EventHandling =
             -> match event with
                | TalentDamage e -> DamageResult (handleDamageEvent e (source, sourceState) (target, targetState))
                | TalentHeal _ -> HealResult ({ TargetId = targetState.Id; HealAmount = 0u })
-               | _ -> raise (InvalidEventException("No such source-target event exists", event))
+               | _ -> raise (InvalidEventException("No such source-target event exists.", event))
         | _, Some (_, targetState)
             -> match event with
                | CombatantRemove _ -> CombatantRemoveResult ({ TargetId = targetState.Id })
                | PartyAdd _ -> PartyAddResult ({ TargetId = targetState.Id })
                | PartyRemove _ -> PartyRemoveResult ({ TargetId = targetState.Id })
-               | _ -> raise (InvalidEventException("No such target event exists", event))
+               | _ -> raise (InvalidEventException("No such target event exists.", event))
         | _ -> match event with
                | Elapse e -> ElapseResult ({ TimeElapsedMs = e.TimeElapsedMs })
                | CombatantAdd e -> CombatantAddResult ({ Entity = e.Entity; EntityState = e.EntityState })
-               | _ -> raise (InvalidEventException("No such parameterless event exists", event))
+               | _ -> raise (InvalidEventException("No such parameterless event exists.", event))

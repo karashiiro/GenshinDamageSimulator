@@ -19,7 +19,7 @@ type ElementalAura =
     | DendroAura of ElementalAuraData
 
 module ElementalAura =
-    let getAuraElement aura =
+    let element aura =
         match aura with
         | PyroAura _ -> Element.Pyro
         | HydroAura _ -> Element.Hydro
@@ -29,7 +29,7 @@ module ElementalAura =
         | GeoAura _ -> Element.Geo
         | DendroAura _ -> Element.Dendro
 
-    let wrapAuraData aura =
+    let wrap aura =
         match aura.Element with
         | Element.Pyro -> PyroAura(aura)
         | Element.Hydro -> HydroAura(aura)
@@ -39,7 +39,7 @@ module ElementalAura =
         | Element.Geo -> GeoAura(aura)
         | Element.Dendro -> DendroAura(aura)
 
-    let unwrapAuraData aura =
+    let unwrap aura =
         match aura with
         | PyroAura a -> a
         | HydroAura a -> a
@@ -51,7 +51,7 @@ module ElementalAura =
 
     let oldIfPermanent aura trigger =
         if aura.Permanent then aura else trigger
-        |> wrapAuraData
+        |> wrap
         |> Seq.singleton
 
     let reactionModifier reaction =
@@ -64,23 +64,23 @@ module ElementalAura =
         | _ -> 0f
 
     let calcUpdatedGaugeRaw aura trigger reaction =
-        (GaugeUnits.raw aura.GaugeUnits) - reactionModifier reaction * (GaugeUnits.raw trigger.GaugeUnits)
+        (GaugeUnits.unwrap aura.GaugeUnits) - reactionModifier reaction * (GaugeUnits.unwrap trigger.GaugeUnits)
 
     let resolveGaugeElectroCharged aura trigger = // TODO aura tax
         let newGaugeUnitsAura = calcUpdatedGaugeRaw aura trigger ElectroCharged
         if newGaugeUnitsAura <= 0f then
-            Seq.singleton (wrapAuraData trigger)
+            Seq.singleton (wrap trigger)
         else
-            [|wrapAuraData { aura with GaugeUnits = newGaugeUnitsAura |> GaugeUnits }; wrapAuraData trigger|]
+            [|wrap { aura with GaugeUnits = newGaugeUnitsAura |> GaugeUnits }; wrap trigger|]
 
     let resolveGauge aura trigger reaction =
         if aura.Permanent then
-            Seq.singleton (wrapAuraData aura)
+            Seq.singleton (wrap aura)
         elif trigger.Permanent then
-            Seq.singleton (wrapAuraData trigger)
+            Seq.singleton (wrap trigger)
         else
             let newGaugeUnits = calcUpdatedGaugeRaw aura trigger reaction
-            if newGaugeUnits <= 0f then Seq.empty else Seq.singleton (wrapAuraData { aura with GaugeUnits = newGaugeUnits |> GaugeUnits })
+            if newGaugeUnits <= 0f then Seq.empty else Seq.singleton (wrap { aura with GaugeUnits = newGaugeUnits |> GaugeUnits })
 
     let interact aura trigger = // TODO aura tax
         match (aura, trigger) with
@@ -95,7 +95,7 @@ module ElementalAura =
         // Pyro aura reactions
         | (PyroAura p, HydroAura h) -> resolveGauge p h StrongVaporize, Some(StrongVaporize)
         | (PyroAura p, ElectroAura e) -> resolveGauge p e Overload, Some(Overload)
-        | (PyroAura p, CryoAura c) -> resolveGauge p c StrongMelt, Some(StrongMelt)
+        | (PyroAura p, CryoAura c) -> resolveGauge p c WeakMelt, Some(WeakMelt)
         | (PyroAura p, AnemoAura a) -> resolveGauge p a Swirl, Some(Swirl)
         | (PyroAura p, GeoAura g) -> resolveGauge p g Crystallize, Some(Crystallize)
         | (PyroAura p, DendroAura d) -> [|PyroAura(p); DendroAura(d)|], Some(Burning) // TODO
@@ -113,7 +113,7 @@ module ElementalAura =
         | (ElectroAura e, GeoAura g) -> resolveGauge e g Crystallize, Some(Crystallize)
         // Cryo aura reactions
         | (CryoAura _, HydroAura h) -> Seq.singleton (HydroAura(h)), Some(Frozen) // TODO
-        | (CryoAura c, PyroAura p) -> resolveGauge c p WeakMelt, Some(WeakMelt)
+        | (CryoAura c, PyroAura p) -> resolveGauge c p StrongMelt, Some(StrongMelt)
         | (CryoAura c, ElectroAura e) -> resolveGauge c e Superconduct, Some(Superconduct)
         | (CryoAura c, AnemoAura a) -> resolveGauge c a Swirl, Some(Swirl)
         | (CryoAura c, GeoAura g) -> resolveGauge c g Crystallize, Some(Crystallize)

@@ -4,7 +4,7 @@ open System.Reflection
 open System.IO
 open Newtonsoft.Json
 
-exception MappingNotFoundException of string
+exception MappingNotFoundException of string * uint32
 
 // https://github.com/Dimbreath/GenshinData/blob/master/ExcelBinOutput/ElementCoeffExcelConfigData.json
 module ElementalCoefficients =
@@ -16,38 +16,61 @@ module ElementalCoefficients =
           PlayerShieldLevelCo: float32 }
 
     let private levelScalingData =
-        "GenshinDamageSimulator.Data.ElementCoeffExcelConfigData.json"
-        |> Assembly.GetExecutingAssembly().GetManifestResourceStream
-        |> fun data -> new StreamReader(data)
-        |> fun reader -> reader.ReadToEnd()
-        |> JsonConvert.DeserializeObject<CoeffDataRow array>
+        lazy (
+            "GenshinDamageSimulator.Data.ElementCoeffExcelConfigData.json"
+            |> Assembly.GetExecutingAssembly().GetManifestResourceStream
+            |> fun data -> new StreamReader(data)
+            |> fun reader -> reader.ReadToEnd()
+            |> JsonConvert.DeserializeObject<CoeffDataRow array>
+        )
 
     let private characterLevelMultipliers =
-        levelScalingData
-        |> Array.map (fun x -> (x.Level, x.PlayerElementLevelCo))
-        |> Map.ofArray
+        lazy (
+            levelScalingData.Force()
+            |> Array.map (fun x -> (x.Level, x.PlayerElementLevelCo))
+            |> Map.ofArray
+        )
 
     let private characterCrystallizeLevelMultipliers =
-        levelScalingData
-        |> Array.map (fun x -> (x.Level, x.PlayerShieldLevelCo))
-        |> Map.ofArray
+        lazy (
+            levelScalingData.Force()
+            |> Array.map (fun x -> (x.Level, x.PlayerShieldLevelCo))
+            |> Map.ofArray
+        )
 
     let private enemyLevelMultipliers =
-        levelScalingData
-        |> Array.map (fun x -> (x.Level, x.ElementLevelCo))
-        |> Map.ofArray
+        lazy (
+            levelScalingData.Force()
+            |> Array.map (fun x -> (x.Level, x.ElementLevelCo))
+            |> Map.ofArray
+        )
 
+    let loaded () =
+        levelScalingData.Force().Length > 0
+
+    /// Gets the character elemental coefficient for the provided level. Throws a MappingNotFoundException
+    /// if no mapping for the provided level exists. Note that most functions in the Data namespace perform
+    /// IO and can, in rare cases, fail with other exceptions.
     let getCharacterLevelMultiplier level =
-        match Map.tryFind level characterLevelMultipliers with
+        let cLevelMult = characterLevelMultipliers.Force()
+        match Map.tryFind level cLevelMult with
         | Some x -> x
-        | None -> raise (MappingNotFoundException($"No mapping found for level {level}"))
+        | None -> raise (MappingNotFoundException("No mapping found for the provided level.", level))
 
+    /// Gets the character crystallize coefficient for the provided level. Throws a MappingNotFoundException
+    /// if no mapping for the provided level exists. Note that most functions in the Data namespace perform
+    /// IO and can, in rare cases, fail with other exceptions.
     let getCharacterCrystallizeLevelMultiplier level =
-        match Map.tryFind level characterCrystallizeLevelMultipliers with
+        let cCrystallizeLevelMult = characterCrystallizeLevelMultipliers.Force()
+        match Map.tryFind level cCrystallizeLevelMult with
         | Some x -> x
-        | None -> raise (MappingNotFoundException($"No mapping found for level {level}"))
+        | None -> raise (MappingNotFoundException("No mapping found for the provided level.", level))
 
+    /// Gets the enemy elemental coefficient for the provided level. Throws a MappingNotFoundException
+    /// if no mapping for the provided level exists. Note that most functions in the Data namespace perform
+    /// IO and can, in rare cases, fail with other exceptions.
     let getEnemyLevelMultiplier level =
-        match Map.tryFind level enemyLevelMultipliers with
+        let eLevelMult = enemyLevelMultipliers.Force()
+        match Map.tryFind level eLevelMult with
         | Some x -> x
-        | None -> raise (MappingNotFoundException($"No mapping found for level {level}"))
+        | None -> raise (MappingNotFoundException("No mapping found for the provided level.", level))

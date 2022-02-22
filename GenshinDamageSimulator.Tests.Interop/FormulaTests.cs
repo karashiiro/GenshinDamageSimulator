@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace GenshinDamageSimulator.Tests
+namespace GenshinDamageSimulator.Tests.Interop
 {
     public class FormulaTests
     {
@@ -19,7 +19,7 @@ namespace GenshinDamageSimulator.Tests
 
             var testNpc1 = Entity.CreateEnemy(new BasicEntityData(2000, 500, 200,
                 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 100));
-            var testNpcState1 = new EntityState(EntityId.Create(2), 20000, 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAura>()));
+            var testNpcState1 = new EntityState(EntityId.Create(2), 20000, 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAuraData>()));
 
             var sim = SimulationState.Create();
             sim = sim.CombatantAdd(testNpc0, testNpcState0);

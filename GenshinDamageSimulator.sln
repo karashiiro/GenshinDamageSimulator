@@ -5,9 +5,11 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "GenshinDamageSimulator", "GenshinDamageSimulator\GenshinDamageSimulator.fsproj", "{64A4D989-3477-4E34-BE98-53458CDC1D73}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenshinDamageSimulator.Tests", "GenshinDamageSimulator.Tests\GenshinDamageSimulator.Tests.csproj", "{FC735CE9-B601-492A-B2DF-6CE7FA8B35C6}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "GenshinDamageSimulator.Data", "GenshinDamageSimulator.Data\GenshinDamageSimulator.Data.fsproj", "{4FA1ACE5-0494-4F5F-9BE5-87BB36FD7BD9}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GenshinDamageSimulator.Data", "GenshinDamageSimulator.Data\GenshinDamageSimulator.Data.fsproj", "{4FA1ACE5-0494-4F5F-9BE5-87BB36FD7BD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenshinDamageSimulator.Tests.Interop", "GenshinDamageSimulator.Tests.Interop\GenshinDamageSimulator.Tests.Interop.csproj", "{680E0F59-5E08-413A-B794-228C5AE96D12}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GenshinDamageSimulator.Tests", "GenshinDamageSimulator.Tests\GenshinDamageSimulator.Tests.fsproj", "{5B2DAF81-0EEE-4B47-9AA7-A1069D4DDAEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +21,18 @@ Global
 		{64A4D989-3477-4E34-BE98-53458CDC1D73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64A4D989-3477-4E34-BE98-53458CDC1D73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64A4D989-3477-4E34-BE98-53458CDC1D73}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FC735CE9-B601-492A-B2DF-6CE7FA8B35C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FC735CE9-B601-492A-B2DF-6CE7FA8B35C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FC735CE9-B601-492A-B2DF-6CE7FA8B35C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FC735CE9-B601-492A-B2DF-6CE7FA8B35C6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4FA1ACE5-0494-4F5F-9BE5-87BB36FD7BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4FA1ACE5-0494-4F5F-9BE5-87BB36FD7BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FA1ACE5-0494-4F5F-9BE5-87BB36FD7BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FA1ACE5-0494-4F5F-9BE5-87BB36FD7BD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{680E0F59-5E08-413A-B794-228C5AE96D12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{680E0F59-5E08-413A-B794-228C5AE96D12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{680E0F59-5E08-413A-B794-228C5AE96D12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{680E0F59-5E08-413A-B794-228C5AE96D12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B2DAF81-0EEE-4B47-9AA7-A1069D4DDAEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B2DAF81-0EEE-4B47-9AA7-A1069D4DDAEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B2DAF81-0EEE-4B47-9AA7-A1069D4DDAEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B2DAF81-0EEE-4B47-9AA7-A1069D4DDAEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

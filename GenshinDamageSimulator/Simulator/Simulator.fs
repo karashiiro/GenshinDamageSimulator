@@ -30,7 +30,7 @@ module Simulator =
                     Combatants = state.Combatants.Remove result.TargetId
                     LastEventResult = result |> CombatantRemoveResult
                     History = state :: state.History }
-        | None -> raise (EntityNotFoundException("Combatant not found", result.TargetId))
+        | None -> raise (EntityNotFoundException("Combatant not found.", result.TargetId))
 
     let addPartyMember (result: PartyAddEventResult) state =
         let cOpt = state.Combatants.TryFind result.TargetId
@@ -42,8 +42,8 @@ module Simulator =
                         Party = state.Party.Add (result.TargetId, c)
                         LastEventResult = result |> PartyAddResult
                         History = state :: state.History }
-               | _ -> raise (EntityNotFoundException("Character not found", result.TargetId))
-        | None -> raise (EntityNotFoundException("Character not found", result.TargetId))
+               | _ -> raise (EntityNotFoundException("Character not found.", result.TargetId))
+        | None -> raise (EntityNotFoundException("Character not found.", result.TargetId))
 
     let removePartyMember (result: PartyRemoveEventResult) state =
         let cOpt = state.Combatants.TryFind result.TargetId
@@ -53,7 +53,7 @@ module Simulator =
                     Party = state.Party.Remove result.TargetId
                     LastEventResult = result |> PartyRemoveResult
                     History = state :: state.History }
-        | None -> raise (EntityNotFoundException("Character not found", result.TargetId))
+        | None -> raise (EntityNotFoundException("Character not found.", result.TargetId))
 
     let combatantantUpdateFn f value =
         match value with
@@ -66,7 +66,7 @@ module Simulator =
         | Some aura
             -> (target, { targetState with
                             Hp = targetState.Hp - result.DamageAmount
-                            ElementalAuras = (ElementalAuraState.unwrap targetState.ElementalAuras).Change((ElementalAura.unwrapAuraData aura).Element, fun _ -> Some(aura)) |> ElementalAuraState })
+                            ElementalAuras = (ElementalAuraState.unwrap targetState.ElementalAuras).Change((ElementalAura.unwrap aura).Element, fun _ -> Some(aura)) |> ElementalAuraState })
         | None -> (target, { targetState with Hp = targetState.Hp - result.DamageAmount })
 
     let applyDamageResult (result: DamageEventResult) state =
@@ -86,7 +86,7 @@ module Simulator =
         | PartyAddResult r -> addPartyMember r
         | PartyRemoveResult r -> removePartyMember r
         | DamageResult r -> applyDamageResult r
-        | _ -> raise (InvalidEventResultException("No handler present for event result", eventResult))
+        | _ -> raise (InvalidEventResultException("No handler present for the produced event result.", eventResult))
 
     let doEvent state sourceId targetId =
         let sourceOption = state.Combatants.TryFind sourceId
