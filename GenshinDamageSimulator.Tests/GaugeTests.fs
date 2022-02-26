@@ -2,6 +2,7 @@
 
 open FsUnit
 open GenshinDamageSimulator
+open System
 open Xunit
 
 // https://library.keqingmains.com/combat-mechanics/elemental-effects/elemental-gauge-theory
@@ -55,7 +56,7 @@ module GaugeTests =
         dr |> should be (equal 7.5f)
 
     [<Fact>]
-    let ``Subtracting elemental units does not bring the elemental units below 0``() =
+    let ``Subtracting elemental units from each other does not bring the elemental units below 0``() =
         // "Fischl's charged shot applies 0.8A Electro aura and is triggered by Kaeya's E,
         // applying 2B Cryo. Superconduct occurs, and no aura is left behind as triggers
         // can only remove units, they can’t add aura/gauge."
@@ -65,10 +66,23 @@ module GaugeTests =
         eu |> should be (equal 0f)
 
     [<Fact>]
+    let ``Subtracting a scalar from elemental units does not bring the elemental units below 0``() =
+        let g = Gauge.ofUnits 1f
+        let eu, _ = g - 0.4f |> Gauge.unwrap
+        eu |> should be (equal 0.6f)
+
+    [<Fact>]
     let ``Subtracting a scalar from elemental units does not modify the decay rate``() =
         let g = Gauge.ofUnits 1f
         let eu, dr = g - 0.4f |> Gauge.unwrap
         eu |> should be (equal 0.6f)
+        dr |> should be (equal 11.875f)
+
+    [<Fact>]
+    let ``Gauge decay should produce correct results and not modify the decay rate``() =
+        let g = Gauge.ofUnits 1f |> Gauge.tax
+        let eu, dr = g |> Gauge.decay 5f |> Gauge.unwrap
+        float32 (Math.Round(float eu, 2)) |> should be (equal 0.38f)
         dr |> should be (equal 11.875f)
 
     [<Fact>]

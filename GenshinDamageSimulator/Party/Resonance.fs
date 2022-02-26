@@ -50,4 +50,4 @@ module Resonance =
             party
             |> getResonances
             |> Set.contains FerventFlames
-        if hasPyroResonance then 0.25f else 0.0f
+        if hasPyroResonance then 0.25f else 0f

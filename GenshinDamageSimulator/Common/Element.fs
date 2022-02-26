@@ -1,5 +1,6 @@
 ﻿namespace GenshinDamageSimulator
 
+[<RequireQualifiedAccess>]
 type Element =
     | Pyro
     | Hydro

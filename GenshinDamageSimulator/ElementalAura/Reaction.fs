@@ -5,11 +5,11 @@ type Reaction =
     | Overload
     | WeakMelt // Pyro <- Cryo
     | WeakVaporize // Hydro <- Pyro
-    | ElectroCharged
+    | ElectroCharged of float32 // Tick countdown in seconds
     | Frozen
     | Superconduct
     | StrongMelt // Cryo <- Pyro
     | Swirl
     | Crystallize
-    | Burning
+    | Burning of float32 // Tick countdown in seconds
     | Shattered // Frozen <- Physical

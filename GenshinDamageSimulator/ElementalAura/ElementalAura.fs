@@ -52,6 +52,16 @@ module ElementalAura =
     let gauge aura =
         (aura |> unwrap).Gauge
 
+    let isExpired aura =
+        let data = (aura |> unwrap)
+        not (data.Permanent) && (aura |> unwrap).Gauge |> Gauge.isEmpty
+
+    let decay s aura =
+        aura
+        |> unwrap
+        |> fun ad -> { ad with Gauge = ad.Gauge |> Gauge.decay s }
+        |> wrap
+
     let oldIfPermanent aura trigger =
         if aura.Permanent then aura else trigger
         |> wrap
@@ -64,12 +74,20 @@ module ElementalAura =
         | Overload | Superconduct -> 1f
         | _ -> 0f
 
-    let resolveGaugeElectroCharged aura trigger = // TODO aura tax
-        let newGaugeAura = aura.Gauge - reactionModifier ElectroCharged * trigger.Gauge
-        if newGaugeAura |> Gauge.isEmpty then
-            Seq.singleton (wrap trigger)
+    /// Resolves a gauge interaction when the result can have both the aura and trigger
+    /// simultaneously (Electro-Charged, Burning).
+    let resolveGaugeDouble aura trigger =
+        // TODO: For now, I'm assuming the reaction modifier for these is 1x since it doesn't seem to
+        // be stated on KQM. I should test this in-game.
+        let newAura = wrap { trigger with Gauge = trigger.Gauge |> Gauge.tax }
+        if aura.Permanent then
+            [| wrap aura; newAura |]
         else
-            [|wrap { aura with Gauge = newGaugeAura }; wrap trigger|]
+            let auraGauge = aura.Gauge - trigger.Gauge
+            if auraGauge |> Gauge.isEmpty then
+                [| newAura |]
+            else
+                [| wrap { aura with Gauge = auraGauge }; newAura |]
 
     let resolveGaugeAdd aura trigger =
         if aura.Permanent then
@@ -105,47 +123,46 @@ module ElementalAura =
         | (PyroAura p, CryoAura c) -> resolveGauge p c WeakMelt, Some(WeakMelt)
         | (PyroAura p, AnemoAura a) -> resolveGauge p a Swirl, Some(Swirl) // TODO multiple enemies
         | (PyroAura p, GeoAura g) -> resolveGauge p g Crystallize, Some(Crystallize)
-        | (PyroAura p, DendroAura d) -> [|PyroAura(p); DendroAura(d)|], Some(Burning) // TODO
+        | (PyroAura p, DendroAura d) -> resolveGaugeDouble p d, Some(Burning 0.25f)
         // Hydro aura reactions
         | (HydroAura h, PyroAura p) -> resolveGauge h p WeakVaporize, Some(WeakVaporize)
-        | (HydroAura h, ElectroAura e) -> resolveGaugeElectroCharged h e, Some(ElectroCharged)
+        | (HydroAura h, ElectroAura e) -> resolveGaugeDouble h e, Some(ElectroCharged 1f)
         | (HydroAura _, CryoAura c) -> Seq.singleton (CryoAura(c)), Some(Frozen) // TODO
         | (HydroAura h, AnemoAura a) -> resolveGauge h a Swirl, Some(Swirl) // TODO multiple enemies
         | (HydroAura h, GeoAura g) -> resolveGauge h g Crystallize, Some(Crystallize)
+        | (HydroAura h, DendroAura d) -> [| wrap h; wrap { d with Gauge = d.Gauge |> Gauge.tax } |], None
         // Electro aura reactions
-        | (ElectroAura e, HydroAura h) -> resolveGaugeElectroCharged e h, Some(ElectroCharged)
+        | (ElectroAura e, HydroAura h) -> resolveGaugeDouble e h, Some(ElectroCharged 1f)
         | (ElectroAura e, PyroAura p) -> resolveGauge e p Overload, Some(Overload)
         | (ElectroAura e, CryoAura c) -> resolveGauge e c Superconduct, Some(Superconduct)
         | (ElectroAura e, AnemoAura a) -> resolveGauge e a Swirl, Some(Swirl) // TODO multiple enemies
         | (ElectroAura e, GeoAura g) -> resolveGauge e g Crystallize, Some(Crystallize)
+        | (ElectroAura e, DendroAura d) -> [| wrap e; wrap { d with Gauge = d.Gauge |> Gauge.tax } |], None
         // Cryo aura reactions
         | (CryoAura _, HydroAura h) -> Seq.singleton (HydroAura(h)), Some(Frozen) // TODO
         | (CryoAura c, PyroAura p) -> resolveGauge c p StrongMelt, Some(StrongMelt)
         | (CryoAura c, ElectroAura e) -> resolveGauge c e Superconduct, Some(Superconduct)
         | (CryoAura c, AnemoAura a) -> resolveGauge c a Swirl, Some(Swirl) // TODO multiple enemies
         | (CryoAura c, GeoAura g) -> resolveGauge c g Crystallize, Some(Crystallize)
+        | (CryoAura c, DendroAura d) -> [| wrap c; wrap { d with Gauge = d.Gauge |> Gauge.tax } |], None
         // Anemo aura reactions
         | (AnemoAura a, PyroAura p) -> resolveGauge a p Swirl, Some(Swirl) // TODO multiple enemies
         | (AnemoAura a, HydroAura h) -> resolveGauge a h Swirl, Some(Swirl) // TODO multiple enemies
         | (AnemoAura a, ElectroAura e) -> resolveGauge a e Swirl, Some(Swirl) // TODO multiple enemies
         | (AnemoAura a, CryoAura c) -> resolveGauge a c Swirl, Some(Swirl) // TODO multiple enemies
+        | (AnemoAura a, GeoAura _) -> [| wrap a |], None
+        | (AnemoAura a, DendroAura d) -> [| wrap a; wrap { d with Gauge = d.Gauge |> Gauge.tax } |], None
         // Geo aura reactions
         | (GeoAura g, PyroAura p) -> resolveGauge g p Crystallize, Some(Crystallize)
         | (GeoAura g, HydroAura h) -> resolveGauge g h Crystallize, Some(Crystallize)
         | (GeoAura g, ElectroAura e) -> resolveGauge g e Crystallize, Some(Crystallize)
         | (GeoAura g, CryoAura c) -> resolveGauge g c Crystallize, Some(Crystallize)
+        | (GeoAura g, AnemoAura _) -> [| wrap g |], None
+        | (GeoAura g, DendroAura d) -> [| wrap g; wrap { d with Gauge = d.Gauge |> Gauge.tax } |], None
         // Dendro aura reactions
-        | (DendroAura d, PyroAura p) -> [|DendroAura(d); PyroAura(p)|], Some(Burning) // TODO
-        // All others (Anemo/Geo/Dendro)
-        | (AnemoAura a, GeoAura g) -> oldIfPermanent a g, None
-        | (AnemoAura a, DendroAura d) -> oldIfPermanent a d, None
-        | (GeoAura g, AnemoAura a) -> oldIfPermanent g a, None
-        | (GeoAura g, DendroAura d) -> oldIfPermanent g d, None
-        | (DendroAura d, HydroAura h) -> oldIfPermanent d h, None
-        | (DendroAura d, ElectroAura e) -> oldIfPermanent d e, None
-        | (DendroAura d, CryoAura c) -> oldIfPermanent d c, None
-        | (DendroAura d, AnemoAura a) -> oldIfPermanent d a, None
-        | (DendroAura d, GeoAura g) -> oldIfPermanent d g, None
-        | (HydroAura h, DendroAura d) -> oldIfPermanent h d, None
-        | (ElectroAura e, DendroAura d) -> oldIfPermanent e d, None
-        | (CryoAura c, DendroAura d) -> oldIfPermanent c d, None
+        | (DendroAura d, PyroAura p) -> resolveGaugeDouble d p, Some(Burning 0.25f)
+        | (DendroAura d, HydroAura h) -> [| wrap d; wrap { h with Gauge = h.Gauge |> Gauge.tax } |], None
+        | (DendroAura d, ElectroAura e) -> [| wrap d; wrap { e with Gauge = e.Gauge |> Gauge.tax } |], None
+        | (DendroAura d, CryoAura c) -> [| wrap d; wrap { c with Gauge = c.Gauge |> Gauge.tax } |], None
+        | (DendroAura d, AnemoAura _) -> [| wrap d |], None
+        | (DendroAura d, GeoAura _) -> [| wrap d |], None

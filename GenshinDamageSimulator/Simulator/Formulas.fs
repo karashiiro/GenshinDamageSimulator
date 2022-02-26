@@ -15,7 +15,7 @@ module Formulas =
         match reaction with
             | Superconduct -> 1f
             | Swirl -> 1.2f
-            | ElectroCharged -> 2.4f
+            | ElectroCharged _ -> 2.4f
             | Shattered -> 3f
             | Overload -> 4f
             | _ -> 0f
@@ -59,6 +59,10 @@ module Formulas =
         16f * (float32 em / float32 (em + 2000u))
 
     let calcTransformativeDamageCharacter reaction characterLevel transformativeBonus reactionBonus =
+        // TODO: Decide if we're going to use the datamined coefficients or the KQM formula.
+        // I like not depending on the datamine being updated, but I think the KQM formula
+        // was determined using polynomial regression, which would make it marginally less
+        // accurate.
         let levelMult = ElementalCoefficients.getCharacterLevelMultiplier characterLevel
         uint32 (levelMult * getTransformativeReactionMultiplier reaction * (1f + transformativeBonus + reactionBonus))
 

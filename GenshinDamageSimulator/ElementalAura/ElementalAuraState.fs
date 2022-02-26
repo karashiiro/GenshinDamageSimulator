@@ -7,6 +7,10 @@ exception InvalidElementalAuraStateException of string * Element
 
 type ElementalAuraState = ElementalAuraState of Map<Element, ElementalAura>
 
+type ElementalAuraStateResult =
+    { ElectroChargedTicks: int
+      BurningTicks: int }
+
 module ElementalAuraState =
     let wrap state =
         state |> ElementalAuraState
@@ -16,6 +20,9 @@ module ElementalAuraState =
         state'
 
     let empty = Map.empty |> wrap
+
+    let add k v state =
+        state |> unwrap |> Map.add k v |> wrap
 
     let contains element state =
         state |> unwrap |> Map.containsKey element
@@ -32,6 +39,115 @@ module ElementalAuraState =
     let isEmpty state =
         state |> unwrap |> Map.isEmpty
 
+    /// Calculates the aura result of a single tick of Electro-Charged.
+    let tickec aura =
+        // https://library.keqingmains.com/combat-mechanics/elemental-effects/elemental-gauge-theory#electro-charged
+        match aura with
+        | ElectroAura a -> { a with Gauge = a.Gauge - 0.4f } |> ElementalAura.wrap
+        | HydroAura a -> { a with Gauge = a.Gauge - 0.4f } |> ElementalAura.wrap
+        | _ -> aura
+
+    /// Calculates the aura result of Electro-Charged application over the provided time in seconds,
+    /// returning the updated auras, reaction state, and number of ticks that occurred.
+    let rec elapseec electro hydro r s ticks =
+        // https://library.keqingmains.com/evidence/combat-mechanics/elemental-effects/transformative-reactions#ec-ticks-only-consume-gauge-when-they-deal-damage
+        // The gauges still decay normally, so we need to account for this at each tick in this function
+        let duration a = a |> ElementalAura.gauge |> Gauge.duration
+        let extraTick a = a |> duration |> fun d -> 1f > d && d >= 0.5f
+        match r with
+        | Some (ElectroCharged t) ->
+            if ElementalAura.isExpired electro || ElementalAura.isExpired hydro then
+                electro, hydro, None, ticks
+            elif s < 0f then // Elapsed time expired
+                electro, hydro, r, ticks
+            elif s < t then // Not enough time to trigger an EC tick
+                (electro |> ElementalAura.decay s), (hydro |> ElementalAura.decay s), Some (ElectroCharged (t - s)), ticks
+            else // Handle decay and tick
+                let s' = s - t
+                let electro' = electro |> ElementalAura.decay t |> tickec
+                let hydro' = hydro |> ElementalAura.decay t |> tickec
+                // Handle the extra tick that occurs when the remaining
+                // duration d of either aura is 1.0>d>=0.5
+                if extraTick electro' || extraTick hydro' then
+                    elapseec electro' hydro' (Some (ElectroCharged 1f)) s' (ticks + 2)
+                else
+                    elapseec electro' hydro' (Some (ElectroCharged 1f)) s' (ticks + 1)
+        | _ -> electro, hydro, r, 0
+
+    /// Calculates the aura result of Burning application over the provided time in seconds,
+    /// returning the updated auras, reaction state, and number of ticks that occurred.
+    let rec elapseb pyro dendro r s ticks =
+        let decayDendro d p s =
+            let dg = d |> ElementalAura.gauge
+            let dd = d |> ElementalAura.gauge |> Gauge.dr
+            let pd = p |> ElementalAura.gauge |> Gauge.dr
+            { ElementalAura.unwrap d with Gauge = dg - s / (dd + pd) } |> ElementalAura.wrap
+        match r with
+        | Some (Burning t) ->
+            if ElementalAura.isExpired pyro || ElementalAura.isExpired dendro then
+                pyro, dendro, None, ticks
+            elif s < 0f then // Elapsed time expired
+                pyro, dendro, r, ticks
+            elif s < t then // Not enough time to trigger a Burning tick
+                (pyro |> ElementalAura.decay s), (dendro |> ElementalAura.decay s), Some (ElectroCharged (t - s)), ticks
+            else // Handle decay and tick
+                let s' = s - t
+                let pyro' = pyro |> ElementalAura.decay s'
+                let pyroTrigger = // Pyro gets refreshed with a 2U AoE
+                    { Element = Element.Pyro
+                      ApplicationSkillId = 0u
+                      ApplicationSkillIcdMs = 0f
+                      Gauge = Gauge.ofUnits 2f
+                      Permanent = false }
+                let pyro'' = (ElementalAura.resolveGaugeAdd (ElementalAura.unwrap pyro') pyroTrigger |> Array.ofSeq).[0]
+                let dendro' = decayDendro dendro pyro s'
+                elapseb pyro'' dendro' (Some (Burning 0.25f)) s' (ticks + 1)
+        | _ -> pyro, dendro, r, 0
+
+    /// Calculates the aura result of gauge decay over the provided time in seconds.
+    let elapse1 aura s =
+        let ad = aura |> ElementalAura.unwrap
+        let ad' = { ad with Gauge = ad.Gauge |> Gauge.decay s }
+        ad' |> ElementalAura.wrap
+
+    /// Calculates the resulting aura state after elapsing the specified time in seconds, considering reactions.
+    let elapse state reactions s =
+        // TODO: This is a mess
+        let mutable state' = state
+        let mutable reactions' = List.empty
+        let mutable result = { ElectroChargedTicks = 0; BurningTicks = 0 }
+        for r in reactions do
+            match r with
+            | ElectroCharged _ ->
+                let electro = state |> get Element.Electro
+                let hydro = state |> get Element.Hydro
+                let electro', hydro', r', ticks = elapseec electro hydro (Some r) s 0
+                if not (electro' |> ElementalAura.isExpired) then
+                    state' <- add Element.Electro electro' <| state'
+                if not (hydro' |> ElementalAura.isExpired) then
+                    state' <- add Element.Hydro hydro' <| state'
+                match r' with
+                | Some r'' -> reactions' <- r'' :: reactions'
+                | None -> ()
+                result <- { result with ElectroChargedTicks = ticks }
+            | Burning _ ->
+                let pyro = state |> get Element.Pyro
+                let dendro = state |> get Element.Dendro
+                let pyro', dendro', r', ticks = elapseb pyro dendro (Some r) s 0
+                if not (pyro' |> ElementalAura.isExpired) then
+                    state' <- add Element.Pyro dendro' <| state'
+                if not (dendro' |> ElementalAura.isExpired) then
+                    state' <- add Element.Dendro dendro' <| state'
+                match r' with
+                | Some r'' -> reactions' <- r'' :: reactions'
+                | None -> ()
+                result <- { result with BurningTicks = ticks }
+            | _ -> ()
+        for k, v in state |> unwrap |> Map.toSeq do
+            if not (state' |> contains k) then
+                state' <- add k v <| state'
+        state', reactions', result
+
     let interactEmpty state trigger =
         let element = ElementalAura.element trigger
         match element with
@@ -43,6 +159,7 @@ module ElementalAuraState =
             wrap newState, Seq.empty
 
     let interactNotEmpty state trigger =
+        // TODO: This is a mess
         state
         |> unwrap
         |> Map.values
