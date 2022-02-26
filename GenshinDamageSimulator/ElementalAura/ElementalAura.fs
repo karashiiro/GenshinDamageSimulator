@@ -49,7 +49,7 @@ module ElementalAura =
         | GeoAura a -> a
         | DendroAura a -> a
 
-    let gaugeUnits aura =
+    let gauge aura =
         (aura |> unwrap).Gauge
 
     let oldIfPermanent aura trigger =
@@ -59,21 +59,13 @@ module ElementalAura =
 
     let reactionModifier reaction =
         match reaction with
-        | StrongMelt | StrongVaporize -> 2.5f
-        | WeakMelt | WeakVaporize -> 0.625f
-        | Overload | Superconduct -> 1.25f
-        | Crystallize | Swirl -> 0.625f
-        | ElectroCharged -> 0.4f
+        | StrongMelt | StrongVaporize -> 2f
+        | Crystallize | Swirl | WeakMelt | WeakVaporize -> 0.5f
+        | Overload | Superconduct -> 1f
         | _ -> 0f
 
-    let calcAddedGauge aura trigger =
-        aura.Gauge + trigger.Gauge
-
-    let calcReactionGauge aura trigger reaction =
-        aura.Gauge - reactionModifier reaction * trigger.Gauge
-
     let resolveGaugeElectroCharged aura trigger = // TODO aura tax
-        let newGaugeAura = calcReactionGauge aura trigger ElectroCharged
+        let newGaugeAura = aura.Gauge - reactionModifier ElectroCharged * trigger.Gauge
         if newGaugeAura |> Gauge.isEmpty then
             Seq.singleton (wrap trigger)
         else
@@ -85,8 +77,8 @@ module ElementalAura =
         elif trigger.Permanent then
             Seq.singleton (wrap trigger)
         else
-            let newGauge = calcAddedGauge aura trigger
-            if newGauge |> Gauge.isEmpty then Seq.empty else Seq.singleton (wrap { aura with Gauge = newGauge })
+            let newGauge = aura.Gauge + (Gauge.tax trigger.Gauge)
+            if newGauge |> Gauge.isEmpty then Seq.empty else Seq.singleton (wrap { trigger with Gauge = newGauge })
 
     let resolveGauge aura trigger reaction =
         if aura.Permanent then
@@ -94,7 +86,7 @@ module ElementalAura =
         elif trigger.Permanent then
             Seq.singleton (wrap trigger)
         else
-            let newGauge = calcReactionGauge aura trigger reaction
+            let newGauge = aura.Gauge - reactionModifier reaction * trigger.Gauge
             if newGauge |> Gauge.isEmpty then Seq.empty else Seq.singleton (wrap { aura with Gauge = newGauge })
 
     let interact aura trigger =

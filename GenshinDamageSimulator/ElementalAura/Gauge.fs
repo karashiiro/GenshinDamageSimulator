@@ -37,7 +37,7 @@ module Gauge =
         (initialDuration e) / (e * 0.8f)
 
     /// Returns the gauge for the provided elemental unit value.
-    let ofGauge e =
+    let ofUnits e =
         (e, initialDecay e) ||> wrap
 
     /// Applies the aura tax to this gauge.
