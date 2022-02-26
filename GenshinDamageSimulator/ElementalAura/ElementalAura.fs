@@ -66,15 +66,27 @@ module ElementalAura =
         | ElectroCharged -> 0.4f
         | _ -> 0f
 
-    let calcUpdatedGaugeRaw aura trigger reaction =
+    let calcAddedGauge aura trigger =
+        aura.Gauge + trigger.Gauge
+
+    let calcReactionGauge aura trigger reaction =
         aura.Gauge - reactionModifier reaction * trigger.Gauge
 
     let resolveGaugeElectroCharged aura trigger = // TODO aura tax
-        let newGaugeAura = calcUpdatedGaugeRaw aura trigger ElectroCharged
+        let newGaugeAura = calcReactionGauge aura trigger ElectroCharged
         if newGaugeAura |> Gauge.isEmpty then
             Seq.singleton (wrap trigger)
         else
             [|wrap { aura with Gauge = newGaugeAura }; wrap trigger|]
+
+    let resolveGaugeAdd aura trigger =
+        if aura.Permanent then
+            Seq.singleton (wrap aura)
+        elif trigger.Permanent then
+            Seq.singleton (wrap trigger)
+        else
+            let newGauge = calcAddedGauge aura trigger
+            if newGauge |> Gauge.isEmpty then Seq.empty else Seq.singleton (wrap { aura with Gauge = newGauge })
 
     let resolveGauge aura trigger reaction =
         if aura.Permanent then
@@ -82,19 +94,19 @@ module ElementalAura =
         elif trigger.Permanent then
             Seq.singleton (wrap trigger)
         else
-            let newGauge = calcUpdatedGaugeRaw aura trigger reaction
+            let newGauge = calcReactionGauge aura trigger reaction
             if newGauge |> Gauge.isEmpty then Seq.empty else Seq.singleton (wrap { aura with Gauge = newGauge })
 
-    let interact aura trigger = // TODO aura tax
+    let interact aura trigger =
         match (aura, trigger) with
         // Same-element triggers
-        | (PyroAura pOld, PyroAura pNew) -> oldIfPermanent pOld pNew, None
-        | (HydroAura hOld, HydroAura hNew) -> oldIfPermanent hOld hNew, None
-        | (ElectroAura eOld, ElectroAura eNew) -> oldIfPermanent eOld eNew, None
-        | (CryoAura cOld, CryoAura cNew) -> oldIfPermanent cOld cNew, None
-        | (AnemoAura aOld, AnemoAura aNew) -> oldIfPermanent aOld aNew, None
-        | (GeoAura gOld, GeoAura gNew) -> oldIfPermanent gOld gNew, None
-        | (DendroAura dOld, DendroAura dNew) -> oldIfPermanent dOld dNew, None
+        | (PyroAura pOld, PyroAura pNew) -> resolveGaugeAdd pOld pNew, None
+        | (HydroAura hOld, HydroAura hNew) -> resolveGaugeAdd hOld hNew, None
+        | (ElectroAura eOld, ElectroAura eNew) -> resolveGaugeAdd eOld eNew, None
+        | (CryoAura cOld, CryoAura cNew) -> resolveGaugeAdd cOld cNew, None
+        | (AnemoAura aOld, AnemoAura aNew) -> resolveGaugeAdd aOld aNew, None
+        | (GeoAura gOld, GeoAura gNew) -> resolveGaugeAdd gOld gNew, None
+        | (DendroAura dOld, DendroAura dNew) -> resolveGaugeAdd dOld dNew, None
         // Pyro aura reactions
         | (PyroAura p, HydroAura h) -> resolveGauge p h StrongVaporize, Some(StrongVaporize)
         | (PyroAura p, ElectroAura e) -> resolveGauge p e Overload, Some(Overload)
