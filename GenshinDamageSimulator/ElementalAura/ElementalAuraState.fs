@@ -34,8 +34,13 @@ module ElementalAuraState =
 
     let interactEmpty state trigger =
         let element = ElementalAura.element trigger
-        let newState = state |> unwrap |> Map.add element trigger // TODO: aura tax
-        wrap newState, Seq.empty
+        match element with
+        | Element.Geo | Element.Anemo -> state, Seq.empty
+        | _ ->
+            let auraData = ElementalAura.unwrap trigger
+            let taxedGu = auraData.GaugeUnits |> GaugeUnits.unwrap |> (*) 0.8f |> GaugeUnits.wrap
+            let newState = state |> unwrap |> Map.add element (ElementalAura.wrap { auraData with GaugeUnits = taxedGu })
+            wrap newState, Seq.empty
 
     let interactNotEmpty state trigger =
         state

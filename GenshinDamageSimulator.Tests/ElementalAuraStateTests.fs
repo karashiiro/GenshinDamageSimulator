@@ -78,6 +78,37 @@ module ElementalAuraStateTests =
         property state trigger |> should be True
 
     [<Fact>]
+    let ``Test that applying a Geo aura on an unaspected state does nothing``() =
+        let property s t =
+            ElementalAuraState.interact s t
+            ||> fun ns r -> ns, ElementalAuraState.isEmpty ns && Seq.isEmpty r
+            ||> fun ns result -> result && ``follows universal properties`` <| ns
+        let state = ElementalAuraState.empty
+        let trigger = createGenericTrigger 4f 0u Element.Geo
+        property state trigger |> should be True
+
+    [<Fact>]
+    let ``Test that applying an Anemo aura on an unaspected state does nothing``() =
+        let property s t =
+            ElementalAuraState.interact s t
+            ||> fun ns r -> ns, ElementalAuraState.isEmpty ns && Seq.isEmpty r
+            ||> fun ns result -> result && ``follows universal properties`` <| ns
+        let state = ElementalAuraState.empty
+        let trigger = createGenericTrigger 4f 0u Element.Anemo
+        property state trigger |> should be True
+
+    [<Fact>]
+    let ``Test that applying an aura applies the 0.8x aura tax``() =
+        let property s t =
+            ElementalAuraState.interact s t
+            ||> fun ns r -> ns, ns |> containsCryo && Seq.isEmpty r
+            ||> fun ns result -> ns, result && GaugeUnits.unwrap ((ns |> ElementalAuraState.get Element.Cryo |> ElementalAura.unwrap).GaugeUnits) = 1.6f
+            ||> fun ns result -> result && ``follows universal properties`` <| ns
+        let state = ElementalAuraState.empty
+        let trigger = createGenericTrigger 2f 0u Element.Cryo
+        property state trigger |> should be True
+
+    [<Fact>]
     let ``Test that applying an aura on a state that already has that aura will replace it without any reaction``() =
         let property s t1 t2 =
             // First interaction check
