@@ -268,16 +268,18 @@ module ElementalAuraStateTests =
 
     [<Fact>]
     let ``Test that creating a 50% modifier transformative reaction subtracts the gauges correctly (Crystallize)``() =
-        let t1 = createGenericTrigger 2f 0u Element.Hydro
-        let t2 = createGenericTrigger 2f 1u Element.Geo
+        // "Using a 1GU Geo trigger on a 0.8A Electro aura will result in Crystallize, subtracting
+        // 0.5GU and leaving 0.3A of Electro aura."
+        let t1 = createGenericTrigger 1f 0u Element.Electro
+        let t2 = createGenericTrigger 1f 1u Element.Geo
         let state = ElementalAuraState.empty
         let state, _ = ElementalAuraState.interact state t1
         let state, reactions = ElementalAuraState.interact state t2
         reactions |> should contain Crystallize
-        let g = state |> ElementalAuraState.get Element.Hydro |> ElementalAura.gauge
+        let g = state |> ElementalAuraState.get Element.Electro |> ElementalAura.gauge
         let eu, dr = g |> Gauge.unwrap
-        eu |> should be (equal 0.6f)
-        dr |> should be (equal 7.5f)
+        eu |> should be (equal 0.3f)
+        dr |> should be (equal 11.875f)
 
     [<Fact>]
     let ``Test that creating a 50% modifier transformative reaction subtracts the gauges correctly (Swirl)``() =
