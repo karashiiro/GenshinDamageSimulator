@@ -103,32 +103,32 @@ module ElementalAura =
         | (PyroAura p, HydroAura h) -> resolveGauge p h StrongVaporize, Some(StrongVaporize)
         | (PyroAura p, ElectroAura e) -> resolveGauge p e Overload, Some(Overload)
         | (PyroAura p, CryoAura c) -> resolveGauge p c WeakMelt, Some(WeakMelt)
-        | (PyroAura p, AnemoAura a) -> resolveGauge p a Swirl, Some(Swirl)
+        | (PyroAura p, AnemoAura a) -> resolveGauge p a Swirl, Some(Swirl) // TODO multiple enemies
         | (PyroAura p, GeoAura g) -> resolveGauge p g Crystallize, Some(Crystallize)
         | (PyroAura p, DendroAura d) -> [|PyroAura(p); DendroAura(d)|], Some(Burning) // TODO
         // Hydro aura reactions
         | (HydroAura h, PyroAura p) -> resolveGauge h p WeakVaporize, Some(WeakVaporize)
         | (HydroAura h, ElectroAura e) -> resolveGaugeElectroCharged h e, Some(ElectroCharged)
         | (HydroAura _, CryoAura c) -> Seq.singleton (CryoAura(c)), Some(Frozen) // TODO
-        | (HydroAura h, AnemoAura a) -> resolveGauge h a Swirl, Some(Swirl)
+        | (HydroAura h, AnemoAura a) -> resolveGauge h a Swirl, Some(Swirl) // TODO multiple enemies
         | (HydroAura h, GeoAura g) -> resolveGauge h g Crystallize, Some(Crystallize)
         // Electro aura reactions
         | (ElectroAura e, HydroAura h) -> resolveGaugeElectroCharged e h, Some(ElectroCharged)
         | (ElectroAura e, PyroAura p) -> resolveGauge e p Overload, Some(Overload)
         | (ElectroAura e, CryoAura c) -> resolveGauge e c Superconduct, Some(Superconduct)
-        | (ElectroAura e, AnemoAura a) -> resolveGauge e a Swirl, Some(Swirl)
+        | (ElectroAura e, AnemoAura a) -> resolveGauge e a Swirl, Some(Swirl) // TODO multiple enemies
         | (ElectroAura e, GeoAura g) -> resolveGauge e g Crystallize, Some(Crystallize)
         // Cryo aura reactions
         | (CryoAura _, HydroAura h) -> Seq.singleton (HydroAura(h)), Some(Frozen) // TODO
         | (CryoAura c, PyroAura p) -> resolveGauge c p StrongMelt, Some(StrongMelt)
         | (CryoAura c, ElectroAura e) -> resolveGauge c e Superconduct, Some(Superconduct)
-        | (CryoAura c, AnemoAura a) -> resolveGauge c a Swirl, Some(Swirl)
+        | (CryoAura c, AnemoAura a) -> resolveGauge c a Swirl, Some(Swirl) // TODO multiple enemies
         | (CryoAura c, GeoAura g) -> resolveGauge c g Crystallize, Some(Crystallize)
         // Anemo aura reactions
-        | (AnemoAura a, PyroAura p) -> resolveGauge a p Swirl, Some(Swirl)
-        | (AnemoAura a, HydroAura h) -> resolveGauge a h Swirl, Some(Swirl)
-        | (AnemoAura a, ElectroAura e) -> resolveGauge a e Swirl, Some(Swirl)
-        | (AnemoAura a, CryoAura c) -> resolveGauge a c Swirl, Some(Swirl)
+        | (AnemoAura a, PyroAura p) -> resolveGauge a p Swirl, Some(Swirl) // TODO multiple enemies
+        | (AnemoAura a, HydroAura h) -> resolveGauge a h Swirl, Some(Swirl) // TODO multiple enemies
+        | (AnemoAura a, ElectroAura e) -> resolveGauge a e Swirl, Some(Swirl) // TODO multiple enemies
+        | (AnemoAura a, CryoAura c) -> resolveGauge a c Swirl, Some(Swirl) // TODO multiple enemies
         // Geo aura reactions
         | (GeoAura g, PyroAura p) -> resolveGauge g p Crystallize, Some(Crystallize)
         | (GeoAura g, HydroAura h) -> resolveGauge g h Crystallize, Some(Crystallize)
