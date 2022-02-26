@@ -65,6 +65,13 @@ module GaugeTests =
         eu |> should be (equal 0f)
 
     [<Fact>]
+    let ``Subtracting a scalar from elemental units does not modify the decay rate``() =
+        let g = Gauge.ofUnits 1f
+        let eu, dr = g - 0.4f |> Gauge.unwrap
+        eu |> should be (equal 0.6f)
+        dr |> should be (equal 11.875f)
+
+    [<Fact>]
     let ``Multiplying elemental units by a scalar does not modify the decay rate``() =
         let g = Gauge.ofUnits 1f
         let eu, dr = g * 2f |> Gauge.unwrap

@@ -59,8 +59,13 @@ module Gauge =
         let eu2, _ = tg |> unwrap
         (max 0f (eu1 - eu2), dr1) ||> wrap
 
-    /// Gauge multiplication. Gauges may only be multiplied by a scalar.
-    let mul g m =
+    /// Scalar gauge subtraction. This operation does not modify the decay rate.
+    let subs g m =
+        let eu, dr = g |> unwrap
+        (eu - m, dr) ||> wrap
+
+    /// Scalar gauge multiplication. This operation does not modify the decay rate.
+    let muls g m =
         let eu, dr = g |> unwrap
         (eu * m, dr) ||> wrap
 
@@ -73,8 +78,11 @@ type Gauge with
     /// go below zero.
     static member (-) (ag, tg) = Gauge.sub ag tg
 
-    /// Gauge multiplication. Gauges may only be multiplied by a scalar.
-    static member (*) (g, m) = Gauge.mul g m
+    /// Scalar gauge subtraction. This operation does not modify the decay rate.
+    static member (-) (g, m) = Gauge.subs g m
 
-    /// Gauge multiplication. Gauges may only be multiplied by a scalar.
-    static member (*) (m, g) = Gauge.mul g m
+    /// Scalar gauge multiplication. This operation does not modify the decay rate.
+    static member (*) (g, m) = Gauge.muls g m
+
+    /// Scalar gauge multiplication. This operation does not modify the decay rate.
+    static member (*) (m, g) = Gauge.muls g m
