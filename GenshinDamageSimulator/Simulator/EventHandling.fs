@@ -46,7 +46,7 @@ module EventHandling =
                         -> Some({ Element = element
                                   ApplicationSkillId = 0u
                                   ApplicationSkillIcdMs = 0f
-                                  GaugeUnits = 0f |> GaugeUnits
+                                  Gauge = 0f |> Gauge.ofGauge
                                   Permanent = false } |> ElementalAura.wrap)
                     | None -> None }
 

@@ -22,11 +22,11 @@ module ElementalAuraStateTests =
 
     let getCryoData state = state |> ElementalAuraState.get Element.Cryo |> getData
 
-    let createGenericTrigger gu id element =
+    let createGenericTrigger eg id element =
         { Element = element
           ApplicationSkillId = id
           ApplicationSkillIcdMs = 200f
-          GaugeUnits = GaugeUnits.wrap gu
+          Gauge = Gauge.ofGauge eg
           Permanent = false } |> ElementalAura.wrap
 
     let createPermanentTrigger gu id element =
@@ -98,11 +98,11 @@ module ElementalAuraStateTests =
         property state trigger |> should be True
 
     [<Fact>]
-    let ``Test that applying an aura applies the 0.8x aura tax``() =
+    let ``Test that applying an aura applies the 20% aura tax``() =
         let property s t =
             ElementalAuraState.interact s t
             ||> fun ns r -> ns, ns |> containsCryo && Seq.isEmpty r
-            ||> fun ns result -> ns, result && GaugeUnits.unwrap ((ns |> ElementalAuraState.get Element.Cryo |> ElementalAura.unwrap).GaugeUnits) = 1.6f
+            ||> fun ns result -> ns, result && ns |> ElementalAuraState.get Element.Cryo |> ElementalAura.gaugeUnits |> Gauge.eu = 1.6f
             ||> fun ns result -> result && ``follows universal properties`` <| ns
         let state = ElementalAuraState.empty
         let trigger = createGenericTrigger 2f 0u Element.Cryo

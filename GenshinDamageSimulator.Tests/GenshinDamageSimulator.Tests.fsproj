@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -10,6 +10,7 @@
   <ItemGroup>
     <Compile Include="ElementalAuraStateTests.fs" />
     <Compile Include="DataTests.fs" />
+    <Compile Include="GaugeTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

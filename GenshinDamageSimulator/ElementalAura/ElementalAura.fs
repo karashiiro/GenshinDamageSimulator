@@ -6,7 +6,7 @@ type ElementalAuraData =
     { Element: Element
       ApplicationSkillId: uint32 // Used for comparing ICDs
       ApplicationSkillIcdMs: float32
-      GaugeUnits: GaugeUnits
+      Gauge: Gauge
       Permanent: bool }
 
 type ElementalAura =
@@ -49,6 +49,9 @@ module ElementalAura =
         | GeoAura a -> a
         | DendroAura a -> a
 
+    let gaugeUnits aura =
+        (aura |> unwrap).Gauge
+
     let oldIfPermanent aura trigger =
         if aura.Permanent then aura else trigger
         |> wrap
@@ -64,14 +67,14 @@ module ElementalAura =
         | _ -> 0f
 
     let calcUpdatedGaugeRaw aura trigger reaction =
-        (GaugeUnits.unwrap aura.GaugeUnits) - reactionModifier reaction * (GaugeUnits.unwrap trigger.GaugeUnits)
+        aura.Gauge - reactionModifier reaction * trigger.Gauge
 
     let resolveGaugeElectroCharged aura trigger = // TODO aura tax
-        let newGaugeUnitsAura = calcUpdatedGaugeRaw aura trigger ElectroCharged
-        if newGaugeUnitsAura <= 0f then
+        let newGaugeAura = calcUpdatedGaugeRaw aura trigger ElectroCharged
+        if newGaugeAura |> Gauge.isEmpty then
             Seq.singleton (wrap trigger)
         else
-            [|wrap { aura with GaugeUnits = newGaugeUnitsAura |> GaugeUnits }; wrap trigger|]
+            [|wrap { aura with Gauge = newGaugeAura }; wrap trigger|]
 
     let resolveGauge aura trigger reaction =
         if aura.Permanent then
@@ -79,8 +82,8 @@ module ElementalAura =
         elif trigger.Permanent then
             Seq.singleton (wrap trigger)
         else
-            let newGaugeUnits = calcUpdatedGaugeRaw aura trigger reaction
-            if newGaugeUnits <= 0f then Seq.empty else Seq.singleton (wrap { aura with GaugeUnits = newGaugeUnits |> GaugeUnits })
+            let newGauge = calcUpdatedGaugeRaw aura trigger reaction
+            if newGauge |> Gauge.isEmpty then Seq.empty else Seq.singleton (wrap { aura with Gauge = newGauge })
 
     let interact aura trigger = // TODO aura tax
         match (aura, trigger) with
