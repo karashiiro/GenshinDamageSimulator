@@ -131,7 +131,7 @@ module ElementalAuraState =
         let mutable result = { ElectroChargedTicks = 0; BurningTicks = 0 }
         for r in reactions do
             match r with
-            | ElectroCharged _ ->
+            | ElectroCharged _ when not (reactions' |> List.contains r) ->
                 let electro = state |> get Element.Electro
                 let hydro = state |> get Element.Hydro
                 let electro', hydro', r', ticks = elapseec electro hydro (Some r) s 0
@@ -143,7 +143,7 @@ module ElementalAuraState =
                 | Some r'' -> reactions' <- r'' :: reactions'
                 | None -> ()
                 result <- { result with ElectroChargedTicks = ticks }
-            | Burning _ ->
+            | Burning _ when not (reactions' |> List.contains r) ->
                 let pyro = state |> get Element.Pyro
                 let dendro = state |> get Element.Dendro
                 let pyro', dendro', r', ticks = elapseb pyro dendro (Some r) s 0
