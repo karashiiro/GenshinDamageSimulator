@@ -110,6 +110,19 @@ module ElementalAuraState =
         let ad' = { ad with Gauge = ad.Gauge |> Gauge.decay s }
         ad' |> ElementalAura.wrap
 
+    /// Fills s0 with entries from s1, where s0 and s1 do not share keys.
+    let rec fillWith s1 s0 =
+        if Map.isEmpty s1 then
+            s0
+        else
+            let (k, v) = s1 |> Map.pick (fun k v -> Some (k, v))
+            let s1' = Map.remove k s1
+            if not (s0 |> Map.containsKey k) then
+                let s0' = Map.add k v s0
+                fillWith s1' s0'
+            else
+                fillWith s1' s0
+
     /// Calculates the resulting aura state after elapsing the specified time in seconds, considering reactions.
     let elapse state reactions s =
         // TODO: This is a mess
@@ -143,9 +156,7 @@ module ElementalAuraState =
                 | None -> ()
                 result <- { result with BurningTicks = ticks }
             | _ -> ()
-        for k, v in state |> unwrap |> Map.toSeq do
-            if not (state' |> contains k) then
-                state' <- add k v <| state'
+        state' <- state' |> unwrap |> fillWith (state |> unwrap) |> wrap
         state', reactions', result
 
     let interactEmpty state trigger =
