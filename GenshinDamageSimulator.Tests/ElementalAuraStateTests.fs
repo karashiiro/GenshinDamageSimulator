@@ -39,44 +39,12 @@ module ElementalAuraStateTests =
         |> ElementalAura.unwrap
         |> fun t -> { t with Permanent = true } |> ElementalAura.wrap
 
-    // Universal properties
-    let ``has at most two auras`` (input: ElementalAuraState) =
-        let state = ElementalAuraState.unwrap input
-        state.Count <= 2
-
-    let ``does not have Anemo and Geo together`` (input: ElementalAuraState) =
-        input
-        |> fun s -> s, s |> containsAnemo
-        ||> fun s result -> s |> containsGeo |> (&&) result
-        |> not
-
-    let ``does not have Dendro with anything other than Pyro`` (input: ElementalAuraState) =
-        if input |> ElementalAuraState.isSingle then
-            true
-        elif not (input |> containsDendro) then
-            true
-        else
-            input // Has more than one aura, one of which is Dendro
-            |> fun s -> s, s |> containsHydro
-            ||> fun s result -> s, s |> containsElectro |> (||) result
-            ||> fun s result -> s, s |> containsCryo |> (||) result
-            ||> fun s result -> s, s |> containsAnemo |> (||) result
-            ||> fun s result -> s |> containsGeo |> (||) result
-            |> not
-
-    let ``follows universal properties`` (input: ElementalAuraState) =
-        input
-        |> fun s -> s, ``has at most two auras`` s
-        ||> fun s result -> s, result && ``does not have Anemo and Geo together`` s
-        ||> fun s result -> result && ``does not have Dendro with anything other than Pyro`` s
-
     // Tests
     [<Fact>]
     let ``Test that applying an aura on an unaspected state adds the aura to the state without any reaction``() =
         let property s t =
             ElementalAuraState.interact s t
-            ||> fun ns r -> ns, ns |> containsCryo && Seq.isEmpty r
-            ||> fun ns result -> result && ``follows universal properties`` <| ns
+            ||> fun ns r -> ns |> containsCryo && Seq.isEmpty r
         let state = ElementalAuraState.empty
         let trigger = createGenericTrigger 4f 0u Element.Cryo
         property state trigger |> should be True
@@ -85,8 +53,7 @@ module ElementalAuraStateTests =
     let ``Test that applying a Geo aura on an unaspected state does nothing``() =
         let property s t =
             ElementalAuraState.interact s t
-            ||> fun ns r -> ns, ElementalAuraState.isEmpty ns && Seq.isEmpty r
-            ||> fun ns result -> result && ``follows universal properties`` <| ns
+            ||> fun ns r -> ElementalAuraState.isEmpty ns && Seq.isEmpty r
         let state = ElementalAuraState.empty
         let trigger = createGenericTrigger 4f 0u Element.Geo
         property state trigger |> should be True
@@ -95,8 +62,7 @@ module ElementalAuraStateTests =
     let ``Test that applying an Anemo aura on an unaspected state does nothing``() =
         let property s t =
             ElementalAuraState.interact s t
-            ||> fun ns r -> ns, ElementalAuraState.isEmpty ns && Seq.isEmpty r
-            ||> fun ns result -> result && ``follows universal properties`` <| ns
+            ||> fun ns r -> ElementalAuraState.isEmpty ns && Seq.isEmpty r
         let state = ElementalAuraState.empty
         let trigger = createGenericTrigger 4f 0u Element.Anemo
         property state trigger |> should be True
@@ -106,8 +72,7 @@ module ElementalAuraStateTests =
         let property s t =
             ElementalAuraState.interact s t
             ||> fun ns r -> ns, ns |> containsCryo && Seq.isEmpty r
-            ||> fun ns result -> ns, result && ns |> ElementalAuraState.get Element.Cryo |> ElementalAura.gauge |> Gauge.eu = 1.6f
-            ||> fun ns result -> result && ``follows universal properties`` <| ns
+            ||> fun ns result -> result && ns |> ElementalAuraState.get Element.Cryo |> ElementalAura.gauge |> Gauge.eu = 1.6f
         let state = ElementalAuraState.empty
         let trigger = createGenericTrigger 2f 0u Element.Cryo
         property state trigger |> should be True
@@ -118,11 +83,9 @@ module ElementalAuraStateTests =
             // First interaction check
             ElementalAuraState.interact s t1
             ||> fun ns r -> ns, ns |> containsCryo && Seq.isEmpty r
-            ||> fun ns result -> ns, result && ``follows universal properties`` <| ns
             // Second interaction check
             ||> fun ns result -> ElementalAuraState.interact ns t2, result
             ||> fun (ns, r) result -> ns, result && ns |> containsCryo && Seq.isEmpty r
-            ||> fun ns result -> ns, result && ``follows universal properties`` <| ns
             ||> fun ns result -> result && (ns |> getCryoData).ApplicationSkillId = (t2 |> getData).ApplicationSkillId
         let state = ElementalAuraState.empty
         let firstTrigger = createGenericTrigger 4f 0u Element.Cryo
@@ -135,11 +98,9 @@ module ElementalAuraStateTests =
             // First interaction check
             ElementalAuraState.interact s tp
             ||> fun ns r -> ns, ns |> containsCryo && Seq.isEmpty r
-            ||> fun ns result -> ns, result && ``follows universal properties`` <| ns
             // Second interaction check
             ||> fun ns result -> ElementalAuraState.interact ns tn, result
             ||> fun (ns, r) result -> ns, result && ns |> containsCryo && Seq.isEmpty r
-            ||> fun ns result -> ns, result && ``follows universal properties`` <| ns
             ||> fun ns result -> result && (ns |> getCryoData).ApplicationSkillId = (tp |> getData).ApplicationSkillId
         let state = ElementalAuraState.empty
         let firstTrigger = createPermanentTrigger 0f 0u Element.Cryo
@@ -152,11 +113,9 @@ module ElementalAuraStateTests =
             // First interaction check
             ElementalAuraState.interact s tn
             ||> fun ns r -> ns, ns |> containsCryo && Seq.isEmpty r
-            ||> fun ns result -> ns, result && ``follows universal properties`` <| ns
             // Second interaction check
             ||> fun ns result -> ElementalAuraState.interact ns tp, result
             ||> fun (ns, r) result -> ns, result && ns |> containsCryo && Seq.isEmpty r
-            ||> fun ns result -> ns, result && ``follows universal properties`` <| ns
             ||> fun ns result -> result && (ns |> getCryoData).ApplicationSkillId = (tp |> getData).ApplicationSkillId
         let state = ElementalAuraState.empty
         let firstTrigger = createGenericTrigger 4f 1u Element.Cryo
@@ -169,11 +128,9 @@ module ElementalAuraStateTests =
             // First interaction check
             ElementalAuraState.interact s tp
             ||> fun ns r -> ns, ns |> containsCryo && Seq.isEmpty r
-            ||> fun ns result -> ns, result && ``follows universal properties`` <| ns
             // Second interaction check
             ||> fun ns result -> ElementalAuraState.interact ns tn, result
             ||> fun (ns, r) result -> ns, result && ns |> containsCryo && r |> Seq.contains StrongMelt
-            ||> fun ns result -> ns, result && ``follows universal properties`` <| ns
             ||> fun ns result -> result && (ns |> getCryoData).ApplicationSkillId = (tp |> getData).ApplicationSkillId
         let state = ElementalAuraState.empty
         let firstTrigger = createPermanentTrigger 0f 0u Element.Cryo
