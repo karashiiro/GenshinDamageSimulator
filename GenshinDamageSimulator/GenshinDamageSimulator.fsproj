@@ -10,6 +10,7 @@
     <Compile Include="Common\Stat.fs" />
     <Compile Include="Common\DamageType.fs" />
     <Compile Include="ElementalAura\Gauge.fs" />
+    <Compile Include="ElementalAura\ElectroCharged.fs" />
     <Compile Include="ElementalAura\Reaction.fs" />
     <Compile Include="ElementalAura\ElementalAura.fs" />
     <Compile Include="ElementalAura\ElementalAuraState.fs" />
