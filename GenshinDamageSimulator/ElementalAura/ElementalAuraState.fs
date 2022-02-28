@@ -21,8 +21,9 @@ module ElementalAuraState =
 
     let empty = Map.empty |> wrap
 
-    let add k v state =
-        state |> unwrap |> Map.add k v |> wrap
+    let add aura state =
+        let el = ElementalAura.element aura
+        state |> unwrap |> Map.add el aura |> wrap
 
     let contains element state =
         state |> unwrap |> Map.containsKey element
@@ -123,41 +124,41 @@ module ElementalAuraState =
             else
                 fillWith s1' s0
 
+    let addIfLive a s =
+        if not (a |> ElementalAura.isExpired) then add a s else s
+
+    /// Elapse the specfied states and reactions.
+    let rec elapser s1 r1 s0 r0 s ec b =
+        match r0 with
+        | r :: r0' ->
+            match r with
+            | ElectroCharged _ ->
+                let electro = s0 |> get Element.Electro
+                let hydro = s0 |> get Element.Hydro
+                let electro', hydro', r'o, ticks = elapseec electro hydro (Some r) s 0
+                let s1' = s1 |> addIfLive electro' |> addIfLive hydro'
+                let ec' = ec + ticks
+                match r'o with
+                | Some r' -> elapser s1' (r' :: r1) s0 r0' s ec' b
+                | None -> elapser s1' r1 s0 r0' s ec' b
+            | Burning _ ->
+                let pyro = s0 |> get Element.Pyro
+                let dendro = s0 |> get Element.Dendro
+                let pyro', dendro', r'o, ticks = elapseb pyro dendro (Some r) s 0
+                let s1' = s1 |> addIfLive pyro' |> addIfLive dendro'
+                let b' = b + ticks
+                match r'o with
+                | Some r' -> elapser s1' (r' :: r1) s0 r0' s ec b'
+                | None -> elapser s1' r1 s0 r0' s ec b'
+            | _ -> elapser s1 r1 s0 r0 s ec b
+        | _ -> s1, r1, ec, b
+
     /// Calculates the resulting aura state after elapsing the specified time in seconds, considering reactions.
     let elapse state reactions s =
-        // TODO: This is a mess
-        let mutable state' = state
-        let mutable reactions' = List.empty
-        let mutable result = { ElectroChargedTicks = 0; BurningTicks = 0 }
-        for r in reactions do
-            match r with
-            | ElectroCharged _ when not (reactions' |> List.contains r) ->
-                let electro = state |> get Element.Electro
-                let hydro = state |> get Element.Hydro
-                let electro', hydro', r', ticks = elapseec electro hydro (Some r) s 0
-                if not (electro' |> ElementalAura.isExpired) then
-                    state' <- add Element.Electro electro' <| state'
-                if not (hydro' |> ElementalAura.isExpired) then
-                    state' <- add Element.Hydro hydro' <| state'
-                match r' with
-                | Some r'' -> reactions' <- r'' :: reactions'
-                | None -> ()
-                result <- { result with ElectroChargedTicks = ticks }
-            | Burning _ when not (reactions' |> List.contains r) ->
-                let pyro = state |> get Element.Pyro
-                let dendro = state |> get Element.Dendro
-                let pyro', dendro', r', ticks = elapseb pyro dendro (Some r) s 0
-                if not (pyro' |> ElementalAura.isExpired) then
-                    state' <- add Element.Pyro dendro' <| state'
-                if not (dendro' |> ElementalAura.isExpired) then
-                    state' <- add Element.Dendro dendro' <| state'
-                match r' with
-                | Some r'' -> reactions' <- r'' :: reactions'
-                | None -> ()
-                result <- { result with BurningTicks = ticks }
-            | _ -> ()
-        state' <- state' |> unwrap |> fillWith (state |> unwrap) |> wrap
-        state', reactions', result
+        let state', reactions', ecticks, bticks = elapser empty [] state reactions s 0 0
+        let state'' = state' |> unwrap |> fillWith (state |> unwrap) |> wrap
+        let result = { ElectroChargedTicks = ecticks; BurningTicks = bticks }
+        state'', reactions', result
 
     let interactEmpty state trigger =
         let element = ElementalAura.element trigger
