@@ -46,6 +46,7 @@ module EventHandling =
                         -> Some({ Element = element
                                   ApplicationSkillId = 0u
                                   ApplicationSkillIcdMs = 0f
+                                  ElementalMastery = Formulas.calcTotalElementalMastery attacker
                                   Gauge = 0f |> Gauge.ofUnits
                                   Permanent = false } |> ElementalAura.wrap)
                     | None -> None }

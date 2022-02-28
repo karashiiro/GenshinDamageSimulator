@@ -102,6 +102,7 @@ module ElementalAuraState =
                     { Element = Element.Pyro
                       ApplicationSkillId = 0u
                       ApplicationSkillIcdMs = 0f
+                      ElementalMastery = 0u
                       Gauge = Gauge.ofUnits 2f
                       Permanent = false }
                 let pyro'' = (ElementalAura.resolveGaugeAdd (ElementalAura.unwrap pyro') pyroTrigger |> Array.ofSeq).[0]

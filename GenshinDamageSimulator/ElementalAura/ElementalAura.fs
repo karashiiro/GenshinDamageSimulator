@@ -6,6 +6,7 @@ type ElementalAuraData =
     { Element: Element
       ApplicationSkillId: uint32 // Used for comparing ICDs
       ApplicationSkillIcdMs: float32
+      ElementalMastery: uint32
       Gauge: Gauge
       Permanent: bool }
 
@@ -126,13 +127,13 @@ module ElementalAura =
         | (PyroAura p, DendroAura d) -> resolveGaugeDouble p d, Some(Burning 0.25f)
         // Hydro aura reactions
         | (HydroAura h, PyroAura p) -> resolveGauge h p WeakVaporize, Some(WeakVaporize)
-        | (HydroAura h, ElectroAura e) -> resolveGaugeDouble h e, Some(ElectroCharged 1f)
+        | (HydroAura h, ElectroAura e) -> resolveGaugeDouble h e, Some(ElectroCharged (ElectroCharged.wrap 1f e.ElementalMastery))
         | (HydroAura _, CryoAura c) -> Seq.singleton (CryoAura(c)), Some(Frozen) // TODO
         | (HydroAura h, AnemoAura a) -> resolveGauge h a Swirl, Some(Swirl) // TODO multiple enemies
         | (HydroAura h, GeoAura g) -> resolveGauge h g Crystallize, Some(Crystallize)
         | (HydroAura h, DendroAura d) -> [| wrap h; wrap { d with Gauge = d.Gauge |> Gauge.tax } |], None
         // Electro aura reactions
-        | (ElectroAura e, HydroAura h) -> resolveGaugeDouble e h, Some(ElectroCharged 1f)
+        | (ElectroAura e, HydroAura h) -> resolveGaugeDouble e h, Some(ElectroCharged (ElectroCharged.wrap 1f h.ElementalMastery))
         | (ElectroAura e, PyroAura p) -> resolveGauge e p Overload, Some(Overload)
         | (ElectroAura e, CryoAura c) -> resolveGauge e c Superconduct, Some(Superconduct)
         | (ElectroAura e, AnemoAura a) -> resolveGauge e a Swirl, Some(Swirl) // TODO multiple enemies
