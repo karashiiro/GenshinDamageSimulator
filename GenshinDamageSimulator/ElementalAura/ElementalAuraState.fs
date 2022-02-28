@@ -25,6 +25,9 @@ module ElementalAuraState =
         let el = ElementalAura.element aura
         state |> unwrap |> Map.add el aura |> wrap
 
+    let remove el state =
+        state |> unwrap |> Map.remove el |> wrap
+
     let contains element state =
         state |> unwrap |> Map.containsKey element
 
@@ -170,19 +173,20 @@ module ElementalAuraState =
             let newState = state |> unwrap |> Map.add element (ElementalAura.wrap { auraData with Gauge = taxedGu })
             wrap newState, Seq.empty
 
-    let interactNotEmpty state trigger =
-        // TODO: This is a mess
-        state
-        |> unwrap
-        |> Map.values
-        |> Seq.map (fun aura -> ElementalAura.interact aura trigger)
-        |> Seq.map (fun (auras, reaction) -> auras, reaction |> Option.toArray |> Seq.ofArray)
-        |> (Seq.fold (fun (x, y) (auras, reactions) ->
-            let allAuras = Seq.append x auras
-            let allReactions = Seq.append y reactions
-            allAuras, allReactions) (Seq.empty, Seq.empty))
-        ||> fun auras reactions -> Seq.map (fun aura -> ElementalAura.element aura, aura) auras, reactions
-        ||> fun auras reactions -> auras |> Map.ofSeq |> wrap, reactions
+    let rec interactner s1 r s0 trigger =
+        if s0 |> isEmpty then
+            s1, r |> Seq.ofList
+        else
+            let (el, a) = s0 |> unwrap |> Map.pick (fun k v -> Some (k, v))
+            let aa, r'o = ElementalAura.interact a trigger
+            let s0' = s0 |> remove el
+            let s1' = (s1, aa) ||> Seq.fold (fun s a -> add a s)
+            match r'o with
+            | Some r' -> interactner s1' (r' :: r) s0' trigger
+            | _ -> interactner s1' r s0' trigger
+
+    let interactNotEmpty =
+        interactner empty []
 
     let interact state =
         if state |> isEmpty then interactEmpty state else interactNotEmpty state
