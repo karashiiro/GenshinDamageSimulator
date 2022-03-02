@@ -4,13 +4,20 @@ exception InvalidEventResultException of string * GameEventResult
 exception EntityNotFoundException of string * EntityId
 
 type SimulationState =
-    { Combatants: Map<EntityId, (Entity * EntityState)>
+    { Ids: Map<EntityId, bool>
+      Combatants: Map<EntityId, (Entity * EntityState)>
       Party: Party
       LastEventResult: GameEventResult
       TimestampMs: int64
       History: SimulationState list }
 
 module Simulator =
+    let rec freeId state id =
+        if state.Ids |> Map.containsKey id then
+            freeId state (id + 1)
+        else
+            id
+
     let elapse (result: ElapseEventResult) state =
         { state with 
             TimestampMs = state.TimestampMs + result.TimeElapsedMs
@@ -100,7 +107,8 @@ module Simulator =
         | _ -> state
 
     let origin =
-        { Combatants = Map.empty
+        { Ids = Map.empty
+          Combatants = Map.empty
           Party = Map.empty
           LastEventResult = OriginResult (OriginEventResult ())
           TimestampMs = 0
@@ -110,6 +118,10 @@ module Simulator =
 type SimulationState with
     /// Creates a new simulator with the origin state.
     static member Create () = Simulator.origin
+
+    /// Gets an unused entity ID from the simulation state.
+    member this.FreeId () =
+        Simulator.freeId this (EntityId.create 0)
 
     /// Executes a new elapse event on the current simulation state, returning a new simulation state
     /// with the current state in the history stack.

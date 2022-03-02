@@ -30,3 +30,9 @@ type EntityId with
 
     /// The placeholder entity ID (-1).
     static member None = EntityId.none
+
+    /// Entity ID scalar addition.
+    static member (+) (id: EntityId, amount: int) =
+        let (EntityId n) = id
+        let n' = n + amount
+        n' |> EntityId

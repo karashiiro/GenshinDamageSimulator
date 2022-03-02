@@ -32,8 +32,7 @@ public class FormulaTests
                 Weapon = new Weapon(120, StatModifier.CreatePercent(PercStat.PhysicalBonus, 0.5f)),
                 Artifacts = Array.Empty<Artifact>(),
             });
-        var testNpcState0 = new EntityState(EntityId.Create(1), 20000, 0, ElementalAuraState.Create());
-            
+
         var testNpc1 = Entity.CreateEnemy(new BasicEntityParams
         {
             BaseHp = 2000,
@@ -50,9 +49,9 @@ public class FormulaTests
             Level = 100,
         });
 
-        var testNpcState1 = new EntityState(EntityId.Create(2), 20000, 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAuraData>()));
-
         var sim = SimulationState.Create();
+        var testNpcState0 = new EntityState(sim.FreeId(), 20000, 0, ElementalAuraState.Create());
+        var testNpcState1 = new EntityState(sim.FreeId(), 20000, 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAuraData>()));
         sim = sim.CombatantAdd(testNpc0, testNpcState0);
         sim = sim.PartyAdd(EntityId.Create(1));
         sim = sim.CombatantAdd(testNpc1, testNpcState1);
