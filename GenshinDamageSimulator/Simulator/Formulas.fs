@@ -87,7 +87,7 @@ module Formulas =
         1f - (float32 defense / float32 (defense + 5u * attackerLevel + 500u))
 
     let calcLevelDiffDefenseMultiplier attackerLevel defenderLevel defReductionPerc defIgnoredPerc =
-        float32 (attackerLevel + 100u) / (float32 (attackerLevel + 100u) + float32 (defenderLevel + 100u) * (1f - defReductionPerc) * (1f - defIgnoredPerc))
+        float32 (attackerLevel + 100u) / (float32 (attackerLevel + 100u) + float32 (defenderLevel + 100u) * (1f - (min 0.9f defReductionPerc)) * (1f - defIgnoredPerc))
 
     let calcDefenseMultiplier defense attackerLevel defenderLevel defReductionPerc defIgnoredPerc =
         (calcBaseDefenseMultiplier defense attackerLevel) * (calcLevelDiffDefenseMultiplier attackerLevel defenderLevel defReductionPerc defIgnoredPerc)
