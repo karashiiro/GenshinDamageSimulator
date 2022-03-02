@@ -24,7 +24,7 @@ type BasicEntityData =
 
 type CharacterEntityData =
     { MainStat: StatModifier
-      Element: Element
+      Element: Element option
       Weapon: Weapon
       Artifacts: Artifact array }
 

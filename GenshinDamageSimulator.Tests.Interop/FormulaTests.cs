@@ -7,12 +7,12 @@ namespace GenshinDamageSimulator.Tests.Interop
     public class FormulaTests
     {
         [Fact]
-        public void SingleAbility_Works()
+        public void NormalAttack_Works()
         {
             var testNpc0 = Entity.CreateCharacter(new BasicEntityData(2000, 500, 200,
                 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 90),
                 new CharacterEntityData(StatModifier.CreatePercent(PercStat.CriticalDamage, 0.2f),
-                Element.Electro,
+                Element.Geo,
                 new Weapon(120, StatModifier.CreatePercent(PercStat.PhysicalBonus, 0.5f)),
                 Array.Empty<Artifact>()));
             var testNpcState0 = new EntityState(EntityId.Create(1), 20000, 0, ElementalAuraState.Create());
