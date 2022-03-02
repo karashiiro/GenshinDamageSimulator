@@ -3,12 +3,11 @@
 public static class Noelle
 {
     public static readonly Entity Noelle90 = Entity.CreateCharacter(
-        // TODO: Cross-reference with KQM library
         new BasicEntityParams
         {
             BaseHp = 12071,
             BaseAttack = 191,
-            BaseDefense = 559 + 240, // TODO: Where is the +240 coming from?
+            BaseDefense = 559,
             BasePhysicalRes = 0f,
             BasePyroRes = 0f,
             BaseHydroRes = 0f,
@@ -21,7 +20,7 @@ public static class Noelle
         },
         new CharacterEntityParams
         {
-            MainStat = StatModifier.CreatePercent(PercStat.CriticalDamage, 0.2f),
+            MainStat = StatModifier.CreatePercent(PercStat.Defense, 0.3f),
             Element = Element.Geo,
             Weapon = new Weapon(23, null),
             Artifacts = Array.Empty<Artifact>(),
