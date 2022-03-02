@@ -25,8 +25,8 @@ module Formulas =
         uint32 (float32 (b.BaseHp) * (1f + Entity.getStatPercent PercStat.Hp c)) + Entity.getStatFlat FlatStat.Hp c
 
     // Attack formulas
-    let calcTotalAttack (b, c) party =
-        uint32 (float32 (b.BaseAttack) * (1f + Resonance.calcResonanceAttackPercent party * Entity.getStatPercent PercStat.Attack c)) + Entity.getStatFlat FlatStat.Attack c
+    let calcTotalAttack (b, c) =
+        uint32 (float32 (b.BaseAttack) * (1f + Entity.getStatPercent PercStat.Attack c)) + Entity.getStatFlat FlatStat.Attack c
         
     // Defense formulas
     let calcTotalDefense (b, c) =

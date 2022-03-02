@@ -55,7 +55,7 @@ public class FormulaTests
         sim = sim.CombatantAdd(testNpc0, testNpcState0);
         sim = sim.PartyAdd(EntityId.Create(1));
         sim = sim.CombatantAdd(testNpc1, testNpcState1);
-        sim = sim.TalentDamage(DamageType.Physical, BaseStat.Attack, 1f, Critical.NoCritical, EntityId.Create(1), EntityId.Create(2));
+        sim = sim.TalentDamage(DamageType.Physical, TalentStat.Attack, 1f, Critical.NoCritical, testNpcState0.Id, testNpcState1.Id);
         _ = sim.StepBack();
     }
 }

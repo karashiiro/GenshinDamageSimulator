@@ -4,6 +4,9 @@
 type BaseStat = Hp | Attack | Defense
 
 [<RequireQualifiedAccess>]
+type TalentStat = Hp | Attack | Defense
+
+[<RequireQualifiedAccess>]
 type FlatStat = Hp | Attack | Defense | ElementalMastery
 
 [<RequireQualifiedAccess>]

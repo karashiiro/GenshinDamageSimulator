@@ -17,7 +17,7 @@ type Critical = AverageCritical | FullCritical | NoCritical
 
 type TalentDamageEvent =
     { DamageType: DamageType
-      DamageStat: BaseStat
+      DamageStat: TalentStat
       DamageStatMultiplier: float32
       Critical: Critical }
 

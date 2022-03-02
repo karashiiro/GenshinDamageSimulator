@@ -154,7 +154,7 @@ type SimulationState with
 
     /// Executes a new talent damage event on the current simulation state, returning a new simulation state
     /// with the current state in the history stack.
-    member this.TalentDamage (damageType: DamageType) (damageStat: BaseStat) (damageStatMultiplier: float32) (critical: Critical) (sourceId: EntityId) (targetId: EntityId) =
+    member this.TalentDamage (damageType: DamageType) (damageStat: TalentStat) (damageStatMultiplier: float32) (critical: Critical) (sourceId: EntityId) (targetId: EntityId) =
         if isNull (box damageType) then nullArg "damageType"
         if isNull (box damageStat) then nullArg "damageStat"
         if isNull (box damageStatMultiplier) then nullArg "damageStatMultiplier"
