@@ -53,7 +53,7 @@ public class FormulaTests
         var testNpcState0 = new EntityState(sim.FreeId(), 20000, 0, ElementalAuraState.Create());
         var testNpcState1 = new EntityState(sim.FreeId(), 20000, 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAuraData>()));
         sim = sim.CombatantAdd(testNpc0, testNpcState0);
-        sim = sim.PartyAdd(EntityId.Create(1));
+        sim = sim.PartyAdd(testNpcState0.Id);
         sim = sim.CombatantAdd(testNpc1, testNpcState1);
         sim = sim.TalentDamage(DamageType.Physical, TalentStat.Attack, 1f, Critical.NoCritical, testNpcState0.Id, testNpcState1.Id);
         _ = sim.StepBack();
