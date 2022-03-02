@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GenshinDamageSimulator.Tests.Data\GenshinDamageSimulator.Tests.Data.csproj" />
     <ProjectReference Include="..\GenshinDamageSimulator\GenshinDamageSimulator.fsproj" />
   </ItemGroup>
 

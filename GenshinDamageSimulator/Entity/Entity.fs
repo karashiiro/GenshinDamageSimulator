@@ -6,7 +6,7 @@ type Artifact =
 
 type Weapon =
     { Attack: uint32
-      MainStat: StatModifier }
+      MainStat: StatModifier option }
 
 type BasicEntityData =
     { BaseHp: uint32
@@ -62,7 +62,11 @@ module Entity =
         |> List.sum
 
     let getStatLines entity =
-        entity.MainStat :: entity.Weapon.MainStat :: (entity.Artifacts |> Seq.map (fun x -> x.MainStat :: List.ofArray x.StatLines) |> Seq.concat |> List.ofSeq)
+        let statLines =
+            match entity.Weapon.MainStat with
+            | Some weaponMainStat -> weaponMainStat :: (entity.Artifacts |> Seq.map (fun x -> x.MainStat :: List.ofArray x.StatLines) |> Seq.concat |> List.ofSeq)
+            | None -> entity.Artifacts |> Seq.map (fun x -> x.MainStat :: List.ofArray x.StatLines) |> Seq.concat |> List.ofSeq
+        entity.MainStat :: statLines
 
     let getStatFlat stat entity =
         match entity with
@@ -130,17 +134,62 @@ module Entity =
         | DamageType.Dendro -> Some(Element.Dendro)
         | _ -> None
 
+/// A basic entity data mapping class for use in C#.
+type BasicEntityParams() =
+    member val BaseHp = 0u with get, set
+    member val BaseAttack = 0u with get, set
+    member val BaseDefense = 0u with get, set
+    member val BasePhysicalRes = 0f with get, set
+    member val BasePyroRes = 0f with get, set
+    member val BaseHydroRes = 0f with get, set
+    member val BaseCryoRes = 0f with get, set
+    member val BaseElectroRes = 0f with get, set
+    member val BaseAnemoRes = 0f with get, set
+    member val BaseGeoRes = 0f with get, set
+    member val BaseDendroRes = 0f with get, set
+    member val Level = 0u with get, set
+
+    member this.ToBasicEntityData () =
+        { BaseHp = this.BaseHp
+          BaseAttack = this.BaseAttack
+          BaseDefense = this.BaseDefense
+          BasePhysicalRes = this.BasePhysicalRes
+          BasePyroRes = this.BasePyroRes
+          BaseHydroRes = this.BaseHydroRes
+          BaseCryoRes = this.BaseCryoRes
+          BaseElectroRes = this.BaseElectroRes
+          BaseAnemoRes = this.BaseAnemoRes
+          BaseGeoRes = this.BaseGeoRes
+          BaseDendroRes = this.BaseDendroRes
+          Level = this.Level }
+
+/// A character entity data mapping class for use in C#.
+type CharacterEntityParams() =
+    member val MainStat = FlatStatModifier ({ Type = FlatStat.Attack; Value = 0u }) with get, set
+    member val Element = None with get, set
+    member val Weapon = { Attack = 0u; MainStat = None } with get, set
+    member val Artifacts = Array.empty with get, set
+
+    member this.ToCharacterEntityData () =
+        if isNull (box this.MainStat) then nullArg "MainStat"
+        if isNull (box this.Weapon) then nullArg "Weapon"
+        if isNull (box this.Artifacts) then nullArg "Artifacts"
+        { MainStat = this.MainStat
+          Element = this.Element
+          Weapon = this.Weapon
+          Artifacts = this.Artifacts }
+
 // This is the C# interface for entities.
 type Entity with
     /// Creates a new character entity from the provided data. This method should be preferred
     /// over NewCharacterEntity.
-    static member CreateCharacter (basicData: BasicEntityData) (characterData: CharacterEntityData) =
+    static member CreateCharacter (basicData: BasicEntityParams) (characterData: CharacterEntityParams) =
         if isNull (box basicData) then nullArg "basicData"
         if isNull (box characterData) then nullArg "characterData"
-        (basicData, characterData) |> CharacterEntity
+        (basicData.ToBasicEntityData(), characterData.ToCharacterEntityData()) |> CharacterEntity
 
     /// Creates a new enemy entity from the provided data. This method should be preferred
     /// over NewEnemyEntity.
-    static member CreateEnemy (basicData: BasicEntityData) =
+    static member CreateEnemy (basicData: BasicEntityParams) =
         if isNull (box basicData) then nullArg "basicData"
-        basicData |> EnemyEntity
+        basicData.ToBasicEntityData() |> EnemyEntity

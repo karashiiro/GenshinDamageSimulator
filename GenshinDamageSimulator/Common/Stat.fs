@@ -1,9 +1,12 @@
 ﻿namespace GenshinDamageSimulator
 
+[<RequireQualifiedAccess>]
 type BaseStat = Hp | Attack | Defense
 
+[<RequireQualifiedAccess>]
 type FlatStat = Hp | Attack | Defense | ElementalMastery
 
+[<RequireQualifiedAccess>]
 type PercStat =
     | Hp | Attack | Defense
     | EnergyRecharge

@@ -109,7 +109,7 @@ module Simulator =
 // This is the C# interface for the simulator.
 type SimulationState with
     /// Creates a new simulator with the origin state.
-    static member Create() = Simulator.origin
+    static member Create () = Simulator.origin
 
     /// Executes a new elapse event on the current simulation state, returning a new simulation state
     /// with the current state in the history stack.
