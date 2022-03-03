@@ -134,6 +134,9 @@ module Entity =
         | DamageType.Dendro -> Some(Element.Dendro)
         | _ -> None
 
+    let calcEnemyBaseDefense (level: uint32) =
+        500f + 5f * float32 level
+
 /// A basic entity data mapping class for use in C#.
 type BasicEntityParams() =
     member val BaseHp = 0f with get, set
@@ -193,3 +196,6 @@ type Entity with
     static member CreateEnemy (basicData: BasicEntityParams) =
         if isNull (box basicData) then nullArg "basicData"
         basicData.ToBasicEntityData() |> EnemyEntity
+
+    static member CalcEnemyBaseDefense (level: uint32) =
+        Entity.calcEnemyBaseDefense level

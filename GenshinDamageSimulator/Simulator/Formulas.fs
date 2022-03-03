@@ -80,9 +80,6 @@ module Formulas =
         abilityStat * abilityMult + bonusFlat * bonusMult
 
     // Incoming damage formulas
-    let calcEnemyDefense (level: uint32) =
-        5f * float32 level + 500f
-
     let calcBaseDefenseMultiplier defense (attackerLevel: uint32) =
         1f - (defense / (defense + 5f * float32 attackerLevel + 500f))
 
