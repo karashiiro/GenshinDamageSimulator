@@ -22,15 +22,15 @@ module Formulas =
 
     // HP formulas
     let calcTotalHp (b, c) =
-        uint32 (float32 (b.BaseHp) * (1f + Entity.getStatPercent PercStat.Hp c)) + Entity.getStatFlat FlatStat.Hp c
+        b.BaseHp * (1f + Entity.getStatPercent PercStat.Hp c) + Entity.getStatFlat FlatStat.Hp c
 
     // Attack formulas
     let calcTotalAttack (b, c) =
-        uint32 (float32 (b.BaseAttack) * (1f + Entity.getStatPercent PercStat.Attack c)) + Entity.getStatFlat FlatStat.Attack c
+        b.BaseAttack * (1f + Entity.getStatPercent PercStat.Attack c) + Entity.getStatFlat FlatStat.Attack c
         
     // Defense formulas
     let calcTotalDefense (b, c) =
-        uint32 (float32 (b.BaseDefense) * (1f + Entity.getStatPercent PercStat.Defense c)) + Entity.getStatFlat FlatStat.Defense c
+        b.BaseDefense * (1f + Entity.getStatPercent PercStat.Defense c) + Entity.getStatFlat FlatStat.Defense c
 
     // Elemental mastery formulas
     let calcTotalElementalMastery =
@@ -50,13 +50,13 @@ module Formulas =
 
     // Outgoing damage formulas
     let calcAmplifyingBonus em =
-        2.78f * (float32 em / float32 (em + 1400u))
+        2.78f * (em / (em + 1400f))
 
     let calcAmplifyingMultiplier reaction amplifyingBonus reactionBonus =
         getAmpifyingReactionMultiplier reaction * (1f + amplifyingBonus + reactionBonus)
 
     let calcTransformativeBonus em =
-        16f * (float32 em / float32 (em + 2000u))
+        16f * (em / (em + 2000f))
 
     let calcTransformativeDamageCharacter reaction characterLevel transformativeBonus reactionBonus =
         // TODO: Decide if we're going to use the datamined coefficients or the KQM formula.
@@ -76,20 +76,20 @@ module Formulas =
     let calcCritMultiplier critDamage =
         1f + critDamage
 
-    let calcOutgoingDamage (abilityStat: uint32) abilityMult bonusFlat bonusMult =
-        uint32 (float32 (uint32 (float32 (abilityStat) * abilityMult) + bonusFlat) * bonusMult)
+    let calcOutgoingDamage (abilityStat: float32) abilityMult bonusFlat bonusMult =
+        abilityStat * abilityMult + bonusFlat * bonusMult
 
     // Incoming damage formulas
-    let calcEnemyDefense level =
-        5u * level + 500u
+    let calcEnemyDefense (level: uint32) =
+        5f * float32 level + 500f
 
-    let calcBaseDefenseMultiplier defense attackerLevel =
-        1f - (float32 defense / float32 (defense + 5u * attackerLevel + 500u))
+    let calcBaseDefenseMultiplier defense (attackerLevel: uint32) =
+        1f - (defense / (defense + 5f * float32 attackerLevel + 500f))
 
-    let calcLevelDiffDefenseMultiplier attackerLevel defenderLevel defReductionPerc defIgnoredPerc =
-        float32 (attackerLevel + 100u) / (float32 (attackerLevel + 100u) + float32 (defenderLevel + 100u) * (1f - (min 0.9f defReductionPerc)) * (1f - defIgnoredPerc))
+    let calcLevelDiffDefenseMultiplier (attackerLevel: uint32) (defenderLevel: uint32) defReductionPerc defIgnoredPerc =
+        (float32 attackerLevel + 100f) / (float32 attackerLevel + 100f + (float32 defenderLevel + 100f) * (1f - (min 0.9f defReductionPerc)) * (1f - defIgnoredPerc))
 
-    let calcDefenseMultiplier defense attackerLevel defenderLevel defReductionPerc defIgnoredPerc =
+    let calcDefenseMultiplier (defense: float32) (attackerLevel: uint32) (defenderLevel: uint32) defReductionPerc defIgnoredPerc =
         (calcBaseDefenseMultiplier defense attackerLevel) * (calcLevelDiffDefenseMultiplier attackerLevel defenderLevel defReductionPerc defIgnoredPerc)
 
     let calcResMultiplier baseResPerc resBonusPerc resReductionPerc =
@@ -104,8 +104,8 @@ module Formulas =
     let calcDamageReductionMultiplier dmgReductionPerc =
         1f - dmgReductionPerc
 
-    let calcIncomingTransformativeDamage (baseDamage: uint32) resMult =
-        uint32 (float32 (baseDamage) * resMult)
+    let calcIncomingTransformativeDamage baseDamage resMult =
+        baseDamage * resMult
 
-    let calcIncomingDamage amplifyingMult (baseDamage: uint32) defMult resMult dmgReductionMult =
-        uint32 (amplifyingMult * float32 (uint32 (float32 (baseDamage) * defMult * resMult * dmgReductionMult)))
+    let calcIncomingDamage (amplifyingMult: float32) baseDamage defMult resMult dmgReductionMult =
+        amplifyingMult * baseDamage * defMult * resMult * dmgReductionMult

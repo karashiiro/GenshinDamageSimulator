@@ -1,6 +1,6 @@
 ﻿namespace GenshinDamageSimulator
 
-type ElectroCharged = ElectroCharged of float32 * uint32
+type ElectroCharged = ElectroCharged of float32 * float32
 
 module ElectroCharged =
     /// Wraps the provided values in an Electro-Charged reaction.    

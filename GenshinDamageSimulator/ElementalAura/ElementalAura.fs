@@ -6,7 +6,7 @@ type ElementalAuraData =
     { Element: Element
       ApplicationSkillId: uint32 // Used for comparing ICDs
       ApplicationSkillIcdMs: float32
-      ElementalMastery: uint32
+      ElementalMastery: float32
       Gauge: Gauge
       Permanent: bool }
 

@@ -16,10 +16,10 @@ module EventHandling =
         let attackerDamageBonus = Entity.getDamageBonusPercent event.DamageType attacker
         let attackerCriticalHit = Entity.getStatPercent PercStat.CriticalHit attacker
         let attackerCriticalDamage = Entity.getStatPercent PercStat.CriticalDamage attacker
-        let outgoingDamage = Formulas.calcOutgoingDamage attackerBaseStat event.DamageStatMultiplier 0u attackerDamageBonus
+        let outgoingDamage = Formulas.calcOutgoingDamage attackerBaseStat event.DamageStatMultiplier 0f attackerDamageBonus
         match event.Critical with
-        | FullCritical -> uint32 (float32 (outgoingDamage) * Formulas.calcCritMultiplier attackerCriticalDamage)
-        | AverageCritical -> uint32 (float32 (outgoingDamage) * Formulas.calcAverageCritMultiplier attackerCriticalHit attackerCriticalDamage)
+        | FullCritical -> outgoingDamage * Formulas.calcCritMultiplier attackerCriticalDamage
+        | AverageCritical -> outgoingDamage * Formulas.calcAverageCritMultiplier attackerCriticalHit attackerCriticalDamage
         | NoCritical -> outgoingDamage
 
     let handleDamageEventIncoming (attacker: Entity) defender outgoingDamage event =
@@ -61,7 +61,7 @@ module EventHandling =
         | Some (source, sourceState), Some (target, targetState)
             -> match event with
                | TalentDamage e -> DamageResult (handleDamageEvent e (source, sourceState) (target, targetState))
-               | TalentHeal _ -> HealResult ({ TargetId = targetState.Id; HealAmount = 0u })
+               | TalentHeal _ -> HealResult ({ TargetId = targetState.Id; HealAmount = 0f })
                | _ -> raise (InvalidEventException("No such source-target event exists.", event))
         | _, Some (_, targetState)
             -> match event with

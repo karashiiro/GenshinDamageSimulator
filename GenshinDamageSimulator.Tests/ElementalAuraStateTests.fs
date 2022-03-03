@@ -30,7 +30,7 @@ module ElementalAuraStateTests =
         { Element = element
           ApplicationSkillId = id
           ApplicationSkillIcdMs = 200f
-          ElementalMastery = 80u
+          ElementalMastery = 80f
           Gauge = Gauge.ofUnits eu
           Permanent = false } |> ElementalAura.wrap
 

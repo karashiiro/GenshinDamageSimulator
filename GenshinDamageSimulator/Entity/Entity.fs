@@ -5,13 +5,13 @@ type Artifact =
       StatLines: StatModifier array }
 
 type Weapon =
-    { Attack: uint32
+    { Attack: float32
       MainStat: StatModifier option }
 
 type BasicEntityData =
-    { BaseHp: uint32
-      BaseAttack: uint32
-      BaseDefense: uint32
+    { BaseHp: float32
+      BaseAttack: float32
+      BaseDefense: float32
       BasePhysicalRes: float32
       BasePyroRes: float32
       BaseHydroRes: float32
@@ -36,8 +36,8 @@ type Entity =
 
 type EntityState = // TODO: Status effects
     { Id: EntityId
-      Hp: uint32
-      ShieldHp: uint32
+      Hp: float32
+      ShieldHp: float32
       ElementalAuras: ElementalAuraState }
 
 module Entity =
@@ -47,8 +47,8 @@ module Entity =
                               | FlatStatModifier f
                                   -> match f.Type with
                                      | s when s = stat -> f.Value
-                                     | _ -> 0u
-                              | _ -> 0u)
+                                     | _ -> 0f
+                              | _ -> 0f)
         |> List.sum
 
     let getTotalPercent stat statLines =
@@ -71,7 +71,7 @@ module Entity =
     let getStatFlat stat entity =
         match entity with
         | CharacterEntity (_, cd) -> cd |> getStatLines |> getTotalFlat stat
-        | EnemyEntity _ -> 0u
+        | EnemyEntity _ -> 0f
 
     let getStatPercent stat entity =
         match entity with
@@ -136,9 +136,9 @@ module Entity =
 
 /// A basic entity data mapping class for use in C#.
 type BasicEntityParams() =
-    member val BaseHp = 0u with get, set
-    member val BaseAttack = 0u with get, set
-    member val BaseDefense = 0u with get, set
+    member val BaseHp = 0f with get, set
+    member val BaseAttack = 0f with get, set
+    member val BaseDefense = 0f with get, set
     member val BasePhysicalRes = 0f with get, set
     member val BasePyroRes = 0f with get, set
     member val BaseHydroRes = 0f with get, set
@@ -165,9 +165,9 @@ type BasicEntityParams() =
 
 /// A character entity data mapping class for use in C#.
 type CharacterEntityParams() =
-    member val MainStat = FlatStatModifier ({ Type = FlatStat.Attack; Value = 0u }) with get, set
+    member val MainStat = FlatStatModifier ({ Type = FlatStat.Attack; Value = 0f }) with get, set
     member val Element = None with get, set
-    member val Weapon = { Attack = 0u; MainStat = None } with get, set
+    member val Weapon = { Attack = 0f; MainStat = None } with get, set
     member val Artifacts = Array.empty with get, set
 
     member this.ToCharacterEntityData () =
