@@ -1,5 +1,6 @@
 using GenshinDamageSimulator.Tests.Data.Characters;
 using GenshinDamageSimulator.Tests.Data.Enemies;
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -25,6 +26,6 @@ public class SimulatorTests
             GameEventResult.DamageResult r => r.Item.DamageAmount,
             _ => 0f,
         };
-        Assert.Equal(154f, result);
+        Assert.True(Math.Abs(154.26689f - result) < 0.01f);
     }
 }

@@ -2,7 +2,8 @@
 
 open GenshinDamageSimulator.Data
 
-// From https://genshin-impact.fandom.com/wiki/Damage
+// https://genshin-impact.fandom.com/wiki/Damage
+// https://library.keqingmains.com/combat-mechanics/damage/damage-formula
 
 module Formulas =
     let getAmpifyingReactionMultiplier reaction =
@@ -20,31 +21,33 @@ module Formulas =
             | Overload -> 4f
             | _ -> 0f
 
-    // HP formulas
-    let calcTotalHp (b, c) =
-        b.BaseHp * (1f + Entity.getStatPercent PercStat.Hp c) + Entity.getStatFlat FlatStat.Hp c
+    let calcTotalHp entity =
+        match entity with
+        | CharacterEntity (b, _) -> 
+            b.BaseHp * (1f + Entity.getStatPercent PercStat.Hp entity) + Entity.getStatFlat FlatStat.Hp entity
+        | EnemyEntity b -> b.BaseHp * (1f + Entity.getStatPercent PercStat.Hp entity) + Entity.getStatFlat FlatStat.Hp entity
 
-    // Attack formulas
-    let calcTotalAttack (b, c) =
-        b.BaseAttack * (1f + Entity.getStatPercent PercStat.Attack c) + Entity.getStatFlat FlatStat.Attack c
+    let calcTotalAttack entity =
+        match entity with
+        | CharacterEntity (b, c) -> 
+            (b.BaseAttack + c.Weapon.Attack) * (1f + Entity.getStatPercent PercStat.Attack entity) + Entity.getStatFlat FlatStat.Attack entity
+        | EnemyEntity b -> b.BaseAttack * (1f + Entity.getStatPercent PercStat.Attack entity) + Entity.getStatFlat FlatStat.Attack entity
         
-    // Defense formulas
-    let calcTotalDefense (b, c) =
-        b.BaseDefense * (1f + Entity.getStatPercent PercStat.Defense c) + Entity.getStatFlat FlatStat.Defense c
+    let calcTotalDefense entity =
+        match entity with
+        | CharacterEntity (b, _) -> 
+            b.BaseDefense * (1f + Entity.getStatPercent PercStat.Defense entity) + Entity.getStatFlat FlatStat.Defense entity
+        | EnemyEntity b -> b.BaseDefense * (1f + Entity.getStatPercent PercStat.Defense entity) + Entity.getStatFlat FlatStat.Defense entity
 
-    // Elemental mastery formulas
     let calcTotalElementalMastery =
         Entity.getStatFlat FlatStat.ElementalMastery
 
-    // Energy recharge formulas
     let calcTotalEnergyRecharge entity =
         1f + Entity.getStatPercent PercStat.EnergyRecharge entity
 
-    // Crit rate formulas
     let calcTotalCriticalHit =
         Entity.getStatPercent PercStat.CriticalHit
 
-    // Crit damage formulas
     let calcTotalCriticalDamage =
         Entity.getStatPercent PercStat.CriticalDamage
 
@@ -59,10 +62,6 @@ module Formulas =
         16f * (em / (em + 2000f))
 
     let calcTransformativeDamageCharacter reaction characterLevel transformativeBonus reactionBonus =
-        // TODO: Decide if we're going to use the datamined coefficients or the KQM formula.
-        // I like not depending on the datamine being updated, but I think the KQM formula
-        // was determined using polynomial regression, which would make it marginally less
-        // accurate.
         let levelMult = ElementalCoefficients.getCharacterLevelMultiplier characterLevel
         uint32 (levelMult * getTransformativeReactionMultiplier reaction * (1f + transformativeBonus + reactionBonus))
 

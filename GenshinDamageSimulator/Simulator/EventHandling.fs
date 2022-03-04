@@ -12,7 +12,7 @@ module EventHandling =
             | TalentStat.Attack -> Formulas.calcTotalAttack
             | TalentStat.Defense -> Formulas.calcTotalDefense
             | TalentStat.Hp -> Formulas.calcTotalHp
-        let attackerBaseStat = attackerScalingStatFn (attackerBasicData, attacker)
+        let attackerBaseStat = attackerScalingStatFn attacker
         let attackerDamageBonus = Entity.getDamageBonusPercent event.DamageType attacker
         let attackerCriticalHit = Entity.getStatPercent PercStat.CriticalHit attacker
         let attackerCriticalDamage = Entity.getStatPercent PercStat.CriticalDamage attacker
