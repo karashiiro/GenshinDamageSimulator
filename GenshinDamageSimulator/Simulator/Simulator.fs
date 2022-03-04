@@ -7,9 +7,9 @@ type SimulationState =
     { Ids: Map<EntityId, bool>
       Combatants: Map<EntityId, (Entity * EntityState)>
       Party: Party
-      LastEventResult: GameEventResult
       TimestampMs: int64
-      History: SimulationState list }
+      LastEventResult: GameEventResult
+      LastState: SimulationState option }
 
 module Simulator =
     let rec freeId state id =
@@ -27,7 +27,7 @@ module Simulator =
         { state with
             Combatants = state.Combatants.Add (result.EntityState.Id, (result.Entity, result.EntityState))
             LastEventResult = result |> CombatantAddResult
-            History = state :: state.History }
+            LastState = Some state }
 
     let removeCombatant (result: CombatantRemoveEventResult) state =
         let cOpt = state.Combatants.TryFind result.TargetId
@@ -36,7 +36,7 @@ module Simulator =
             -> { state with
                     Combatants = state.Combatants.Remove result.TargetId
                     LastEventResult = result |> CombatantRemoveResult
-                    History = state :: state.History }
+                    LastState = Some state }
         | None -> raise (EntityNotFoundException("Combatant not found.", result.TargetId))
 
     let addPartyMember (result: PartyAddEventResult) state =
@@ -48,7 +48,7 @@ module Simulator =
                     { state with
                         Party = state.Party.Add (result.TargetId, c)
                         LastEventResult = result |> PartyAddResult
-                        History = state :: state.History }
+                        LastState = Some state }
                | _ -> raise (EntityNotFoundException("Character not found.", result.TargetId))
         | None -> raise (EntityNotFoundException("Character not found.", result.TargetId))
 
@@ -59,7 +59,7 @@ module Simulator =
             -> { state with
                     Party = state.Party.Remove result.TargetId
                     LastEventResult = result |> PartyRemoveResult
-                    History = state :: state.History }
+                    LastState = Some state }
         | None -> raise (EntityNotFoundException("Character not found.", result.TargetId))
 
     let combatantantUpdateFn f value =
@@ -82,7 +82,7 @@ module Simulator =
         { state with
             Combatants = state.Combatants.Change (result.TargetId, updateFnTarget)
             LastEventResult = result |> DamageResult
-            History = state :: state.History }
+            LastState = Some state }
 
     let doEventOpt sourceOption targetOption event =
         let eventResult = EventHandling.handleEvent event sourceOption targetOption
@@ -102,17 +102,17 @@ module Simulator =
         eventOptFn
 
     let stepBack state =
-        match state.History with
-        | head :: _ -> head
-        | _ -> state
+        match state.LastState with
+        | Some state' -> state'
+        | None -> state
 
     let origin =
         { Ids = Map.empty
           Combatants = Map.empty
           Party = Map.empty
-          LastEventResult = OriginResult (OriginEventResult ())
           TimestampMs = 0
-          History = [] }
+          LastEventResult = OriginResult (OriginEventResult ())
+          LastState = None }
 
 // This is the C# interface for the simulator.
 type SimulationState with
