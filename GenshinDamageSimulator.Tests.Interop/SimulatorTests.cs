@@ -20,16 +20,11 @@ public class SimulatorTests
         sim = sim.PartyAdd(testNpcState0.Id);
         sim = sim.CombatantAdd(testNpc1, testNpcState1);
         sim = sim.TalentDamage(DamageType.Physical, TalentStat.Defense, 1.5640f, Critical.NoCritical, testNpcState0.Id, testNpcState1.Id);
-        var result = sim.LastEventResult.Match(
+        var result = sim.LastEventResult switch
+        {
+            GameEventResult.DamageResult r => r.Item.DamageAmount,
             _ => 0f,
-            _ => 0f,
-            _ => 0f,
-            _ => 0f,
-            _ => 0f,
-            _ => 0f,
-            damageResult => damageResult.DamageAmount,
-            _ => 0f,
-            _ => 0f);
+        };
         Assert.Equal(154f, result);
     }
 }
