@@ -30,7 +30,7 @@ module EventHandling =
                                 | CharacterEntity (cd, _) -> cd
                                 | EnemyEntity ed -> ed
         let defenderResistanceBaseStat = Entity.getBaseResStat event.DamageType defender
-        let defMult = Formulas.calcDefenseMultiplier attackerBasicData.Level defenderBasicData.Level 0f 0f
+        let defMult = Formulas.calcDefenseMultiplier attackerBasicData.Level defenderBasicData.BaseDefense 0f 0f
         let resMult = Formulas.calcResMultiplier defenderResistanceBaseStat (Entity.getDamageResPercent event.DamageType defender) 0f
         Formulas.calcIncomingDamage 1f outgoingDamage defMult resMult (Formulas.calcDamageReductionMultiplier 0f)
 
