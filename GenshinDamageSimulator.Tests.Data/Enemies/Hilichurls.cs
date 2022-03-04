@@ -8,9 +8,9 @@ public static class Hilichurls
             // https://genshin-impact.fandom.com/wiki/Level_Scaling/Enemy
             // https://raw.githubusercontent.com/Dimbreath/GenshinData/master/ExcelBinOutput/MonsterExcelConfigData.json
             // https://github.com/Dimbreath/GenshinData/blob/master/ExcelBinOutput/MonsterCurveExcelConfigData.json
-            BaseHp = 18947.872f, // TODO: Write function to calculate these precisely
-            BaseAttack = 2894.934f,
-            BaseDefense = Entity.CalcEnemyBaseDefense(81),
+            BaseHp = 1394.866943359375f * 13.583999633789062f,
+            BaseAttack = 128.04910278320312f * 22.607999801635742f,
+            BaseDefense = 500f + 5f * 81f,
             // https://library.keqingmains.com/enemy-data/hilichurls/hilichurls/hilichurl#resistance-table
             BasePhysicalRes = 0.1f,
             BasePyroRes = 0.1f,
