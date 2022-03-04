@@ -14,9 +14,8 @@ public class SimulatorTests
         var testNpc1 = Hilichurls.Hilichurl81;
 
         var sim = SimulationState.Create();
-        // TODO: Get initial HP from entity
-        var testNpcState0 = new EntityState(sim.FreeId(), 12071, 0, ElementalAuraState.Create());
-        var testNpcState1 = new EntityState(sim.FreeId(), 18566, 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAuraData>()));
+        var testNpcState0 = new EntityState(sim.FreeId(), testNpc0.GetMaxHp(), 0, ElementalAuraState.Create());
+        var testNpcState1 = new EntityState(sim.FreeId(), testNpc1.GetMaxHp(), 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAuraData>()));
         sim = sim.CombatantAdd(testNpc0, testNpcState0);
         sim = sim.PartyAdd(testNpcState0.Id);
         sim = sim.CombatantAdd(testNpc1, testNpcState1);

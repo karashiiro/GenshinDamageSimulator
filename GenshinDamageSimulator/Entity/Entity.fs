@@ -62,21 +62,21 @@ module Entity =
         |> List.sum
 
     let getStatLines entity =
-        let statLines =
-            match entity.Weapon.MainStat with
-            | Some weaponMainStat -> weaponMainStat :: (entity.Artifacts |> Seq.map (fun x -> x.MainStat :: List.ofArray x.StatLines) |> Seq.concat |> List.ofSeq)
-            | None -> entity.Artifacts |> Seq.map (fun x -> x.MainStat :: List.ofArray x.StatLines) |> Seq.concat |> List.ofSeq
-        entity.MainStat :: statLines
+        match entity with
+        | CharacterEntity (_, cd)
+            ->
+                let statLines =
+                    match cd.Weapon.MainStat with
+                    | Some weaponMainStat -> weaponMainStat :: (cd.Artifacts |> Seq.map (fun x -> x.MainStat :: List.ofArray x.StatLines) |> Seq.concat |> List.ofSeq)
+                    | None -> cd.Artifacts |> Seq.map (fun x -> x.MainStat :: List.ofArray x.StatLines) |> Seq.concat |> List.ofSeq
+                cd.MainStat :: statLines
+        | EnemyEntity _ -> []
 
     let getStatFlat stat entity =
-        match entity with
-        | CharacterEntity (_, cd) -> cd |> getStatLines |> getTotalFlat stat
-        | EnemyEntity _ -> 0f
+        entity |> getStatLines |> getTotalFlat stat
 
     let getStatPercent stat entity =
-        match entity with
-        | CharacterEntity (_, cd) -> cd |> getStatLines |> getTotalPercent stat
-        | EnemyEntity _ -> 0f
+        entity |> getStatLines |> getTotalPercent stat
 
     let getBaseStat stat entity =
         let basicData = match entity with
@@ -193,3 +193,8 @@ type Entity with
     static member CreateEnemy (basicData: BasicEntityParams) =
         if isNull (box basicData) then nullArg "basicData"
         basicData.ToBasicEntityData() |> EnemyEntity
+
+    /// Returns the max HP of this entity.
+    member this.GetMaxHp () =
+        let statLines = Entity.getStatLines this
+        ((Entity.getBaseStat BaseStat.Hp this) + (Entity.getTotalFlat FlatStat.Hp statLines)) * (1f + Entity.getTotalPercent PercStat.Hp statLines)
