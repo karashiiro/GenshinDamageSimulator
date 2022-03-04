@@ -44,7 +44,7 @@ module ElementalAuraState =
         state |> unwrap |> Map.isEmpty
 
     /// Calculates the aura result of a single tick of Electro-Charged.
-    let tickec aura =
+    let private tickec aura =
         // https://library.keqingmains.com/combat-mechanics/elemental-effects/elemental-gauge-theory#electro-charged
         match aura with
         | ElectroAura a -> { a with Gauge = a.Gauge - 0.4f } |> ElementalAura.wrap
@@ -53,7 +53,7 @@ module ElementalAuraState =
 
     /// Calculates the aura result of Electro-Charged application over the provided time in seconds,
     /// returning the updated auras, reaction state, and number of ticks that occurred.
-    let rec elapseec electro hydro r s ticks =
+    let rec private elapseec electro hydro r s ticks =
         // https://library.keqingmains.com/evidence/combat-mechanics/elemental-effects/transformative-reactions#ec-ticks-only-consume-gauge-when-they-deal-damage
         // The gauges still decay normally, so we need to account for this at each tick in this function
         let duration a = a |> ElementalAura.gauge |> Gauge.duration
@@ -81,7 +81,7 @@ module ElementalAuraState =
 
     /// Calculates the aura result of Burning application over the provided time in seconds,
     /// returning the updated auras, reaction state, and number of ticks that occurred.
-    let rec elapseb pyro dendro r s ticks =
+    let rec private elapseb pyro dendro r s ticks =
         let decayDendro d p s =
             let dg = d |> ElementalAura.gauge
             let dd = d |> ElementalAura.gauge |> Gauge.dr
@@ -111,29 +111,34 @@ module ElementalAuraState =
         | _ -> pyro, dendro, r, 0
 
     /// Calculates the aura result of gauge decay over the provided time in seconds.
-    let elapse1 aura s =
+    let private elapse1 aura s =
         let ad = aura |> ElementalAura.unwrap
         let ad' = { ad with Gauge = ad.Gauge |> Gauge.decay s }
         ad' |> ElementalAura.wrap
 
-    /// Fills s0 with entries from s1, where s0 and s1 do not share keys.
-    let rec fillWith s1 s0 =
+    let private addIfLiveMap a s =
+        let el = ElementalAura.element a
+        if not (a |> ElementalAura.isExpired) then Map.add el a s else s
+
+    let private addIfLive a s =
+        if not (a |> ElementalAura.isExpired) then add a s else s
+
+    /// Elapses s0 with entries from s1, where s0 and s1 do not share keys.
+    let rec private elapseFillWith s1 t s0 =
         if Map.isEmpty s1 then
             s0
         else
             let (k, v) = s1 |> Map.pick (fun k v -> Some (k, v))
             let s1' = Map.remove k s1
             if not (s0 |> Map.containsKey k) then
-                let s0' = Map.add k v s0
-                fillWith s1' s0'
+                let v' = elapse1 v t
+                let s0' = addIfLiveMap v' s0
+                elapseFillWith s1' t s0'
             else
-                fillWith s1' s0
+                elapseFillWith s1' t s0
 
-    let addIfLive a s =
-        if not (a |> ElementalAura.isExpired) then add a s else s
-
-    /// Elapse the specfied states and reactions.
-    let rec elapser s1 r1 s0 r0 s ec b =
+    /// Elapse the provided states, considering only elements involved in reactions.
+    let rec private elapser s1 r1 s0 r0 s ec b =
         match r0 with
         | r :: r0' ->
             match r with
@@ -161,11 +166,11 @@ module ElementalAuraState =
     /// Calculates the resulting aura state after elapsing the specified time in seconds, considering reactions.
     let elapse state reactions s =
         let state', reactions', ecticks, bticks = elapser empty [] state reactions s 0 0
-        let state'' = state' |> unwrap |> fillWith (state |> unwrap) |> wrap
+        let state'' = state' |> unwrap |> elapseFillWith (state |> unwrap) s |> wrap
         let result = { ElectroChargedTicks = ecticks; BurningTicks = bticks }
         state'', reactions', result
 
-    let interactEmpty state trigger =
+    let private interactEmpty state trigger =
         let element = ElementalAura.element trigger
         match element with
         | Element.Geo | Element.Anemo -> state, Seq.empty
@@ -175,7 +180,7 @@ module ElementalAuraState =
             let newState = state |> unwrap |> Map.add element (ElementalAura.wrap { auraData with Gauge = taxedGu })
             wrap newState, Seq.empty
 
-    let rec interactne s1 r s0 trigger =
+    let rec private interactne s1 r s0 trigger =
         if s0 |> isEmpty then
             s1, r |> Seq.ofList
         else
@@ -187,7 +192,7 @@ module ElementalAuraState =
             | Some r' -> interactne s1' (r' :: r) s0' trigger
             | _ -> interactne s1' r s0' trigger
 
-    let interactNotEmpty =
+    let private interactNotEmpty =
         interactne empty []
 
     let interact state =

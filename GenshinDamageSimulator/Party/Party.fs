@@ -1,10 +1,21 @@
 ﻿namespace GenshinDamageSimulator
 
-module Resonance =
-    let hasProtectiveCanopy (map: Map<Element, int>) =
+type ElementalResonance =
+    | FerventFlames
+    | SoothingWater
+    | HighVoltage
+    | ShatteringIce
+    | ImpetuousWinds
+    | EnduringRock
+    | ProtectiveCanopy
+
+type Party = Map<EntityId, CharacterEntity>
+
+module Party =
+    let private hasProtectiveCanopy (map: Map<Element, int>) =
         map.Count >= 4
 
-    let hasTwo element map =
+    let private hasTwo element map =
         map
         |> Map.tryFind element
         |> fun res
@@ -12,22 +23,22 @@ module Resonance =
                | Some x -> x >= 2
                | None -> false
 
-    let hasFerventFlames =
+    let private hasFerventFlames =
         hasTwo Element.Pyro
 
-    let hasSoothingWater =
+    let private hasSoothingWater =
         hasTwo Element.Hydro
 
-    let hasHighVoltage =
+    let private hasHighVoltage =
         hasTwo Element.Electro
 
-    let hasShatteringIce =
+    let private hasShatteringIce =
         hasTwo Element.Cryo
 
-    let hasImpetuousWinds =
+    let private hasImpetuousWinds =
         hasTwo Element.Anemo
 
-    let hasEnduringRock =
+    let private hasEnduringRock =
         hasTwo Element.Geo
 
     let getResonances (party: Party) =

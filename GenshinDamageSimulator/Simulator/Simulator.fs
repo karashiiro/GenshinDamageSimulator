@@ -13,25 +13,19 @@ type SimulationState =
       LastState: SimulationState option }
 
 module Simulator =
-    let rec freeId state id =
-        if state.Ids |> Set.contains id then
-            freeId state (id + 1)
-        else
-            id
-
-    let elapse (result: ElapseEventResult) state =
+    let private elapse (result: ElapseEventResult) state =
         { state with 
             TimestampMs = state.TimestampMs + result.TimeElapsedMs
             LastEventResult = result |> ElapseResult }
 
-    let addCombatant (result: CombatantAddEventResult) state =
+    let private addCombatant (result: CombatantAddEventResult) state =
         { state with
             Ids = state.Ids.Add result.EntityState.Id
             Combatants = state.Combatants.Add (result.EntityState.Id, (result.Entity, result.EntityState))
             LastEventResult = result |> CombatantAddResult
             LastState = Some state }
 
-    let removeCombatant (result: CombatantRemoveEventResult) state =
+    let private removeCombatant (result: CombatantRemoveEventResult) state =
         let cOpt = state.Combatants.TryFind result.TargetId
         match cOpt with
         | Some _
@@ -41,7 +35,7 @@ module Simulator =
                     LastState = Some state }
         | None -> raise (EntityNotFoundException("Combatant not found.", result.TargetId))
 
-    let addPartyMember (result: PartyAddEventResult) state =
+    let private addPartyMember (result: PartyAddEventResult) state =
         let cOpt = state.Combatants.TryFind result.TargetId
         match cOpt with
         | Some (combatant, _)
@@ -54,7 +48,7 @@ module Simulator =
                | _ -> raise (EntityNotFoundException("Character not found.", result.TargetId))
         | None -> raise (EntityNotFoundException("Character not found.", result.TargetId))
 
-    let removePartyMember (result: PartyRemoveEventResult) state =
+    let private removePartyMember (result: PartyRemoveEventResult) state =
         let cOpt = state.Combatants.TryFind result.TargetId
         match cOpt with
         | Some _
@@ -64,13 +58,13 @@ module Simulator =
                     LastState = Some state }
         | None -> raise (EntityNotFoundException("Character not found.", result.TargetId))
 
-    let combatantantUpdateFn f value =
+    let private combatantantUpdateFn f value =
         match value with
         | Some matchedValue
             -> Some(f matchedValue)
         | _ -> None
 
-    let damageResultFn (result: DamageEventResult) (target, targetState) =
+    let private damageResultFn (result: DamageEventResult) (target, targetState) =
         match result.DamageAura with
         | Some aura
             -> (target, { targetState with
@@ -78,7 +72,7 @@ module Simulator =
                             ElementalAuras = (ElementalAuraState.unwrap targetState.ElementalAuras).Change((ElementalAura.unwrap aura).Element, fun _ -> Some(aura)) |> ElementalAuraState })
         | None -> (target, { targetState with Hp = targetState.Hp - result.DamageAmount })
 
-    let applyDamageResult (result: DamageEventResult) state =
+    let private applyDamageResult (result: DamageEventResult) state =
         let updateFnTarget =
             combatantantUpdateFn (damageResultFn result)
         { state with
@@ -86,7 +80,7 @@ module Simulator =
             LastEventResult = result |> DamageResult
             LastState = Some state }
 
-    let doEventOpt sourceOption targetOption event =
+    let private doEventOpt sourceOption targetOption event =
         let eventResult = EventHandling.handleEvent event sourceOption targetOption
         match eventResult with
         | Ok (ElapseResult r) -> elapse r
@@ -103,6 +97,12 @@ module Simulator =
         let targetOption = state.Combatants.TryFind targetId
         let eventOptFn e = doEventOpt sourceOption targetOption e state
         eventOptFn
+
+    let rec freeId state id =
+        if state.Ids |> Set.contains id then
+            freeId state (id + 1)
+        else
+            id
 
     let stepBack state =
         match state.LastState with

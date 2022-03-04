@@ -63,12 +63,7 @@ module ElementalAura =
         |> fun ad -> { ad with Gauge = ad.Gauge |> Gauge.decay s }
         |> wrap
 
-    let oldIfPermanent aura trigger =
-        if aura.Permanent then aura else trigger
-        |> wrap
-        |> Seq.singleton
-
-    let reactionModifier reaction =
+    let private reactionModifier reaction =
         match reaction with
         | StrongMelt | StrongVaporize -> 2f
         | Crystallize | Swirl | WeakMelt | WeakVaporize -> 0.5f
@@ -77,7 +72,7 @@ module ElementalAura =
 
     /// Resolves a gauge interaction when the result can have both the aura and trigger
     /// simultaneously (Electro-Charged, Burning).
-    let resolveGaugeDouble aura trigger =
+    let private resolveGaugeDouble aura trigger =
         // TODO: For now, I'm assuming the reaction modifier for these is 1x since it doesn't seem to
         // be stated on KQM. I should test this in-game.
         let newAura = wrap { trigger with Gauge = trigger.Gauge |> Gauge.tax }
@@ -99,7 +94,7 @@ module ElementalAura =
             let newGauge = aura.Gauge + (Gauge.tax trigger.Gauge)
             if newGauge |> Gauge.isEmpty then Seq.empty else Seq.singleton (wrap { trigger with Gauge = newGauge })
 
-    let resolveGauge aura trigger reaction =
+    let private resolveGauge aura trigger reaction =
         if aura.Permanent then
             Seq.singleton (wrap aura)
         elif trigger.Permanent then

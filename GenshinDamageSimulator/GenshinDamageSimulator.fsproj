@@ -16,8 +16,7 @@
     <Compile Include="ElementalAura\ElementalAuraState.fs" />
     <Compile Include="Entity\EntityId.fs" />
     <Compile Include="Entity\Entity.fs" />
-    <Compile Include="Party\PartyTypes.fs" />
-    <Compile Include="Party\Resonance.fs" />
+    <Compile Include="Party\Party.fs" />
     <Compile Include="Simulator\Formulas.fs" />
     <Compile Include="Simulator\GameEvent.fs" />
     <Compile Include="Simulator\GameEventResult.fs" />
