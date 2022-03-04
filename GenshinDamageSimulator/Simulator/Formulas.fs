@@ -79,9 +79,18 @@ module Formulas =
         abilityStat * abilityMult + bonusFlat * bonusMult
 
     // Incoming damage formulas
-    let calcDefenseMultiplier (attackerLevel: uint32) defenderDefense defReductionPerc defIgnoredPerc =
+    let calcDefenseMultiplierRaw attackerLevel defenderDefense defReductionPerc defIgnoredPerc =
         // https://genshin-impact.fandom.com/wiki/Defense
         (1f - defenderDefense / (defenderDefense + 5f * float32 attackerLevel + 500f)) * (1f - (min 0.9f defReductionPerc)) * (1f - defIgnoredPerc)
+
+    let calcDefenseMultiplier attacker defender defReductionPerc defIgnoredPerc =
+        let attackerLevel, defenderDefense =
+            match (attacker, defender) with
+            | CharacterEntity (bc, _), EnemyEntity be -> bc.Level, be.BaseDefense
+            | EnemyEntity be, CharacterEntity (bc, _) -> bc.Level, be.BaseDefense
+            | CharacterEntity (bc1, _), CharacterEntity (bc2, _) -> bc1.Level, bc2.BaseDefense
+            | EnemyEntity be1, EnemyEntity be2 -> be1.Level, be2.BaseDefense
+        calcDefenseMultiplierRaw attackerLevel defenderDefense defReductionPerc defIgnoredPerc
 
     let calcResMultiplier baseResPerc resBonusPerc resReductionPerc =
         let resPerc = baseResPerc + resBonusPerc - resReductionPerc

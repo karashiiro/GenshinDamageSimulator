@@ -11,5 +11,5 @@ module FormulaTests =
         let defEnemy = 500f + 5f * 81f
         let defReduction = 0f
         let defIgnore = 0f
-        let actual = Formulas.calcDefenseMultiplier levelChar defEnemy defReduction defIgnore
+        let actual = Formulas.calcDefenseMultiplierRaw levelChar defEnemy defReduction defIgnore
         abs (actual - 0.51212938f) |> should be (lessThan 0.01f)

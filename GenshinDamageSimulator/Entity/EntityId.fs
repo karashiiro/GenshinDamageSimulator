@@ -11,9 +11,9 @@ type EntityId = EntityId of int32
 module EntityId =
     let create id =
         if id >= 0 then
-            id |> EntityId
+            Ok (id |> EntityId)
         else
-            raise (InvalidEntityIdException(InvalidEntityIdException.format "EntityId.none", id))
+            Error (InvalidEntityIdException.format "EntityId.none", id)
 
     let none = -1 |> EntityId
 
@@ -22,11 +22,10 @@ type EntityId with
     /// Creates a new entity ID from the provided raw value. This method should be preferred
     /// over NewEntityId.
     static member Create (id: int32) =
-        try
-            EntityId.create id
-        with :? InvalidEntityIdException ->
-            // Create a new exception with the C# member name
-            raise (InvalidEntityIdException(InvalidEntityIdException.format "EntityId.None", id))
+        let id' = EntityId.create id
+        match id' with
+        | Ok id'' -> id''
+        | Error (_, id'') -> raise (InvalidEntityIdException(InvalidEntityIdException.format "EntityId.None", id''))
 
     /// The placeholder entity ID (-1).
     static member None = EntityId.none

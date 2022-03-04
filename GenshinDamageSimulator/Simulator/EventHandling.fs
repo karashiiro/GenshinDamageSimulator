@@ -1,38 +1,29 @@
 ﻿namespace GenshinDamageSimulator
 
-exception InvalidEventException of string * GameEvent
-
 module EventHandling =
-    let handleDamageEventOutgoing (attacker: Entity) event =
-        let attackerBasicData = match attacker with
-                                | CharacterEntity (cd, _) -> cd
-                                | EnemyEntity ed -> ed
-        let attackerScalingStatFn =
+    let handleDamageEventOutgoing attacker event =
+        attacker
+        |>
             match event.DamageStat with
             | TalentStat.Attack -> Formulas.calcTotalAttack
             | TalentStat.Defense -> Formulas.calcTotalDefense
             | TalentStat.Hp -> Formulas.calcTotalHp
-        let attackerBaseStat = attackerScalingStatFn attacker
-        let attackerDamageBonus = Entity.getDamageBonusPercent event.DamageType attacker
-        let attackerCriticalHit = Entity.getStatPercent PercStat.CriticalHit attacker
-        let attackerCriticalDamage = Entity.getStatPercent PercStat.CriticalDamage attacker
-        let outgoingDamage = Formulas.calcOutgoingDamage attackerBaseStat event.DamageStatMultiplier 0f attackerDamageBonus
-        match event.Critical with
-        | FullCritical -> outgoingDamage * Formulas.calcCritMultiplier attackerCriticalDamage
-        | AverageCritical -> outgoingDamage * Formulas.calcAverageCritMultiplier attackerCriticalHit attackerCriticalDamage
-        | NoCritical -> outgoingDamage
-
-    let handleDamageEventIncoming (attacker: Entity) defender outgoingDamage event =
-        let attackerBasicData = match attacker with
-                                | CharacterEntity (cd, _) -> cd
-                                | EnemyEntity ed -> ed
-        let defenderBasicData = match defender with
-                                | CharacterEntity (cd, _) -> cd
-                                | EnemyEntity ed -> ed
-        let defenderResistanceBaseStat = Entity.getBaseResStat event.DamageType defender
-        let defMult = Formulas.calcDefenseMultiplier attackerBasicData.Level defenderBasicData.BaseDefense 0f 0f
-        let resMult = Formulas.calcResMultiplier defenderResistanceBaseStat (Entity.getDamageResPercent event.DamageType defender) 0f
-        Formulas.calcIncomingDamage 1f outgoingDamage defMult resMult (Formulas.calcDamageReductionMultiplier 0f)
+        |> fun s -> s, Entity.getDamageBonusPercent event.DamageType attacker
+        |> fun (s, b) -> s, b, Entity.getStatPercent PercStat.CriticalHit attacker
+        |> fun (s, b, cr) -> s, b, cr, Entity.getStatPercent PercStat.CriticalDamage attacker
+        |> fun (s, b, cr, cd) -> cr, cd, Formulas.calcOutgoingDamage s event.DamageStatMultiplier 0f b
+        |> fun (cr, cd, o) ->
+            match event.Critical with
+            | FullCritical -> o * Formulas.calcCritMultiplier cd
+            | AverageCritical -> o * Formulas.calcAverageCritMultiplier cr cd
+            | NoCritical -> o
+        
+    let handleDamageEventIncoming attacker defender outgoingDamage event =
+        defender
+        |> Entity.getBaseResStat event.DamageType
+        |> fun s -> s, Formulas.calcDefenseMultiplier attacker defender 0f 0f
+        |> fun (s, dm) -> dm, Formulas.calcResMultiplier s (Entity.getDamageResPercent event.DamageType defender) 0f
+        |> fun (dm, rm) -> Formulas.calcIncomingDamage 1f outgoingDamage dm rm (Formulas.calcDamageReductionMultiplier 0f)
 
     let handleDamageEvent event (attacker: Entity, _: EntityState) (defender, defenderState) =
         let eo = Entity.getElementForDamageType event.DamageType
@@ -57,16 +48,16 @@ module EventHandling =
         match sourceOption, targetOption with
         | Some (source, sourceState), Some (target, targetState)
             -> match event with
-               | TalentDamage e -> DamageResult (handleDamageEvent e (source, sourceState) (target, targetState))
-               | TalentHeal _ -> HealResult ({ TargetId = targetState.Id; HealAmount = 0f })
-               | _ -> raise (InvalidEventException("No such source-target event exists.", event))
+               | TalentDamage e -> Ok (DamageResult (handleDamageEvent e (source, sourceState) (target, targetState)))
+               | TalentHeal _ -> Ok (HealResult ({ TargetId = targetState.Id; HealAmount = 0f }))
+               | _ -> Error ("No such source-target event exists.", event)
         | _, Some (_, targetState)
             -> match event with
-               | CombatantRemove _ -> CombatantRemoveResult ({ TargetId = targetState.Id })
-               | PartyAdd _ -> PartyAddResult ({ TargetId = targetState.Id })
-               | PartyRemove _ -> PartyRemoveResult ({ TargetId = targetState.Id })
-               | _ -> raise (InvalidEventException("No such target event exists.", event))
+               | CombatantRemove _ -> Ok (CombatantRemoveResult ({ TargetId = targetState.Id }))
+               | PartyAdd _ -> Ok (PartyAddResult ({ TargetId = targetState.Id }))
+               | PartyRemove _ -> Ok (PartyRemoveResult ({ TargetId = targetState.Id }))
+               | _ -> Error ("No such target event exists.", event)
         | _ -> match event with
-               | Elapse e -> ElapseResult ({ TimeElapsedMs = e.TimeElapsedMs })
-               | CombatantAdd e -> CombatantAddResult ({ Entity = e.Entity; EntityState = e.EntityState })
-               | _ -> raise (InvalidEventException("No such parameterless event exists.", event))
+               | Elapse e -> Ok (ElapseResult ({ TimeElapsedMs = e.TimeElapsedMs }))
+               | CombatantAdd e -> Ok (CombatantAddResult ({ Entity = e.Entity; EntityState = e.EntityState }))
+               | _ -> Error ("No such parameterless event exists.", event)

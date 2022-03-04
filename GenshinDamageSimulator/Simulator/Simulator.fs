@@ -1,5 +1,6 @@
 ﻿namespace GenshinDamageSimulator
 
+exception InvalidEventException of string * GameEvent
 exception InvalidEventResultException of string * GameEventResult
 exception EntityNotFoundException of string * EntityId
 
@@ -88,13 +89,14 @@ module Simulator =
     let doEventOpt sourceOption targetOption event =
         let eventResult = EventHandling.handleEvent event sourceOption targetOption
         match eventResult with
-        | ElapseResult r -> elapse r
-        | CombatantAddResult r -> addCombatant r
-        | CombatantRemoveResult r -> removeCombatant r
-        | PartyAddResult r -> addPartyMember r
-        | PartyRemoveResult r -> removePartyMember r
-        | DamageResult r -> applyDamageResult r
-        | _ -> raise (InvalidEventResultException("No handler present for the produced event result.", eventResult))
+        | Ok (ElapseResult r) -> elapse r
+        | Ok (CombatantAddResult r) -> addCombatant r
+        | Ok (CombatantRemoveResult r) -> removeCombatant r
+        | Ok (PartyAddResult r) -> addPartyMember r
+        | Ok (PartyRemoveResult r) -> removePartyMember r
+        | Ok (DamageResult r) -> applyDamageResult r
+        | Ok (eventResult) -> raise (InvalidEventResultException("No handler present for the produced event result.", eventResult))
+        | Error (reason, event) -> raise (InvalidEventException(reason, event))
 
     let doEvent state sourceId targetId =
         let sourceOption = state.Combatants.TryFind sourceId
@@ -122,7 +124,7 @@ type SimulationState with
 
     /// Gets an unused entity ID from the simulation state.
     member this.FreeId () =
-        Simulator.freeId this (EntityId.create 0)
+        Simulator.freeId this (EntityId.Create 0)
 
     /// Executes a new elapse event on the current simulation state, returning a new simulation state
     /// with the current state in the history stack.
