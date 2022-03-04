@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="FormulaTests.fs" />
     <Compile Include="ElementalAuraStateTests.fs" />
     <Compile Include="DataTests.fs" />
     <Compile Include="GaugeTests.fs" />

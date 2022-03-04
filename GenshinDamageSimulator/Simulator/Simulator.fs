@@ -4,7 +4,7 @@ exception InvalidEventResultException of string * GameEventResult
 exception EntityNotFoundException of string * EntityId
 
 type SimulationState =
-    { Ids: Map<EntityId, bool>
+    { Ids: Set<EntityId>
       Combatants: Map<EntityId, (Entity * EntityState)>
       Party: Party
       TimestampMs: int64
@@ -13,7 +13,7 @@ type SimulationState =
 
 module Simulator =
     let rec freeId state id =
-        if state.Ids |> Map.containsKey id then
+        if state.Ids |> Set.contains id then
             freeId state (id + 1)
         else
             id
@@ -25,6 +25,7 @@ module Simulator =
 
     let addCombatant (result: CombatantAddEventResult) state =
         { state with
+            Ids = state.Ids.Add result.EntityState.Id
             Combatants = state.Combatants.Add (result.EntityState.Id, (result.Entity, result.EntityState))
             LastEventResult = result |> CombatantAddResult
             LastState = Some state }
@@ -107,7 +108,7 @@ module Simulator =
         | None -> state
 
     let origin =
-        { Ids = Map.empty
+        { Ids = Set.empty
           Combatants = Map.empty
           Party = Map.empty
           TimestampMs = 0
@@ -138,6 +139,7 @@ type SimulationState with
     /// Executes a new combatant remove event on the current simulation state, returning a new simulation state
     /// with the current state in the history stack.
     member this.CombatantRemove (targetId: EntityId) =
+        if isNull (box targetId) then nullArg "targetId"
         Simulator.doEvent this EntityId.none targetId (CombatantRemove (CombatantRemoveEvent ()))
 
     /// Executes a new party add event on the current simulation state, returning a new simulation state

@@ -80,14 +80,8 @@ module Formulas =
         abilityStat * abilityMult + bonusFlat * bonusMult
 
     // Incoming damage formulas
-    let calcBaseDefenseMultiplier defense (attackerLevel: uint32) =
-        1f - (defense / (defense + 5f * float32 attackerLevel + 500f))
-
-    let calcLevelDiffDefenseMultiplier (attackerLevel: uint32) (defenderLevel: uint32) defReductionPerc defIgnoredPerc =
+    let calcDefenseMultiplier (attackerLevel: uint32) (defenderLevel: uint32) defReductionPerc defIgnoredPerc =
         (float32 attackerLevel + 100f) / (float32 attackerLevel + 100f + (float32 defenderLevel + 100f) * (1f - (min 0.9f defReductionPerc)) * (1f - defIgnoredPerc))
-
-    let calcDefenseMultiplier (defense: float32) (attackerLevel: uint32) (defenderLevel: uint32) defReductionPerc defIgnoredPerc =
-        (calcBaseDefenseMultiplier defense attackerLevel) * (calcLevelDiffDefenseMultiplier attackerLevel defenderLevel defReductionPerc defIgnoredPerc)
 
     let calcResMultiplier baseResPerc resBonusPerc resReductionPerc =
         let resPerc = baseResPerc + resBonusPerc - resReductionPerc

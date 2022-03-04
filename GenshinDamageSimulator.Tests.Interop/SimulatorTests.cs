@@ -15,11 +15,11 @@ public class SimulatorTests
 
         var sim = SimulationState.Create();
         var testNpcState0 = new EntityState(sim.FreeId(), testNpc0.GetMaxHp(), 0, ElementalAuraState.Create());
-        var testNpcState1 = new EntityState(sim.FreeId(), testNpc1.GetMaxHp(), 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAuraData>()));
         sim = sim.CombatantAdd(testNpc0, testNpcState0);
         sim = sim.PartyAdd(testNpcState0.Id);
+        var testNpcState1 = new EntityState(sim.FreeId(), testNpc1.GetMaxHp(), 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAuraData>()));
         sim = sim.CombatantAdd(testNpc1, testNpcState1);
-        sim = sim.TalentDamage(DamageType.Physical, TalentStat.Defense, 1.5640f, Critical.NoCritical, testNpcState0.Id, testNpcState1.Id);
+        sim = sim.TalentDamage(DamageType.Physical, TalentStat.Attack, 1.5640f, Critical.NoCritical, testNpcState0.Id, testNpcState1.Id);
         var result = sim.LastEventResult switch
         {
             GameEventResult.DamageResult r => r.Item.DamageAmount,
