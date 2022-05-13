@@ -5,9 +5,11 @@ public static class Noelle
     public static readonly Entity Noelle90 = Entity.CreateCharacter(
         new BasicEntityParams
         {
+            // https://library.keqingmains.com/characters/geo/noelle
+            // https://genshin-impact.fandom.com/wiki/Noelle#Ascensions_and_Stats
             BaseHp = 12071,
             BaseAttack = 191,
-            BaseDefense = 559,
+            BaseDefense = 799,
             BasePhysicalRes = 0f,
             BasePyroRes = 0f,
             BaseHydroRes = 0f,
