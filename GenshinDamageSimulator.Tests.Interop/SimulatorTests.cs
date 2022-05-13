@@ -137,6 +137,113 @@ public class SimulatorTests
         // There's probably some float imprecision going on somewhere.
         AssertFloatEquals(expectedDamage, result, 1.2f);
     }
+    
+    /// <summary>
+    /// This test is referring to the first hit of the actual burst damage, not
+    /// the damage bonus and damage conversion after the burst damage goes out.
+    /// The little burst thing, not the swing afterwards.
+    /// </summary>
+    [Fact]
+    public void Noelle_ElementalBurst10_Hit1_Works()
+    {
+        var testNpc0 = Noelle.Noelle90;
+        var testNpc1 = Hilichurls.Hilichurl81;
+        
+        // TODO: Actually math this out
+        const float expectedDamage = 536f;
+
+        var sim = SimulationState.Create();
+        var testNpcState0 = new EntityState(sim.FreeId(), testNpc0.GetMaxHp(), 0, ElementalAuraState.Create());
+        sim = sim.CombatantAdd(testNpc0, testNpcState0);
+        sim = sim.PartyAdd(testNpcState0.Id);
+        var testNpcState1 = new EntityState(sim.FreeId(), testNpc1.GetMaxHp(), 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAuraData>()));
+        sim = sim.CombatantAdd(testNpc1, testNpcState1);
+        sim = sim.TalentDamage(DamageType.Geo, TalentStat.Attack, 1.2096f, Critical.NoCritical, testNpcState0.Id, testNpcState1.Id);
+        var result = sim.LastEventResult switch
+        {
+            GameEventResult.DamageResult r => r.Item.DamageAmount,
+            _ => 0f,
+        };
+        
+        // Using a larger threshold because I don't feel like actually mathing this
+        AssertFloatEquals(expectedDamage, result, 1f);
+    }
+    
+    [Fact]
+    public void Noelle_ElementalBurst10_DamageConversion_Hit1_Works()
+    {
+        var testNpc0 = Noelle.Noelle90;
+        var testNpc1 = Hilichurls.Hilichurl81;
+        
+        // TODO: Actually math this out
+        const float expectedDamage = 693f;
+
+        var sim = SimulationState.Create();
+        var testNpcState0 = new EntityState(sim.FreeId(), testNpc0.GetMaxHp(), 0, ElementalAuraState.Create());
+        sim = sim.CombatantAdd(testNpc0, testNpcState0);
+        sim = sim.PartyAdd(testNpcState0.Id);
+        var testNpcState1 = new EntityState(sim.FreeId(), testNpc1.GetMaxHp(), 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAuraData>()));
+        sim = sim.CombatantAdd(testNpc1, testNpcState1);
+        sim = sim.TalentDamage(DamageType.Geo, TalentStat.Attack, 1.5640f, Critical.NoCritical, testNpcState0.Id, testNpcState1.Id);
+        var result = sim.LastEventResult switch
+        {
+            GameEventResult.DamageResult r => r.Item.DamageAmount,
+            _ => 0f,
+        };
+        
+        // Using a larger threshold because I don't feel like actually mathing this
+        AssertFloatEquals(expectedDamage, result, 1f);
+    }
+    
+    [Fact]
+    public void Noelle_ElementalBurst10_DamageConversion_Sequence_Works()
+    {
+        var testNpc0 = Noelle.Noelle90;
+        var testNpc1 = Hilichurls.Hilichurl81;
+        
+        // TODO: Actually math this out
+        const float expectedDamage = 693f + 642f + 755f + 994f;
+
+        var actual = 0f;
+
+        var sim = SimulationState.Create();
+        var testNpcState0 = new EntityState(sim.FreeId(), testNpc0.GetMaxHp(), 0, ElementalAuraState.Create());
+        sim = sim.CombatantAdd(testNpc0, testNpcState0);
+        sim = sim.PartyAdd(testNpcState0.Id);
+        var testNpcState1 = new EntityState(sim.FreeId(), testNpc1.GetMaxHp(), 0, ElementalAuraState.FromDictionary(new Dictionary<Element, ElementalAuraData>()));
+        sim = sim.CombatantAdd(testNpc1, testNpcState1);
+        
+        sim = sim.TalentDamage(DamageType.Geo, TalentStat.Attack, 1.5640f, Critical.NoCritical, testNpcState0.Id, testNpcState1.Id);
+        actual += sim.LastEventResult switch
+        {
+            GameEventResult.DamageResult r => r.Item.DamageAmount,
+            _ => 0f,
+        };
+        
+        sim = sim.TalentDamage(DamageType.Geo, TalentStat.Attack, 1.4501f, Critical.NoCritical, testNpcState0.Id, testNpcState1.Id);
+        actual += sim.LastEventResult switch
+        {
+            GameEventResult.DamageResult r => r.Item.DamageAmount,
+            _ => 0f,
+        };
+        
+        sim = sim.TalentDamage(DamageType.Geo, TalentStat.Attack, 1.7051f, Critical.NoCritical, testNpcState0.Id, testNpcState1.Id);
+        actual += sim.LastEventResult switch
+        {
+            GameEventResult.DamageResult r => r.Item.DamageAmount,
+            _ => 0f,
+        };
+        
+        sim = sim.TalentDamage(DamageType.Geo, TalentStat.Attack, 2.2423f, Critical.NoCritical, testNpcState0.Id, testNpcState1.Id);
+        actual += sim.LastEventResult switch
+        {
+            GameEventResult.DamageResult r => r.Item.DamageAmount,
+            _ => 0f,
+        };
+        
+        // Using a larger threshold because I don't feel like actually mathing this
+        AssertFloatEquals(expectedDamage, actual, 1f);
+    }
 
     private static void AssertFloatEquals(float expected, float actual, float threshold = 0.05f)
     {
