@@ -9,7 +9,7 @@ namespace GenshinDamageSimulator.Tests.Interop;
 public class SimulatorTests
 {
     [Fact]
-    public void Noelle_NormalAttack10_Hit1_Works()
+    public void Noelle_NormalAttack10_Hit1_IsAccurate()
     {
         var testNpc0 = Noelle.Noelle90;
         var testNpc1 = Hilichurls.Hilichurl81;
@@ -32,7 +32,7 @@ public class SimulatorTests
     }
     
     [Fact]
-    public void Noelle_NormalAttack10_Sequence_Works()
+    public void Noelle_NormalAttack10_Sequence_IsAccurate()
     {
         var testNpc0 = Noelle.Noelle90;
         var testNpc1 = Hilichurls.Hilichurl81;
