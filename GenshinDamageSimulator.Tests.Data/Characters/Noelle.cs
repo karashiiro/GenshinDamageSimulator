@@ -21,6 +21,9 @@ public static class Noelle
         new CharacterEntityParams
         {
             MainStat = StatModifier.CreatePercent(PercStat.Defense, 0.3f),
+            CriticalHit = StatModifier.CreatePercent(PercStat.CriticalHit, 0.05f),
+            CriticalDamage = StatModifier.CreatePercent(PercStat.CriticalDamage, 0.5f),
+            EnergyRecharge = StatModifier.CreatePercent(PercStat.EnergyRecharge, 1f),
             Element = Element.Geo,
             Weapon = new Weapon(23, null), // Waster Greatsword
             Artifacts = Array.Empty<Artifact>(),

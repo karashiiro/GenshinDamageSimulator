@@ -24,6 +24,9 @@ type BasicEntityData =
 
 type CharacterEntityData =
     { MainStat: StatModifier
+      CriticalHit: StatModifier
+      CriticalDamage: StatModifier
+      EnergyRecharge: StatModifier
       Element: Element option
       Weapon: Weapon
       Artifacts: Artifact array }
@@ -69,7 +72,7 @@ module Entity =
                     match cd.Weapon.MainStat with
                     | Some weaponMainStat -> weaponMainStat :: (cd.Artifacts |> Seq.map (fun x -> x.MainStat :: List.ofArray x.StatLines) |> Seq.concat |> List.ofSeq)
                     | None -> cd.Artifacts |> Seq.map (fun x -> x.MainStat :: List.ofArray x.StatLines) |> Seq.concat |> List.ofSeq
-                cd.MainStat :: statLines
+                cd.MainStat :: cd.CriticalHit :: cd.CriticalDamage :: cd.EnergyRecharge :: statLines
         | EnemyEntity _ -> []
 
     let getStatFlat stat entity =
@@ -165,16 +168,25 @@ type BasicEntityParams() =
 
 /// A character entity data mapping class for use in C#.
 type CharacterEntityParams() =
-    member val MainStat = FlatStatModifier ({ Type = FlatStat.Attack; Value = 0f }) with get, set
+    member val MainStat = FlatStatModifier { Type = FlatStat.Attack; Value = 0f } with get, set
+    member val CriticalHit = PercStatModifier { Type = PercStat.CriticalHit; Value = 0f } with get, set
+    member val CriticalDamage = PercStatModifier { Type = PercStat.CriticalDamage; Value = 0f } with get, set
+    member val EnergyRecharge = PercStatModifier { Type = PercStat.EnergyRecharge; Value = 0f } with get, set
     member val Element = None with get, set
     member val Weapon = { Attack = 0f; MainStat = None } with get, set
     member val Artifacts = Array.empty with get, set
 
     member this.ToCharacterEntityData () =
         if isNull (box this.MainStat) then nullArg "MainStat"
+        if isNull (box this.CriticalHit) then nullArg "CriticalHit"
+        if isNull (box this.CriticalDamage) then nullArg "CriticalDamage"
+        if isNull (box this.EnergyRecharge) then nullArg "EnergyRecharge"
         if isNull (box this.Weapon) then nullArg "Weapon"
         if isNull (box this.Artifacts) then nullArg "Artifacts"
         { MainStat = this.MainStat
+          CriticalHit = this.CriticalHit
+          CriticalDamage = this.CriticalDamage
+          EnergyRecharge = this.EnergyRecharge
           Element = this.Element
           Weapon = this.Weapon
           Artifacts = this.Artifacts }
