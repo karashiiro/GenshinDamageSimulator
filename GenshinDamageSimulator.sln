@@ -13,6 +13,12 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "GenshinDamageSimulator.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenshinDamageSimulator.Tests.Data", "GenshinDamageSimulator.Tests.Data\GenshinDamageSimulator.Tests.Data.csproj", "{EED4BFD5-0E53-4DA3-A5AE-BA6C42E51EA0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub", "GitHub", "{47411501-9CCC-4AD6-82D1-8683FDD6E4F6}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

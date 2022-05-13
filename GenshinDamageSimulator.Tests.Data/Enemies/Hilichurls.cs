@@ -2,6 +2,7 @@
 
 public static class Hilichurls
 {
+    // There's a patrolling one South of the lake near the Thousand Winds Temple to use as an in-game reference
     public static readonly Entity Hilichurl81 = Entity.CreateEnemy(
         new BasicEntityParams
         {
