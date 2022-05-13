@@ -22,7 +22,7 @@ public static class Noelle
         {
             MainStat = StatModifier.CreatePercent(PercStat.Defense, 0.3f),
             Element = Element.Geo,
-            Weapon = new Weapon(23, null),
+            Weapon = new Weapon(23, null), // Waster Greatsword
             Artifacts = Array.Empty<Artifact>(),
         });
 }
