@@ -1,12 +1,10 @@
 ﻿namespace Scryglass
 
 module Elements =
-    type Entity = uint32
-    
     type GaugeUnits = float
     type InternalCooldown = float
     type Aura =
-        | StandardAura of GaugeUnits * InternalCooldown * Entity
+        | StandardAura of GaugeUnits * InternalCooldown * Entity.EntityId
         | SelfAura of GaugeUnits
     
     type Element = Pyro | Cryo | Hydro | Electro | Anemo | Geo | Dendro
@@ -26,7 +24,7 @@ module Elements =
         | Crystallize
         | Burning
     
-    type Physical = InternalCooldown * Entity
+    type Physical = InternalCooldown * Entity.EntityId
     
     type ApplyAura = ElementAuraState -> Aura -> ElementAuraState * Reaction option
     type ApplyPhysical = ElementAuraState -> Physical -> ElementAuraState * Reaction option
