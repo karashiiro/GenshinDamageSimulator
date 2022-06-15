@@ -7,7 +7,6 @@ type Reaction =
     | WeakVaporize // Hydro <- Pyro
     | ElectroCharged of ElectroCharged
     | Frozen
-    | Shatter
     | Superconduct
     | StrongMelt // Cryo <- Pyro
     | Swirl
