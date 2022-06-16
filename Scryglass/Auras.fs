@@ -17,7 +17,7 @@ module Auras =
     type AnemoAuraData = AuraData
     type GeoAuraData = AuraData
     type DendroAuraData = AuraData
-    
+
     [<RequireQualifiedAccess>]
     type VolatileAura =
         | Pyro of PyroAuraData

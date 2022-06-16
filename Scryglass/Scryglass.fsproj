@@ -6,12 +6,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="time.fs" />
-        <Compile Include="stats.fs" />
-        <Compile Include="gauge.fs" />
-        <Compile Include="auras.fs" />
-        <Compile Include="reactions.fs" />
-        <Compile Include="entities.fs" />
+        <Compile Include="Time.fs" />
+        <Compile Include="Stats.fs" />
+        <Compile Include="Gauge.fs" />
+        <Compile Include="Auras.fs" />
+        <Compile Include="Reactions.fs" />
+        <Compile Include="Entities.fs" />
     </ItemGroup>
 
 </Project>
