@@ -1,7 +1,7 @@
 ﻿namespace Scryglass
 
+open Elements
 open Stats
-open Time
 
 module Entities =
     type EntityId = uint
@@ -41,12 +41,9 @@ module Entities =
         | EnemyEntity of BasicEntityData
         | CharacterEntity of BasicEntityData * CharacterEntityData
 
-    type ActionGroupId = uint
-    type InternalCooldown = Seconds * ActionGroupId
-
     [<RequireQualifiedAccess>]
     type TalentScalingStat = Hp | Attack | Defense
     type Talent =
         { ScalingStat: TalentScalingStat
           ScalingStatMultiplier: float
-          ICD: InternalCooldown }
+          Aura: Aura option }

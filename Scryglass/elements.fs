@@ -1,12 +1,14 @@
 ﻿namespace Scryglass
 
-open Entities
+open Stats
 open Time
 
 module Elements =
     type GaugeUnits = float
+    type InternalCooldownGroupId = uint
+    type InternalCooldown = Seconds * InternalCooldownGroupId
     type AuraData =
-        | StandardAura of GaugeUnits * Talent * Entity
+        | StandardAura of GaugeUnits * InternalCooldown * FlatElementalMastery * Level // EM and level are snapshot
         | SelfAura of GaugeUnits
 
     type PyroAuraData = AuraData
