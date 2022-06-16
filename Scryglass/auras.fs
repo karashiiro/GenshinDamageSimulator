@@ -4,12 +4,11 @@ module Auras =
     open Stats
     open Time
 
-    type GaugeUnits = float
     type InternalCooldownGroupId = uint
     type InternalCooldown = Seconds * InternalCooldownGroupId
     type AuraData =
-        | StandardAura of GaugeUnits * InternalCooldown * FlatElementalMastery * Level // EM and level are snapshot
-        | SelfAura of GaugeUnits
+        | StandardAura of Gauge * InternalCooldown * FlatElementalMastery * Level // EM and level are snapshot
+        | SelfAura of Gauge
 
     type PyroAuraData = AuraData
     type CryoAuraData = AuraData
