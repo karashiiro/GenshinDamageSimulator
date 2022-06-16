@@ -7,7 +7,7 @@
 
     <ItemGroup>
         <Compile Include="time.fs" />
-        <Compile Include="entity.fs" />
+        <Compile Include="entities.fs" />
         <Compile Include="elements.fs" />
     </ItemGroup>
 

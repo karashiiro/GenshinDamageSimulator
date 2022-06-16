@@ -1,28 +1,27 @@
 ﻿namespace Scryglass
 
-module Entity =
+module Entities =
     type EntityId = uint
     
-    [<RequireQualifiedAccess>]
+    type StatValue = float
+
     type TalentStat = Hp | Attack | Defense
 
-    [<RequireQualifiedAccess>]
     type FlatStat = Hp | Attack | Defense | ElementalMastery
 
-    [<RequireQualifiedAccess>]
     type PercentStat =
         | Hp | Attack | Defense
         | EnergyRecharge
         | CriticalHit | CriticalDamage
         | PhysicalBonus | PyroBonus | HydroBonus | ElectroBonus | CryoBonus | AnemoBonus | GeoBonus | DendroBonus
         | PhysicalRes | PyroRes | HydroRes | ElectroRes | CryoRes | AnemoRes | GeoRes | DendroRes
-        
+
     type EntityStat =
         | FlatStat of FlatStat
         | PercentStat of PercentStat
-    
-    type StatModifier = EntityStat * float
-    
+
+    type StatModifier = EntityStat * StatValue
+
     type Artifact =
         { MainStat: StatModifier
           SubStats: StatModifier list }
@@ -32,24 +31,24 @@ module Entity =
           MainStat: StatModifier option }
 
     type BasicEntityData =
-        { BaseHp: float
-          BaseAttack: float
-          BaseDefense: float
-          BasePhysicalRes: float
-          BasePyroRes: float
-          BaseHydroRes: float
-          BaseElectroRes: float
-          BaseCryoRes: float
-          BaseAnemoRes: float
-          BaseGeoRes: float
-          BaseDendroRes: float
+        { BaseHp: StatValue
+          BaseAttack: StatValue
+          BaseDefense: StatValue
+          BasePhysicalRes: StatValue
+          BasePyroRes: StatValue
+          BaseHydroRes: StatValue
+          BaseElectroRes: StatValue
+          BaseCryoRes: StatValue
+          BaseAnemoRes: StatValue
+          BaseGeoRes: StatValue
+          BaseDendroRes: StatValue
           Level: uint }
 
     type CharacterEntityData =
         { MainStat: StatModifier
-          CriticalHit: float
-          CriticalDamage: float
-          EnergyRecharge: float
+          CriticalHit: StatValue
+          CriticalDamage: StatValue
+          EnergyRecharge: StatValue
           Weapon: Weapon
           Artifacts: Artifact list }
 
