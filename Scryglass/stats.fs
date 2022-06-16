@@ -33,9 +33,6 @@ module Stats =
     type PercentGeoRes = StatDataType
     type PercentDendroRes = StatDataType
 
-    [<RequireQualifiedAccess>]
-    type TalentScalingStat = Hp | Attack | Defense
-
     type StatModifier =
         | FlatHp of FlatHp
         | FlatAttack of FlatAttack
