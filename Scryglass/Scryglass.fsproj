@@ -8,7 +8,8 @@
     <ItemGroup>
         <Compile Include="time.fs" />
         <Compile Include="stats.fs" />
-        <Compile Include="elements.fs" />
+        <Compile Include="auras.fs" />
+        <Compile Include="reactions.fs" />
         <Compile Include="entities.fs" />
     </ItemGroup>
 
