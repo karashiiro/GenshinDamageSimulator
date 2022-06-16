@@ -1,13 +1,9 @@
 ﻿namespace Scryglass
 
 module Reactions =
+    open AmplifyingReactionTypes
     open Auras
     open Time
-
-    type StrongVaporize = PyroAuraData * HydroAuraData
-    type WeakVaporize = HydroAuraData * PyroAuraData
-    type StrongMelt = CryoAuraData * PyroAuraData
-    type WeakMelt = PyroAuraData * CryoAuraData
 
     type Overload = PyroAuraData * ElectroAuraData
     type Superconduct = ElectroAuraData * CryoAuraData

@@ -1,6 +1,6 @@
 ﻿namespace Scryglass
 
-open Elements
+open Auras
 open Stats
 
 module Entities =

@@ -10,7 +10,8 @@
         <Compile Include="Stats.fs" />
         <Compile Include="Gauge.fs" />
         <Compile Include="Auras.fs" />
-        <Compile Include="Reactions.fs" />
+        <Compile Include="Reactions\AmplifyingReactions.fs" />
+        <Compile Include="Reactions\Reactions.fs" />
         <Compile Include="Entities.fs" />
     </ItemGroup>
 
