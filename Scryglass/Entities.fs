@@ -1,11 +1,9 @@
 ﻿namespace Scryglass
 
-open Auras
-open Stats
+open Microsoft.FSharp.Data.UnitSystems.SI.UnitNames
 
-module Entities =
-    type EntityId = uint
-
+[<AutoOpen>]
+module EntityTypes =
     type Artifact =
         { MainStat: StatModifier
           SubStats: StatModifier list }
@@ -37,9 +35,20 @@ module Entities =
           Weapon: Weapon
           Artifacts: Artifact list }
 
+    type InternalCooldownGroupId = uint
+    type InternalCooldown = InternalCooldownGroupId * float<second>
+
+    type Shield =
+        { CurrentHp: StatValue
+          Strength: StatValue }
+
+    type EntityState =
+        { CurrentHp: StatValue
+          InternalCooldowns: InternalCooldown list }
+
     type Entity =
-        | EnemyEntity of BasicEntityData
-        | CharacterEntity of BasicEntityData * CharacterEntityData
+        | EnemyEntity of EntityState * BasicEntityData
+        | CharacterEntity of EntityState * BasicEntityData * CharacterEntityData
 
     [<RequireQualifiedAccess>]
     type TalentScalingStat = Hp | Attack | Defense

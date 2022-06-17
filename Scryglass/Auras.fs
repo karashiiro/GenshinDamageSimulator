@@ -1,13 +1,9 @@
 ﻿namespace Scryglass
 
-module Auras =
-    open Stats
-    open Time
-
-    type InternalCooldownGroupId = uint
-    type InternalCooldown = Seconds * InternalCooldownGroupId
+[<AutoOpen>]
+module AuraTypes =
     type AuraData =
-        | StandardAura of Gauge * InternalCooldown * FlatElementalMastery * Level // EM and level are snapshot
+        | StandardAura of Gauge * FlatElementalMastery * Level
         | SelfAura of Gauge
 
     type PyroAuraData = AuraData

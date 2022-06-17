@@ -1,37 +1,38 @@
 ﻿namespace Scryglass
 
+[<AutoOpen>]
 module Stats =
-    type StatDataType = float
+    type StatValue = float
 
-    type Level = uint
+    type Level = int
 
-    type FlatHp = StatDataType
-    type FlatAttack = StatDataType
-    type FlatDefense = StatDataType
-    type FlatElementalMastery = StatDataType
+    type FlatHp = StatValue
+    type FlatAttack = StatValue
+    type FlatDefense = StatValue
+    type FlatElementalMastery = StatValue
 
-    type PercentHp = StatDataType
-    type PercentAttack = StatDataType
-    type PercentDefense = StatDataType
-    type PercentEnergyRecharge = StatDataType
-    type PercentCriticalHit = StatDataType
-    type PercentCriticalDamage = StatDataType
-    type PercentPhysicalBonus = StatDataType
-    type PercentPyroBonus = StatDataType
-    type PercentHydroBonus = StatDataType
-    type PercentElectroBonus = StatDataType
-    type PercentCryoBonus = StatDataType
-    type PercentAnemoBonus = StatDataType
-    type PercentGeoBonus = StatDataType
-    type PercentDendroBonus = StatDataType
-    type PercentPhysicalRes = StatDataType
-    type PercentPyroRes = StatDataType
-    type PercentHydroRes = StatDataType
-    type PercentElectroRes = StatDataType
-    type PercentCryoRes = StatDataType
-    type PercentAnemoRes = StatDataType
-    type PercentGeoRes = StatDataType
-    type PercentDendroRes = StatDataType
+    type PercentHp = StatValue
+    type PercentAttack = StatValue
+    type PercentDefense = StatValue
+    type PercentEnergyRecharge = StatValue
+    type PercentCriticalHit = StatValue
+    type PercentCriticalDamage = StatValue
+    type PercentPhysicalBonus = StatValue
+    type PercentPyroBonus = StatValue
+    type PercentHydroBonus = StatValue
+    type PercentElectroBonus = StatValue
+    type PercentCryoBonus = StatValue
+    type PercentAnemoBonus = StatValue
+    type PercentGeoBonus = StatValue
+    type PercentDendroBonus = StatValue
+    type PercentPhysicalRes = StatValue
+    type PercentPyroRes = StatValue
+    type PercentHydroRes = StatValue
+    type PercentElectroRes = StatValue
+    type PercentCryoRes = StatValue
+    type PercentAnemoRes = StatValue
+    type PercentGeoRes = StatValue
+    type PercentDendroRes = StatValue
 
     type StatModifier =
         | FlatHp of FlatHp
