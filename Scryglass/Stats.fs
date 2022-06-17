@@ -15,7 +15,7 @@ module Stats =
     type PercentAttack = StatValue
     type PercentDefense = StatValue
     type PercentEnergyRecharge = StatValue
-    type PercentCriticalHit = StatValue
+    type PercentCriticalRate = StatValue
     type PercentCriticalDamage = StatValue
     type PercentPhysicalBonus = StatValue
     type PercentPyroBonus = StatValue
@@ -43,7 +43,7 @@ module Stats =
         | PercentAttack of PercentAttack
         | PercentDefense of PercentDefense
         | PercentEnergyRecharge of PercentEnergyRecharge
-        | PercentCriticalHit of PercentCriticalHit
+        | PercentCriticalRate of PercentCriticalRate
         | PercentCriticalDamage of PercentCriticalDamage
         | PercentPhysicalBonus of PercentPhysicalBonus
         | PercentPyroBonus of PercentPyroBonus

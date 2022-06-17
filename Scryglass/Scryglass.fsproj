@@ -14,6 +14,7 @@
         <Compile Include="Reactions\AmplifyingReactions.fs" />
         <Compile Include="Reactions\TransformativeReactions.fs" />
         <Compile Include="Entities.fs" />
+        <Compile Include="Damage.fs" />
     </ItemGroup>
 
 </Project>
