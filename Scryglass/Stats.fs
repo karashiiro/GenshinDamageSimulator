@@ -37,6 +37,15 @@ module Stats =
     type PercentDefenseReduction = StatValue
     type PercentDefenseIgnore = StatValue
 
+    type PercentPhysicalResIgnore = StatValue
+    type PercentPyroResIgnore = StatValue
+    type PercentHydroResIgnore = StatValue
+    type PercentElectroResIgnore = StatValue
+    type PercentCryoResIgnore = StatValue
+    type PercentAnemoResIgnore = StatValue
+    type PercentGeoResIgnore = StatValue
+    type PercentDendroResIgnore = StatValue
+
     type StatModifier =
         | FlatHp of FlatHp
         | FlatAttack of FlatAttack
@@ -66,3 +75,11 @@ module Stats =
         | PercentDendroRes of PercentDendroRes
         | PercentDefenseReduction of PercentDefenseReduction
         | PercentDefenseIgnore of PercentDefenseIgnore
+        | PercentPhysicalResIgnore of PercentPhysicalResIgnore
+        | PercentPyroResIgnore of PercentPyroResIgnore
+        | PercentHydroResIgnore of PercentHydroResIgnore
+        | PercentElectroResIgnore of PercentElectroResIgnore
+        | PercentCryoResIgnore of PercentCryoResIgnore
+        | PercentAnemoResIgnore of PercentAnemoResIgnore
+        | PercentGeoResIgnore of PercentGeoResIgnore
+        | PercentDendroResIgnore of PercentDendroResIgnore

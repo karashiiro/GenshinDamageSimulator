@@ -48,10 +48,11 @@ module EntityTypes =
           InternalCooldowns: InternalCooldown list
           Effects: StatModifier list }
 
+    type EnemyEntity = EntityState * BasicEntityData
     type CharacterEntity = EntityState * BasicEntityData * CharacterEntityData
     
     type Entity =
-        | EnemyEntity of EntityState * BasicEntityData
+        | EnemyEntity of EnemyEntity
         | CharacterEntity of CharacterEntity
 
     [<RequireQualifiedAccess>]
@@ -61,7 +62,7 @@ module EntityTypes =
           ScalingStatMultiplier: float
           Aura: Aura option }
 
-module CharacterEntity =
+module EnemyEntity =
     let private percentHp stat =
         match stat with
         | PercentHp hp -> hp
@@ -92,14 +93,125 @@ module CharacterEntity =
         | FlatDefense def -> def
         | _ -> 0.0
 
+module CharacterEntity =
+    let private percentHp stat =
+        match stat with
+        | PercentHp s -> s
+        | _ -> 0.0
+
+    let private flatHp stat =
+        match stat with
+        | FlatHp s -> s
+        | _ -> 0.0
+
+    let private percentAttack stat =
+        match stat with
+        | PercentAttack s -> s
+        | _ -> 0.0
+
+    let private flatAttack stat =
+        match stat with
+        | FlatAttack s -> s
+        | _ -> 0.0
+
+    let private percentDefense stat =
+        match stat with
+        | PercentDefense s -> s
+        | _ -> 0.0
+
+    let private flatDefense stat =
+        match stat with
+        | FlatDefense s -> s
+        | _ -> 0.0
+
     let private percentCriticalRate stat =
         match stat with
-        | PercentCriticalRate chit -> chit
+        | PercentCriticalRate s -> s
         | _ -> 0.0
 
     let private percentCriticalDamage stat =
         match stat with
-        | PercentCriticalDamage cdmg -> cdmg
+        | PercentCriticalDamage s -> s
+        | _ -> 0.0
+
+    let private percentPhysicalRes stat =
+        match stat with
+        | PercentPhysicalRes s -> s
+        | _ -> 0.0
+
+    let private percentPyroRes stat =
+        match stat with
+        | PercentPyroRes s -> s
+        | _ -> 0.0
+
+    let private percentHydroRes stat =
+        match stat with
+        | PercentHydroRes s -> s
+        | _ -> 0.0
+
+    let private percentElectroRes stat =
+        match stat with
+        | PercentElectroRes s -> s
+        | _ -> 0.0
+
+    let private percentCryoRes stat =
+        match stat with
+        | PercentCryoRes s -> s
+        | _ -> 0.0
+
+    let private percentAnemoRes stat =
+        match stat with
+        | PercentAnemoRes s -> s
+        | _ -> 0.0
+
+    let private percentGeoRes stat =
+        match stat with
+        | PercentGeoRes s -> s
+        | _ -> 0.0
+
+    let private percentDendroRes stat =
+        match stat with
+        | PercentDendroRes s -> s
+        | _ -> 0.0
+
+    let private percentPhysicalResIgnore stat =
+        match stat with
+        | PercentPhysicalResIgnore s -> s
+        | _ -> 0.0
+
+    let private percentPyroResIgnore stat =
+        match stat with
+        | PercentPyroResIgnore s -> s
+        | _ -> 0.0
+
+    let private percentHydroResIgnore stat =
+        match stat with
+        | PercentHydroResIgnore s -> s
+        | _ -> 0.0
+
+    let private percentElectroResIgnore stat =
+        match stat with
+        | PercentElectroResIgnore s -> s
+        | _ -> 0.0
+
+    let private percentCryoResIgnore stat =
+        match stat with
+        | PercentCryoResIgnore s -> s
+        | _ -> 0.0
+
+    let private percentAnemoResIgnore stat =
+        match stat with
+        | PercentAnemoResIgnore s -> s
+        | _ -> 0.0
+
+    let private percentGeoResIgnore stat =
+        match stat with
+        | PercentGeoResIgnore s -> s
+        | _ -> 0.0
+
+    let private percentDendroResIgnore stat =
+        match stat with
+        | PercentDendroResIgnore s -> s
         | _ -> 0.0
 
     let private artifactStats f (artifact: Artifact) =
@@ -138,6 +250,62 @@ module CharacterEntity =
     let totalCriticalDamage ((state, data, characterData): CharacterEntity) =
         let character = (state, data, characterData)
         characterData.BaseCriticalRate + totalStats percentCriticalDamage character
+
+    let totalPhysicalRes ((state, data, characterData): CharacterEntity) =
+        let character = (state, data, characterData)
+        data.BasePhysicalRes + totalStats percentPhysicalRes character
+
+    let totalPyroRes ((state, data, characterData): CharacterEntity) =
+        let character = (state, data, characterData)
+        data.BasePyroRes + totalStats percentPyroRes character
+
+    let totalHydroRes ((state, data, characterData): CharacterEntity) =
+        let character = (state, data, characterData)
+        data.BaseHydroRes + totalStats percentHydroRes character
+
+    let totalElectroRes ((state, data, characterData): CharacterEntity) =
+        let character = (state, data, characterData)
+        data.BaseElectroRes + totalStats percentElectroRes character
+
+    let totalCryoRes ((state, data, characterData): CharacterEntity) =
+        let character = (state, data, characterData)
+        data.BaseCryoRes + totalStats percentCryoRes character
+
+    let totalAnemoRes ((state, data, characterData): CharacterEntity) =
+        let character = (state, data, characterData)
+        data.BaseAnemoRes + totalStats percentAnemoRes character
+
+    let totalGeoRes ((state, data, characterData): CharacterEntity) =
+        let character = (state, data, characterData)
+        data.BaseGeoRes + totalStats percentGeoRes character
+
+    let totalDendroRes ((state, data, characterData): CharacterEntity) =
+        let character = (state, data, characterData)
+        data.BaseDendroRes + totalStats percentDendroRes character
+
+    let totalPhysicalResIgnore (character: CharacterEntity) =
+        totalStats percentPhysicalResIgnore character
+
+    let totalPyroResIgnore (character: CharacterEntity) =
+        totalStats percentPyroResIgnore character
+
+    let totalHydroResIgnore (character: CharacterEntity) =
+        totalStats percentHydroResIgnore character
+
+    let totalElectroResIgnore (character: CharacterEntity) =
+        totalStats percentElectroResIgnore character
+
+    let totalCryoResIgnore (character: CharacterEntity) =
+        totalStats percentCryoResIgnore character
+
+    let totalAnemoResIgnore (character: CharacterEntity) =
+        totalStats percentAnemoResIgnore character
+
+    let totalGeoResIgnore (character: CharacterEntity) =
+        totalStats percentGeoResIgnore character
+
+    let totalDendroResIgnore (character: CharacterEntity) =
+        totalStats percentDendroResIgnore character
 
 module Entity =
     let totalHp entity =
@@ -186,3 +354,83 @@ module Entity =
             | EnemyEntity (s, _) -> s
             | CharacterEntity (s, _, _) -> s
         (0.0, state.Effects) ||> List.fold (fun s v -> s + f v)
+
+    let totalPhysicalRes entity =
+        match entity with
+        | EnemyEntity (_, data) -> data.BasePhysicalRes
+        | CharacterEntity character -> CharacterEntity.totalPhysicalRes character
+
+    let totalPyroRes entity =
+        match entity with
+        | EnemyEntity (_, data) -> data.BasePyroRes
+        | CharacterEntity character -> CharacterEntity.totalPyroRes character
+
+    let totalHydroRes entity =
+        match entity with
+        | EnemyEntity (_, data) -> data.BaseHydroRes
+        | CharacterEntity character -> CharacterEntity.totalHydroRes character
+
+    let totalElectroRes entity =
+        match entity with
+        | EnemyEntity (_, data) -> data.BaseElectroRes
+        | CharacterEntity character -> CharacterEntity.totalElectroRes character
+
+    let totalCryoRes entity =
+        match entity with
+        | EnemyEntity (_, data) -> data.BaseCryoRes
+        | CharacterEntity character -> CharacterEntity.totalCryoRes character
+
+    let totalAnemoRes entity =
+        match entity with
+        | EnemyEntity (_, data) -> data.BaseAnemoRes
+        | CharacterEntity character -> CharacterEntity.totalAnemoRes character
+
+    let totalGeoRes entity =
+        match entity with
+        | EnemyEntity (_, data) -> data.BaseGeoRes
+        | CharacterEntity character -> CharacterEntity.totalGeoRes character
+
+    let totalDendroRes entity =
+        match entity with
+        | EnemyEntity (_, data) -> data.BaseDendroRes
+        | CharacterEntity character -> CharacterEntity.totalDendroRes character
+
+    let totalPhysicalResIgnore entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalPhysicalResIgnore character
+
+    let totalPyroResIgnore entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalPyroResIgnore character
+
+    let totalHydroResIgnore entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalHydroResIgnore character
+
+    let totalElectroResIgnore entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalElectroResIgnore character
+
+    let totalCryoResIgnore entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalCryoResIgnore character
+
+    let totalAnemoResIgnore entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalAnemoResIgnore character
+
+    let totalGeoResIgnore entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalGeoResIgnore character
+
+    let totalDendroResIgnore entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalDendroResIgnore character
