@@ -179,6 +179,46 @@ module CharacterEntity =
         | PercentDendroRes s -> s
         | _ -> 0.0
 
+    let private percentPhysicalBonus stat =
+        match stat with
+        | PercentPhysicalBonus s -> s
+        | _ -> 0.0
+
+    let private percentPyroBonus stat =
+        match stat with
+        | PercentPyroBonus s -> s
+        | _ -> 0.0
+
+    let private percentHydroBonus stat =
+        match stat with
+        | PercentHydroBonus s -> s
+        | _ -> 0.0
+
+    let private percentElectroBonus stat =
+        match stat with
+        | PercentElectroBonus s -> s
+        | _ -> 0.0
+
+    let private percentCryoBonus stat =
+        match stat with
+        | PercentCryoBonus s -> s
+        | _ -> 0.0
+
+    let private percentAnemoBonus stat =
+        match stat with
+        | PercentAnemoBonus s -> s
+        | _ -> 0.0
+
+    let private percentGeoBonus stat =
+        match stat with
+        | PercentGeoBonus s -> s
+        | _ -> 0.0
+
+    let private percentDendroBonus stat =
+        match stat with
+        | PercentDendroBonus s -> s
+        | _ -> 0.0
+
     let private percentPhysicalResIgnore stat =
         match stat with
         | PercentPhysicalResIgnore s -> s
@@ -288,6 +328,30 @@ module CharacterEntity =
         let character = (state, data, characterData)
         data.BaseDendroRes + totalStats percentDendroRes character
 
+    let totalPhysicalBonus (character: CharacterEntity) =
+        totalStats percentPhysicalBonus character
+
+    let totalPyroBonus (character: CharacterEntity) =
+        totalStats percentPyroBonus character
+
+    let totalHydroBonus (character: CharacterEntity) =
+        totalStats percentHydroBonus character
+
+    let totalElectroBonus (character: CharacterEntity) =
+        totalStats percentElectroBonus character
+
+    let totalCryoBonus (character: CharacterEntity) =
+        totalStats percentCryoBonus character
+
+    let totalAnemoBonus (character: CharacterEntity) =
+        totalStats percentAnemoBonus character
+
+    let totalGeoBonus (character: CharacterEntity) =
+        totalStats percentGeoBonus character
+
+    let totalDendroBonus (character: CharacterEntity) =
+        totalStats percentDendroBonus character
+
     let totalPhysicalResIgnore (character: CharacterEntity) =
         totalStats percentPhysicalResIgnore character
 
@@ -316,6 +380,11 @@ module CharacterEntity =
         totalStats flatDamageBonus character
 
 module Entity =
+    let level entity =
+        match entity with
+        | EnemyEntity (_, data) -> data.Level
+        | CharacterEntity (_, data, _) -> data.Level
+
     let totalHp entity =
         match entity with
         | EnemyEntity (_, data) -> data.BaseHp
@@ -402,6 +471,46 @@ module Entity =
         match entity with
         | EnemyEntity (_, data) -> data.BaseDendroRes
         | CharacterEntity character -> CharacterEntity.totalDendroRes character
+
+    let totalPhysicalBonus entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalPhysicalBonus character
+
+    let totalPyroBonus entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalPyroBonus character
+
+    let totalHydroBonus entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalHydroBonus character
+
+    let totalElectroBonus entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalElectroBonus character
+
+    let totalCryoBonus entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalCryoBonus character
+
+    let totalAnemoBonus entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalAnemoBonus character
+
+    let totalGeoBonus entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalGeoBonus character
+
+    let totalDendroBonus entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalDendroBonus character
 
     let totalPhysicalResIgnore entity =
         match entity with

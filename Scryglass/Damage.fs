@@ -8,31 +8,41 @@ module DamageTypes =
     type Infusion = Physical | Pyro | Hydro | Electro | Cryo | Anemo | Geo | Dendro
 
 module Damage =
-    let baseDamage talent attacker =
+    let baseDamage attacker talent =
         match talent.ScalingStat with
-        | TalentScalingStat.Hp -> Entity.totalHp attacker * talent.ScalingStatMultiplier
-        | TalentScalingStat.Attack ->  Entity.totalAttack attacker * talent.ScalingStatMultiplier
-        | TalentScalingStat.Defense -> Entity.totalDefense attacker * talent.ScalingStatMultiplier
+        | TalentScalingStat.Hp -> talent.ScalingStatMultiplier * Entity.totalHp attacker
+        | TalentScalingStat.Attack -> talent.ScalingStatMultiplier * Entity.totalAttack attacker
+        | TalentScalingStat.Defense -> talent.ScalingStatMultiplier * Entity.totalDefense attacker
 
     let private averageCrit attacker =
         1.0 + (max 0.0 (min 1.0 (Entity.totalCriticalRate attacker))) * Entity.totalCriticalDamage attacker
 
-    let critMult style attacker =
+    let critMult attacker style =
         match style with
         | NeverCritical -> 1.0
         | AverageCritical -> averageCrit attacker
         | AlwaysCritical -> 1.0 + Entity.totalCriticalDamage attacker
 
-    let enemyDefense character enemy =
-        let _, data1, _ = character
-        let _, data2 = enemy
-        let a = data1.Level + 100 |> float
-        let b = data2.Level + 100 |> float
-        let enemyDefenseReduction = Entity.totalDefenseReduction (enemy |> EnemyEntity)
-        let defenseIgnore = Entity.totalDefenseIgnore (character |> CharacterEntity)
-        a / (a + b * (1.0 - (min 0.9 enemyDefenseReduction)) * (1.0 - defenseIgnore))
+    let defenseMult attacker defender =
+        let attackerLevelFactor = Entity.level attacker + 100 |> float
+        let defenderLevelFactor = Entity.level defender + 100 |> float
+        let defenderDefenseReduction = Entity.totalDefenseReduction defender
+        let attackerDefenseIgnore = Entity.totalDefenseIgnore attacker
+        attackerLevelFactor / (attackerLevelFactor + defenderLevelFactor * (1.0 - (min 0.9 defenderDefenseReduction)) * (1.0 - attackerDefenseIgnore))
 
-    let resistance infusion attacker defender =
+    let damageBonus infusion attacker =
+        match infusion with
+        | Infusion.Physical -> Entity.totalPhysicalBonus attacker
+        | Infusion.Pyro -> Entity.totalPyroBonus attacker
+        | Infusion.Hydro -> Entity.totalHydroBonus attacker
+        | Infusion.Electro -> Entity.totalElectroBonus attacker
+        | Infusion.Cryo -> Entity.totalCryoBonus attacker
+        | Infusion.Anemo -> Entity.totalAnemoBonus attacker
+        | Infusion.Geo -> Entity.totalGeoBonus attacker
+        | Infusion.Dendro -> Entity.totalDendroBonus attacker
+        |> (+) 1.0
+
+    let resMult infusion attacker defender =
         let baseRes =
             match infusion with
             | Infusion.Physical -> Entity.totalPhysicalRes defender
@@ -63,3 +73,23 @@ module Damage =
 
     let flatDamage =
         Entity.totalFlatDamageBonus
+
+    let infusion talent =
+        match talent.Aura with
+        | Some (Aura.Pyro _) -> Infusion.Pyro
+        | Some (Aura.Hydro _) -> Infusion.Hydro
+        | Some (Aura.Electro _) -> Infusion.Electro
+        | Some (Aura.Cryo _) -> Infusion.Cryo
+        | Some (Aura.Anemo _) -> Infusion.Anemo
+        | Some (Aura.Geo _) -> Infusion.Geo
+        | Some (Aura.Dendro _) -> Infusion.Dendro
+        | _ -> Infusion.Physical
+
+    let damage attacker defender talent critical =
+        let el = infusion talent
+        baseDamage attacker talent
+        |> fun d -> d + flatDamage attacker
+        |> fun d -> d * damageBonus el attacker
+        |> fun d -> d * critMult attacker critical
+        |> fun d -> d * defenseMult attacker defender
+        |> fun d -> d * resMult el attacker defender
