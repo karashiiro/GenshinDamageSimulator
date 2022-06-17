@@ -33,6 +33,9 @@ module Stats =
     type PercentAnemoRes = StatValue
     type PercentGeoRes = StatValue
     type PercentDendroRes = StatValue
+    
+    type PercentDefenseShred = StatValue
+    type PercentDefenseIgnore = StatValue
 
     type StatModifier =
         | FlatHp of FlatHp
@@ -61,3 +64,5 @@ module Stats =
         | PercentAnemoRes of PercentAnemoRes
         | PercentGeoRes of PercentGeoRes
         | PercentDendroRes of PercentDendroRes
+        | PercentDefenseShred of PercentDefenseShred
+        | PercentDefenseIgnore of PercentDefenseIgnore
