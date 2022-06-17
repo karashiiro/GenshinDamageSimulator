@@ -22,3 +22,12 @@ module Damage =
         | NeverCritical -> 1.0
         | AverageCritical -> averageCrit entity
         | AlwaysCritical -> 1.0 + Entity.totalCriticalDamage entity
+
+    let enemyDefense character enemy =
+        let _, data1, _ = character
+        let _, data2 = enemy
+        let a = data1.Level + 100 |> float
+        let b = data2.Level + 100 |> float
+        let enemyDefenseReduction = Entity.totalDefenseReduction (enemy |> EnemyEntity)
+        let defenseIgnore = Entity.totalDefenseIgnore (character |> CharacterEntity)
+        a / (a + b * (1.0 - (min 0.9 enemyDefenseReduction)) * (1.0 - defenseIgnore))

@@ -45,7 +45,8 @@ module EntityTypes =
 
     type EntityState = // buffs and debuffs?
         { CurrentHp: StatValue
-          InternalCooldowns: InternalCooldown list }
+          InternalCooldowns: InternalCooldown list
+          Effects: StatModifier list }
 
     type CharacterEntity = EntityState * BasicEntityData * CharacterEntityData
     
@@ -104,15 +105,19 @@ module CharacterEntity =
     let private artifactStats f (artifact: Artifact) =
         ((0.0, artifact.SubStats) ||> List.fold (fun s v -> s + f v)) + f artifact.MainStat
 
+    let private effectStats f (effects: StatModifier list) =
+        (0.0, effects) ||> List.fold (fun s v -> s + f v)
+    
     let private totalStats f (character: CharacterEntity) =
-        let _, _, characterData = character
+        let state, _, characterData = character
         let mainStat = f characterData.MainStat
         let weaponStat =
             match characterData.Weapon.MainStat with
             | Some s -> f s
             | None -> 0.0
         let artifactsStat = (0.0, characterData.Artifacts) ||> List.fold (fun s a -> s + artifactStats f a)
-        mainStat + weaponStat + artifactsStat
+        let effectsStat = effectStats f state.Effects
+        mainStat + weaponStat + artifactsStat + effectsStat
 
     let totalHp ((state, data, characterData): CharacterEntity) =
         let character = (state, data, characterData)
@@ -159,3 +164,25 @@ module Entity =
         match entity with
         | EnemyEntity _ -> 0.0
         | CharacterEntity character -> CharacterEntity.totalCriticalDamage character
+
+    let totalDefenseReduction entity =
+        let f stat =
+            match stat with
+            | PercentDefenseReduction red -> red
+            | _ -> 0.0
+        let state =
+            match entity with
+            | EnemyEntity (s, _) -> s
+            | CharacterEntity (s, _, _) -> s
+        (0.0, state.Effects) ||> List.fold (fun s v -> s + f v)
+
+    let totalDefenseIgnore entity =
+        let f stat =
+            match stat with
+            | PercentDefenseIgnore red -> red
+            | _ -> 0.0
+        let state =
+            match entity with
+            | EnemyEntity (s, _) -> s
+            | CharacterEntity (s, _, _) -> s
+        (0.0, state.Effects) ||> List.fold (fun s v -> s + f v)

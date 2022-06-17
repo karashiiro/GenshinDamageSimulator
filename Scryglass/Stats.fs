@@ -34,7 +34,7 @@ module Stats =
     type PercentGeoRes = StatValue
     type PercentDendroRes = StatValue
     
-    type PercentDefenseShred = StatValue
+    type PercentDefenseReduction = StatValue
     type PercentDefenseIgnore = StatValue
 
     type StatModifier =
@@ -64,5 +64,5 @@ module Stats =
         | PercentAnemoRes of PercentAnemoRes
         | PercentGeoRes of PercentGeoRes
         | PercentDendroRes of PercentDendroRes
-        | PercentDefenseShred of PercentDefenseShred
+        | PercentDefenseReduction of PercentDefenseReduction
         | PercentDefenseIgnore of PercentDefenseIgnore
