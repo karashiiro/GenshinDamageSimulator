@@ -60,3 +60,6 @@ module Damage =
             1.0 - res
         else // res >= 0.75
             1.0 / (4.0 * res + 1.0)
+
+    let flatDamage =
+        Entity.totalFlatDamageBonus

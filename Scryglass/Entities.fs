@@ -124,6 +124,11 @@ module CharacterEntity =
         | FlatDefense s -> s
         | _ -> 0.0
 
+    let private flatDamageBonus stat =
+        match stat with
+        | FlatDamageBonus s -> s
+        | _ -> 0.0
+
     let private percentCriticalRate stat =
         match stat with
         | PercentCriticalRate s -> s
@@ -307,6 +312,9 @@ module CharacterEntity =
     let totalDendroResIgnore (character: CharacterEntity) =
         totalStats percentDendroResIgnore character
 
+    let totalFlatDamageBonus (character: CharacterEntity) =
+        totalStats flatDamageBonus character
+
 module Entity =
     let totalHp entity =
         match entity with
@@ -434,3 +442,8 @@ module Entity =
         match entity with
         | EnemyEntity _ -> 0.0
         | CharacterEntity character -> CharacterEntity.totalDendroResIgnore character
+
+    let totalFlatDamageBonus entity =
+        match entity with
+        | EnemyEntity _ -> 0.0
+        | CharacterEntity character -> CharacterEntity.totalFlatDamageBonus character

@@ -11,6 +11,8 @@ module Stats =
     type FlatDefense = StatValue
     type FlatElementalMastery = StatValue
 
+    type FlatDamageBonus = StatValue
+
     type PercentHp = StatValue
     type PercentAttack = StatValue
     type PercentDefense = StatValue
@@ -51,6 +53,7 @@ module Stats =
         | FlatAttack of FlatAttack
         | FlatDefense of FlatDefense
         | FlatElementalMastery of FlatElementalMastery
+        | FlatDamageBonus of FlatDamageBonus
         | PercentHp of PercentHp
         | PercentAttack of PercentAttack
         | PercentDefense of PercentDefense
